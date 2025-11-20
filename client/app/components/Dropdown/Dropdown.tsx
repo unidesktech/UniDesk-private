@@ -5,8 +5,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+} from "@/app/components/ui/dropdown-menu";
+import { cn } from "@/app/lib/utils";
 import { ChevronDown } from "lucide-react";
 
 interface DropdownProps {
