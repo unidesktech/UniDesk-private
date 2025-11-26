@@ -5,7 +5,8 @@
   "root": "apps",
   "sourceRoot": "apps",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
   },
   "projects": {
     "api-gateway": {
@@ -42,6 +43,24 @@
       "sourceRoot": "libs/dto/src",
       "compilerOptions": {
         "tsConfigPath": "libs/dto/tsconfig.lib.json"
+      }
+    },
+    "prisma": {
+      "type": "library",
+      "root": "libs/prisma",
+      "entryFile": "index",
+      "sourceRoot": "libs/prisma/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/prisma/tsconfig.lib.json"
+      }
+    },
+    "request-demo": {
+      "type": "application",
+      "root": "apps/request-demo",
+      "entryFile": "main",
+      "sourceRoot": "apps/request-demo/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/request-demo/tsconfig.app.json"
       }
     }
   }

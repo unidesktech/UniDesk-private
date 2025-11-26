@@ -11,4 +11,14 @@ export class ApiGatewayService {
       data: response.data,
     };
   }
+  async createDemo() {
+    const response = await axios.get(
+      `${process.env.REQUESTDEMOENDPOINT}/request-demo/create`,
+    );
+
+    return {
+      gateway: true,
+      data: response.data,
+    };
+  }
 }

@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+  output   = "../libs/prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model schools {
+  school_id  String   @id @db.Uuid
+  name       String?
+  address    String?
+  phone      String?
+  email      String?
+  config     Json?
+  created_at DateTime
+  created_by String?  @db.Uuid
+  updated_at DateTime
+  updated_by String?  @db.Uuid
+  is_active  Boolean  @default(true)
+  is_deleted Boolean  @default(false)
+  comments   String?
+
+  // Relations
+
+  demo_requests         demo_requests[]
+  // users                  users[]
+  // school_branding        school_branding?
+  // school_settings        school_settings[]
+  // school_initial_setup   school_initial_setup?
+  // roles                  roles[]
+  // activity_logs          activity_logs[]
+  // academic_years         academic_years[]
+  // period_templates       period_templates[]
+  // timetables             timetables[]
+  // attendance_sessions    attendance_sessions[]
+  // attendance_batch_imports attendance_batch_imports[]
+  // attendance_insights    attendance_insights[]
+  // attendance_ai_jobs     attendance_ai_jobs[]
+  // exam_types             exam_types[]
+  // exam_groups            exam_groups[]
+  // assignments            assignments[]
+  // question_bank          question_bank[]
+  // study_materials        study_materials[]
+  // doubts                 doubts[]
+  // ai_learning_paths      ai_learning_paths[]
+  // ai_learning_jobs       ai_learning_jobs[]
+  // weekly_plans           weekly_plans[]
+  // lesson_plan_templates  lesson_plan_templates[]
+  // fee_categories         fee_categories[]
+  // fee_items              fee_items[]
+  // fee_structures         fee_structures[]
+  // student_fee_assignments student_fee_assignments[]
+  // fee_invoices           fee_invoices[]
+  // fee_discounts          fee_discounts[]
+  // payment_methods        payment_methods[]
+  // fee_notifications      fee_notifications[]
+  // transport_vehicles     transport_vehicles[]
+  // transport_drivers      transport_drivers[]
+  // transport_routes       transport_routes[]
+  // vehicle_route_assignments vehicle_route_assignments[]
+  // transport_events       transport_events[]
+  // inventory_categories   inventory_categories[]
+  // inventory_items        inventory_items[]
+  // inventory_vendors      inventory_vendors[]
+  // purchase_orders        purchase_orders[]
+  // stock_master           stock_master[]
+  // issue_requests         issue_requests[]
+  // stock_audits           stock_audits[]
+  // books                  books[]
+  // library_members        library_members[]
+  // announcements          announcements[]
+  // notifications          notifications[]
+  // ai_notification_summaries ai_notification_summaries[]
+  // ptm_events             ptm_events[]
+  // conversations          conversations[]
+  // event_groups           event_groups[]
+  // events                 events[]
+  // school_calendars       school_calendars[]
+  // leave_types            leave_types[]
+  // leave_requests         leave_requests[]
+  // media_albums           media_albums[]
+  // media_items            media_items[]
+  // media_tags             media_tags[]
+  // media_upload_sessions  media_upload_sessions[]
+  // media_settings         media_settings?
+  // online_class_providers online_class_providers[]
+  // online_classes         online_classes[]
+  // class_sessions         class_sessions[]
+  // import_jobs            import_jobs[]
+  // export_jobs            export_jobs[]
+  // report_definitions     report_definitions[]
+  // ai_report_jobs         ai_report_jobs[]
+  // feature_flags          feature_flags[]
+  // communication_templates communication_templates[]
+  // ai_template_jobs       ai_template_jobs[]
+}
+
+model demo_requests {
+  request_id        String   @id @db.Uuid
+  school_id         String?  @db.Uuid
+
+  organization       String
+  organization_size  String
+  full_name          String
+  contact_email      String
+  contact_phone      String?
+  country            String?
+  city               String?
+
+  message            String?
+  source             String?
+
+  status             String   @default("new")
+
+  scheduled_demo_at  DateTime?
+  
+  is_active          Boolean  @default(true)
+  is_deleted         Boolean  @default(false)
+  created_at         DateTime
+  updated_at         DateTime
+  comments           String?
+
+  // Relations
+  school schools? @relation(fields: [school_id], references: [school_id])
+
+  @@index([contact_email])
+  @@index([status])
+}
