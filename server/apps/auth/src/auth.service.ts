@@ -9,9 +9,7 @@ export class AuthService {
   async login() {
     try {
       const result = await this.prisma.demo_requests.findMany();
-      writeToConsole.log(
-        `Creating a demo request... ${JSON.stringify(result)}`,
-      );
+      console.log(result);
       return {
         success: true,
         message: 'Login successful',
@@ -22,7 +20,7 @@ export class AuthService {
         token: 'dummy-jwt-token-123',
       };
     } catch (error) {
-      writeToConsole.error(`Error during login: ${error.message}`);
+      writeToConsole.error(`Error during login: ${error}`);
       return {
         success: false,
         message: 'Login failed',

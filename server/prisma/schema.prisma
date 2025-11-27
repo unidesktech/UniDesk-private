@@ -1,11 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
-  output   = "../libs/prisma/generated"
+  output     = "../libs/prisma/generated"
 }
 
 datasource db {
   provider = "postgresql"
+  schemas  = ["unidesk"]
 }
 
 model schools {
@@ -25,7 +26,7 @@ model schools {
 
   // Relations
 
-  demo_requests         demo_requests[]
+  demo_requests demo_requests[]
   // users                  users[]
   // school_branding        school_branding?
   // school_settings        school_settings[]
@@ -96,36 +97,39 @@ model schools {
   // feature_flags          feature_flags[]
   // communication_templates communication_templates[]
   // ai_template_jobs       ai_template_jobs[]
+
+  @@schema("unidesk")
 }
 
 model demo_requests {
-  request_id        String   @id @db.Uuid
-  school_id         String?  @db.Uuid
+  request_id String  @id @db.Uuid
+  school_id  String? @db.Uuid
 
-  organization       String
-  organization_size  String
-  full_name          String
-  contact_email      String
-  contact_phone      String?
-  country            String?
-  city               String?
+  organization      String
+  organization_size String
+  full_name         String
+  contact_email     String
+  contact_phone     String?
+  country           String?
+  city              String?
 
-  message            String?
-  source             String?
+  message String?
+  source  String?
 
-  status             String   @default("new")
+  status String @default("new")
 
-  scheduled_demo_at  DateTime?
-  
-  is_active          Boolean  @default(true)
-  is_deleted         Boolean  @default(false)
-  created_at         DateTime
-  updated_at         DateTime
-  comments           String?
+  scheduled_demo_at DateTime?
+
+  is_active  Boolean  @default(true)
+  is_deleted Boolean  @default(false)
+  created_at DateTime
+  updated_at DateTime
+  comments   String?
 
   // Relations
   school schools? @relation(fields: [school_id], references: [school_id])
 
   @@index([contact_email])
   @@index([status])
+  @@schema("unidesk")
 }
