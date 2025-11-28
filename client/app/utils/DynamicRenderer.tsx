@@ -17,6 +17,7 @@ import {
 } from "recharts";
 import { CheckCircle } from "lucide-react";
 import StatCard from "../components/Cards/StatCard";
+import { CSSProperties } from "react";
 
 interface ConfigItem {
   type: string;
@@ -24,6 +25,10 @@ interface ConfigItem {
   lineData?: any[];
   barData?: any[];
   features?: string[];
+  styles?: {
+    inlineStyles?: CSSProperties | undefined;
+    classNames?: string;
+  };
 }
 
 interface DynamicRendererProps {
@@ -37,12 +42,14 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
   index,
   onClick,
 }) => {
-  console.log(config);
   if (!config) return null;
   switch (config.type?.toLowerCase()) {
     case "iconcard":
       return (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.classNames}`}
+          style={config.styles?.inlineStyles || {}}
+        >
           {(config.items || []).map((item, i) => (
             <IconCard
               key={i}
@@ -83,27 +90,31 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
 
             <div className="flex flex-col md:flex-row gap-6">
               <div className="bg-white w-full rounded-xl p-6 border shadow-sm">
-                <h3 className="text-gray-900 mb-4 text-sm md:text-base">Student Enrollment Trend</h3>
+                <h3 className="text-gray-900 mb-4 text-sm md:text-base">
+                  Student Enrollment Trend
+                </h3>
                 <div className="w-full h-[250px]">
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={config?.lineData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" stroke="#6b7280" />
-                    <YAxis stroke="#6b7280" />
-                    <Tooltip />
-                    <Line
-                      type="monotone"
-                      dataKey="value"
-                      stroke="#3b82f6"
-                      strokeWidth={3}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <LineChart data={config?.lineData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="name" stroke="#6b7280" />
+                      <YAxis stroke="#6b7280" />
+                      <Tooltip />
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#3b82f6"
+                        strokeWidth={3}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
 
               <div className="bg-white rounded-xl w-full p-6 border shadow-sm">
-                <h3 className="text-gray-900 mb-4 text-sm md:text-base">Weekly Attendance</h3>
+                <h3 className="text-gray-900 mb-4 text-sm md:text-base">
+                  Weekly Attendance
+                </h3>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={config?.barData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />

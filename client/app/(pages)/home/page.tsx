@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useMemo } from "react";
 import { homeConfig } from "@/app/config/home.config";
 import { Button } from "@/app/components/ui/button";
@@ -10,8 +9,8 @@ const HomePage: React.FC = () => {
   const config: homeConfigProps = useMemo(() => homeConfig(), []);
   return (
     <div className="relative overflow-hidden bg-linear-to-b from-blue-50/50 via-white to-white pt-32">
-      {/* <div className="absolute top-20 right-20 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 left-20 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl" /> */}
+      <div className="absolute top-20 right-20 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl" />
+      <div className="absolute top-135 left-20 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl" />
       {/* hero Section */}
       <section className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 md:gap-16 items-center">
