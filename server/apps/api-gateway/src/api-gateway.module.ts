@@ -1,8 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ApiGatewayController } from './api-gateway.controller';
-import { ApiGatewayService } from './api-gateway.service';
 import { CommonModule, LoggerMiddleware } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
+import { AuthGatewayController } from './auth/auth.gateway.controller';
+import { RequestDemoGatewayController } from './request-demo/request-demo.gateway.controller';
+import { AuthGatewayService } from './auth/auth.gateway.service';
+import { RequestDemoGateWayService } from './request-demo/request-demo.gateway.service';
 
 @Module({
   imports: [
@@ -12,8 +14,8 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
     }),
   ],
-  controllers: [ApiGatewayController],
-  providers: [ApiGatewayService],
+  controllers: [AuthGatewayController, RequestDemoGatewayController],
+  providers: [AuthGatewayService, RequestDemoGateWayService],
 })
 export class ApiGatewayModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
