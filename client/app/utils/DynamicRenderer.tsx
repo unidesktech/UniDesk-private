@@ -1,0 +1,146 @@
+import { log } from "console";
+import IconCard from "../components/Cards/IconCard";
+import { ImgModule, ModuleItems } from "../components/ImgModule/ImgModule";
+import TestimonialCard from "../components/Cards/TestimonialCard";
+import { Plan, Pricing } from "../components/PricingComponent/Pricing";
+import FaqAccordion, { FaqItem } from "../components/FAQAccordion/FaqAccordion";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { CheckCircle } from "lucide-react";
+import StatCard from "../components/Cards/StatCard";
+
+interface ConfigItem {
+  type: string;
+  items?: any[];
+  lineData?: any[];
+  barData?: any[];
+  features?: string[];
+}
+
+interface DynamicRendererProps {
+  config: ConfigItem;
+  index?: number;
+  onClick?: () => void;
+}
+
+export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
+  config,
+  index,
+  onClick,
+}) => {
+  console.log(config);
+  if (!config) return null;
+  switch (config.type?.toLowerCase()) {
+    case "iconcard":
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(config.items || []).map((item, i) => (
+            <IconCard
+              key={i}
+              Icon={item?.Icon || item?.icon}
+              title={item?.title}
+              desc={item?.desc}
+              styles={item?.styles}
+            />
+          ))}
+        </div>
+      );
+    case "testimonial":
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(config.items || []).map((item, i) => (
+            <TestimonialCard
+              key={i}
+              name={item.name}
+              quote={item.quote}
+              role={item.role}
+              rating={item.rating}
+              img={item.rating}
+            />
+          ))}
+        </div>
+      );
+    case "dashboardmockup":
+      return (
+        <section className="bg-linear-to-b from-white to-gray-50">
+          <div className="bg-linear-to-br from-gray-50 to-blue-50/30 rounded-2xl p-8 border border-gray-200 shadow-2xl">
+            <div className="flex flex-wrap gap-6 mb-8">
+              {(config.items ?? []).map((item, i) => (
+                <div key={i} className="flex-1 min-w-[150px]">
+                  <StatCard item={item} />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="bg-white w-full rounded-xl p-6 border shadow-sm">
+                <h3 className="text-gray-900 mb-4 text-sm md:text-base">Student Enrollment Trend</h3>
+                <div className="w-full h-[250px]">
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={config?.lineData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" stroke="#6b7280" />
+                    <YAxis stroke="#6b7280" />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#3b82f6"
+                      strokeWidth={3}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl w-full p-6 border shadow-sm">
+                <h3 className="text-gray-900 mb-4 text-sm md:text-base">Weekly Attendance</h3>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={config?.barData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" stroke="#6b7280" />
+                    <YAxis stroke="#6b7280" />
+                    <Tooltip />
+                    <Bar
+                      dataKey="attendance"
+                      fill="#14b8a6"
+                      radius={[8, 8, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row justify-center gap-6 mt-12">
+              {(config.features ?? []).map((feature, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl border"
+                >
+                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                  <span className="text-gray-900">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    case "imgmodule":
+      return <ImgModule modules={config.items as ModuleItems[]} />;
+
+    case "pricing":
+      return <Pricing plans={config.items as Plan[]} />;
+
+    case "accordian":
+      return <FaqAccordion faqs={config.items as FaqItem[]} />;
+  }
+};
