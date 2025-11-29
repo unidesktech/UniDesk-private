@@ -4,26 +4,34 @@
     "target": "ES2019",
     "moduleResolution": "node",
     "resolvePackageJsonExports": false,
-
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "skipLibCheck": true,
-
     "paths": {
-      "@app/common": ["libs/common/src"],
-      "@app/common/*": ["libs/common/src/*"],
-      "@app/dto": ["libs/dto/src"],
-      "@app/dto/*": ["libs/dto/src/*"],
-      "@app/prisma": ["libs/prisma/src"],
-      "@app/prisma/*": ["libs/prisma/src/*"]
+      "@app/common": [
+        "libs/common/src"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
+      ],
+      "@app/dto": [
+        "libs/dto/src"
+      ],
+      "@app/dto/*": [
+        "libs/dto/src/*"
+      ],
+      "@app/prisma": [
+        "libs/prisma/src"
+      ],
+      "@app/prisma/*": [
+        "libs/prisma/src/*"
+      ]
     }
   }
 }
