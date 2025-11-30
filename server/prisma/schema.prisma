@@ -40,9 +40,9 @@ model schools {
   established DateTime?
   config      Json?
   created_at  DateTime  @default(now())
-  created_by  String?   @db.Uuid
+  created_by  String?
   updated_at  DateTime
-  updated_by  String?   @db.Uuid
+  updated_by  String?
   is_active   Boolean   @default(true)
   is_deleted  Boolean   @default(false)
   comments    String?
@@ -52,11 +52,11 @@ model schools {
   demo_requests              demo_requests[]
   school_pricing_plans       school_pricing_plans[]
   school_subscription_status school_subscription_status[]
-  // users                  users[]
+  users                      users[]
   school_branding            school_branding?
   school_settings            school_settings[]
   school_initial_setup       school_initial_setup?
-  // roles                  roles[]
+  roles                      roles[]
   // activity_logs          activity_logs[]
   // academic_years         academic_years[]
   // period_templates       period_templates[]
@@ -135,9 +135,9 @@ model school_subscription_status {
   reason     String? // For suspended/inactive
 
   created_at DateTime @default(now())
-  created_by String?  @db.Uuid
+  created_by String?
   updated_at DateTime
-  updated_by String?  @db.Uuid
+  updated_by String?
   is_active  Boolean  @default(true)
   is_deleted Boolean  @default(false)
   comments   String?
@@ -162,9 +162,9 @@ model school_pricing_plans {
   valid_to   DateTime?
 
   created_at DateTime @default(now())
-  created_by String?  @db.Uuid
+  created_by String?
   updated_at DateTime
-  updated_by String?  @db.Uuid
+  updated_by String?
   is_active  Boolean  @default(true)
   is_deleted Boolean  @default(false)
   comments   String?
@@ -187,9 +187,9 @@ model school_branding {
   login_screen_config  Json?
   header_footer_config Json?
   created_at           DateTime
-  created_by           String?  @db.Uuid
+  created_by           String?
   updated_at           DateTime
-  updated_by           String?  @db.Uuid
+  updated_by           String?
   is_active            Boolean  @default(true)
   is_deleted           Boolean  @default(false)
   comments             String?
@@ -207,9 +207,9 @@ model school_settings {
   value       Json?
   description String?
   created_at  DateTime
-  created_by  String?  @db.Uuid
+  created_by  String?
   updated_at  DateTime
-  updated_by  String?  @db.Uuid
+  updated_by  String?
   is_active   Boolean  @default(true)
   is_deleted  Boolean  @default(false)
   comments    String?
@@ -231,9 +231,9 @@ model school_initial_setup {
   completed_at DateTime?
 
   created_at DateTime
-  created_by String?  @db.Uuid
+  created_by String?
   updated_at DateTime
-  updated_by String?  @db.Uuid
+  updated_by String?
 
   is_active  Boolean @default(true)
   is_deleted Boolean @default(false)
@@ -274,5 +274,133 @@ model demo_requests {
 
   @@index([contact_email])
   @@index([status])
+  @@schema("unidesk")
+}
+
+model users {
+  user_id           String    @id @db.Uuid
+  school_id         String?   @db.Uuid
+  user_code         String    @unique
+  name              String?
+  email             String?
+  phone             String?
+  password_hash     String?
+  status            String?
+  last_login_at     DateTime?
+  profile_photo_url String?
+  config            Json?
+  created_by        String?
+  updated_by        String?
+  is_active         Boolean   @default(true)
+  is_deleted        Boolean   @default(false)
+  comments          String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @default(now())
+
+  // Relations
+  school                 schools?                @relation(fields: [school_id], references: [school_id])
+  user_roles             user_roles[]
+  user_preferences       user_preferences?
+  user_onboarding_status user_onboarding_status?
+  // auth_tokens  auth_tokens[]
+  // otp          otp[]
+  // activity_logs activity_logs[]
+  // doubt_replies doubt_replies[]
+  // assignment_comments assignment_comments[]
+  // fcm_tokens   fcm_tokens[]
+  // notification_logs notification_logs[]
+  // presence     presence?
+  // messages_sent messages[] @relation("MessageSender")
+  // ptm_notes_teacher ptm_notes[] @relation("PTMNotesTeacher")
+  // ptm_bookings_parent ptm_bookings[] @relation("PTMParent")
+  // student_profiles student_profiles?
+  // teacher_profiles teacher_profiles?
+  // parent_profiles parent_profiles?
+
+  @@schema("unidesk")
+}
+
+model user_onboarding_status {
+  onboarding_id      String    @id @db.Uuid
+  user_id            String    @unique @db.Uuid
+  has_completed      Boolean   @default(false)
+  steps_completed    Json?
+  onboarding_version Int?      @default(1)
+  first_login_at     DateTime?
+  last_prompt_at     DateTime?
+  created_at         DateTime
+  created_by         String?
+  updated_at         DateTime
+  updated_by         String?
+  is_active          Boolean   @default(true)
+  is_deleted         Boolean   @default(false)
+  comments           String?
+
+  user users? @relation(fields: [user_id], references: [user_id])
+
+  @@schema("unidesk")
+}
+
+model user_preferences {
+  pref_id               String   @id @db.Uuid
+  user_id               String   @unique @db.Uuid
+  theme                 String?
+  language              String?
+  dashboard_config      Json?
+  shortcuts             Json?
+  notification_settings Json?
+  default_page          String?
+  sidebar_collapsed     Boolean? @default(false)
+  created_at            DateTime
+  created_by            String?
+  updated_at            DateTime
+  updated_by            String?
+  is_active             Boolean  @default(true)
+  is_deleted            Boolean  @default(false)
+  comments              String?
+
+  user users? @relation(fields: [user_id], references: [user_id])
+
+  @@schema("unidesk")
+}
+
+model roles {
+  role_id     String   @id @db.Uuid
+  school_id   String?  @db.Uuid
+  name        String
+  description String?
+  created_at  DateTime
+  created_by  String?
+  updated_at  DateTime
+  updated_by  String?
+  is_active   Boolean  @default(true)
+  is_deleted  Boolean  @default(false)
+  comments    String?
+
+  school     schools?     @relation(fields: [school_id], references: [school_id])
+  user_roles user_roles[]
+
+  @@schema("unidesk")
+}
+
+model user_roles {
+  user_role_id String @id @db.Uuid
+  user_id      String @db.Uuid
+  role_id      String @db.Uuid
+
+  is_active  Boolean  @default(true)
+  created_at DateTime
+  created_by String?
+  updated_at DateTime
+  updated_by String?
+  is_deleted Boolean  @default(false)
+  comments   String?
+
+  user users @relation(fields: [user_id], references: [user_id])
+  role roles @relation(fields: [role_id], references: [role_id])
+
+  @@unique([user_id, role_id], name: "ux_user_role_per_school")
+  @@index([user_id])
+  @@index([role_id])
   @@schema("unidesk")
 }

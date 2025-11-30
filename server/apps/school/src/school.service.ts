@@ -24,7 +24,7 @@ export class SchoolService {
     config?: object;
     logo_url?: string;
     banner_url?: string;
-  }): Promise<ResponseDto<null>> {
+  }): Promise<ResponseDto<SchoolBasicInfoDTO | null>> {
     const {
       name,
       short_name,
@@ -38,115 +38,136 @@ export class SchoolService {
       banner_url,
     } = body;
 
-    const existing = await this.prismaService.schools.findFirst({
-      where: {
-        OR: [{ name }, { email }],
-      },
-    });
+    try {
+      const existing = await this.prismaService.schools.findFirst({
+        where: {
+          OR: [{ name }, { email }],
+        },
+      });
 
-    if (existing) {
+      if (existing) {
+        return {
+          success: false,
+          message: 'School with the same name or email already exists',
+          data: null,
+        };
+      }
+
+      const school = await this.prismaService.$transaction(async (prisma) => {
+        const school = await prisma.schools.create({
+          data: {
+            school_id: randomUUID(),
+            school_code: this.getSchoolCode(name, short_name),
+            name,
+            address,
+            email,
+            phone,
+            website,
+            established: established ? new Date(established) : new Date(),
+            config: config ?? {},
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 'system',
+            updated_by: 'system',
+          },
+        });
+
+        await prisma.school_branding.create({
+          data: {
+            branding_id: randomUUID(),
+            school_id: school.school_id,
+            logo_url: logo_url || null,
+            banner_url: banner_url || null,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 'system',
+            updated_by: 'system',
+          },
+        });
+
+        await prisma.school_subscription_status.create({
+          data: {
+            status_id: randomUUID(),
+            school_id: school.school_id,
+            created_at: new Date(),
+            updated_at: new Date(),
+            status: 'inactive',
+            valid_from: new Date(),
+            valid_to: new Date(),
+            created_by: 'system',
+            updated_by: 'system',
+          },
+        });
+
+        await prisma.school_pricing_plans.create({
+          data: {
+            plan_id: randomUUID(),
+            school_id: school.school_id,
+            created_at: new Date(),
+            updated_at: new Date(),
+            plan_type: 'free',
+            price_per_month: 0,
+            billing_cycle: 'monthly',
+            valid_from: new Date(),
+            valid_to: new Date(),
+            created_by: 'system',
+            updated_by: 'system',
+          },
+        });
+
+        await prisma.school_initial_setup.create({
+          data: {
+            setup_id: randomUUID(),
+            school_id: school.school_id,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 'system',
+            updated_by: 'system',
+          },
+        });
+
+        await prisma.school_settings.create({
+          data: {
+            setting_id: randomUUID(),
+            school_id: school.school_id,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: 'system',
+            updated_by: 'system',
+          },
+        });
+
+        return school;
+      });
+
+      await sendEmail(
+        email,
+        'Welcome to UniDesk , Your school has been created.',
+        getSchoolCreationEmailTemplate(
+          name,
+          email,
+          phone,
+          address,
+          school.school_code,
+          website,
+          established,
+          logo_url,
+          banner_url,
+        ),
+      );
+      return {
+        success: true,
+        message: 'School created successfully',
+        data: school,
+      };
+    } catch (err) {
+      writeToConsole.error(`Error Creating School: ${String(err)}`);
       return {
         success: false,
-        message: 'School with the same name or email already exists',
+        message: 'Error creating school',
         data: null,
       };
     }
-
-    const school = await this.prismaService.$transaction(async (prisma) => {
-      const school = await prisma.schools.create({
-        data: {
-          school_id: randomUUID(),
-          school_code: this.getSchoolCode(name, short_name),
-          name,
-          address,
-          email,
-          phone,
-          website,
-          established: established ? new Date(established) : new Date(),
-          config: config ?? {},
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      await prisma.school_branding.create({
-        data: {
-          branding_id: randomUUID(),
-          school_id: school.school_id,
-          logo_url: logo_url || null,
-          banner_url: banner_url || null,
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      await prisma.school_subscription_status.create({
-        data: {
-          status_id: randomUUID(),
-          school_id: school.school_id,
-          created_at: new Date(),
-          updated_at: new Date(),
-          status: 'inactive',
-          valid_from: new Date(),
-          valid_to: new Date(),
-        },
-      });
-
-      await prisma.school_pricing_plans.create({
-        data: {
-          plan_id: randomUUID(),
-          school_id: school.school_id,
-          created_at: new Date(),
-          updated_at: new Date(),
-          plan_type: 'free',
-          price_per_month: 0,
-          billing_cycle: 'monthly',
-          valid_from: new Date(),
-          valid_to: new Date(),
-        },
-      });
-
-      await prisma.school_initial_setup.create({
-        data: {
-          setup_id: randomUUID(),
-          school_id: school.school_id,
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      await prisma.school_settings.create({
-        data: {
-          setting_id: randomUUID(),
-          school_id: school.school_id,
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-      });
-
-      return school;
-    });
-
-    await sendEmail(
-      email,
-      'Welcome to UniDesk , Your school has been created.',
-      getSchoolCreationEmailTemplate(
-        name,
-        email,
-        phone,
-        address,
-        school.school_code,
-        website,
-        established,
-        logo_url,
-        banner_url,
-      ),
-    );
-    return {
-      success: true,
-      message: 'School created successfully',
-      data: null,
-    };
   }
 
   @Track()

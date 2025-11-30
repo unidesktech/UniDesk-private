@@ -10,7 +10,9 @@ export class SchoolController {
 
   @Post('save')
   @Track()
-  saveSchool(@Body() body: any): Promise<ResponseDto<null>> {
+  saveSchool(
+    @Body() body: any,
+  ): Promise<ResponseDto<SchoolBasicInfoDTO | null>> {
     return this.schoolService.save(body);
   }
 

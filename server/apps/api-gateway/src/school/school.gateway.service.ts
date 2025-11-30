@@ -9,8 +9,19 @@ export class SchoolGatewayService {
   async saveSchool(body: any): Promise<ResponseDto<string>> {
     const url = `${process.env.ENDPOINTURL}:${process.env.SCHOOLPORT}/school/save`;
 
-    const response = await axios.post<ResponseDto<string>>(url, body);
-    return response.data;
+    const schoolResponse = await axios.post<ResponseDto<string>>(url, body);
+
+    let response;
+    if (schoolResponse.data.success) {
+      const url = `${process.env.ENDPOINTURL}:${process.env.APIGATEWAYPORT}/auth/add-initial-user/`;
+      response = await axios.post<ResponseDto<string>>(
+        url,
+        schoolResponse.data.data,
+      );
+
+      return response.data;
+    }
+    return schoolResponse.data;
   }
 
   @Track()
