@@ -1,4 +1,3 @@
-// components/Pricing.tsx
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { Check } from "lucide-react";

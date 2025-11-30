@@ -1,5 +1,5 @@
 import React from "react";
-interface StatItem {
+export interface StatItem {
   label: string;
   value: string | number;
   icon: React.ElementType;
@@ -7,7 +7,7 @@ interface StatItem {
   color?: string;
 }
 
-interface StatCardProps {
+export interface StatCardProps {
   item: StatItem; 
   styles?: {
     lableStyles?: {

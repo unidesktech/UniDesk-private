@@ -1,15 +1,16 @@
 import React, { CSSProperties } from "react";
-import IconCard from "./IconCard";
-import StatCard from "./StatCard";
-import TestimonialCard from "./TestimonialCard";
+import IconCard from "./icon-card";
+import StatCard from "./stat-card";
+import TestimonialCard from "./testimonial-card";
+import { barData, lineData } from "@/app/models/chart.model";
 
 interface CardRendererProps {
   config: {
     type: string;
     cardType?: string;
     items?: any[];
-    lineData?: any[];
-    barData?: any[];
+    lineData?: lineData[];
+    barData?: barData[];
     features?: string[];
     styles?: {
       inlineStyles?: CSSProperties | undefined;

@@ -1,9 +1,7 @@
-import { log } from "console";
-import IconCard from "../components/Cards/IconCard";
-import { ImgModule, ModuleItems } from "../components/ImgModule/ImgModule";
-import TestimonialCard from "../components/Cards/TestimonialCard";
-import { Plan, Pricing } from "../components/PricingComponent/Pricing";
-import FaqAccordion, { FaqItem } from "../components/FAQAccordion/FaqAccordion";
+
+import { ImgModule, ModuleItems } from "../components/ImgModule/img-module";
+import { Plan, Pricing } from "../components/PricingComponent/pricing";
+import FaqAccordion, { FaqItem } from "../components/FAQAccordion/faq-accordion";
 import {
   Bar,
   BarChart,
@@ -16,15 +14,16 @@ import {
   YAxis,
 } from "recharts";
 import { CheckCircle } from "lucide-react";
-import StatCard from "../components/Cards/StatCard";
+import StatCard from "../components/Cards/stat-card";
 import { CSSProperties } from "react";
-import CardRenderer from "../components/Cards/CardRenderer";
+import CardRenderer from "../components/Cards/card-renderer";
+import { barData, lineData } from "../models/chart.model";
 
 interface ConfigItem {
   type: string;
   items?: any[];
-  lineData?: any[];
-  barData?: any[];
+  lineData?: lineData[];
+  barData?: barData[];
   features?: string[];
   styles?: {
     inlineStyles?: CSSProperties | undefined;

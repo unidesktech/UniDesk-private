@@ -2,8 +2,8 @@
 import React, { useMemo } from "react";
 import { homeConfig } from "@/app/config/home.config";
 import { Button } from "@/app/components/ui/button";
-import { DynamicRenderer } from "@/app/utils/DynamicRenderer";
-import { homeConfigProps } from "@/app/models/homeConfig.models";
+import { DynamicRenderer } from "@/app/utils/dynamic-render";
+import { homeConfigProps } from "@/app/models/home-config.models";
 
 const HomePage: React.FC = () => {
   const config: homeConfigProps = useMemo(() => homeConfig(), []);
@@ -35,19 +35,22 @@ const HomePage: React.FC = () => {
                   </p>
 
                   <div className="flex flex-wrap gap-4">
-                    {section.items?.map((btn, i) =>
-                      btn.type === "button" ? (
-                        <Button
-                          key={i}
-                          variant={btn.variant}
-                          className={btn.styles?.classNames}
-                          onClick={btn.onClick}
-                        >
-                          {btn.title}
-                          {btn.Icon && <btn.Icon className="w-5 h-5" />}
-                        </Button>
-                      ) : null
-                    )}
+                    {section.items?.map((btn, i) => {
+                      if ("type" in btn && btn.type === "button") {
+                        return (
+                          <Button
+                            key={i}
+                            variant={btn.variant}
+                            className={btn.styles?.classNames}
+                            onClick={btn.onClick}
+                          >
+                            {btn.title}
+                            {btn.Icon && <btn.Icon className="w-5 h-5" />}
+                          </Button>
+                        );
+                      }
+                      return null;
+                    })}
                   </div>
                 </div>
               )}
@@ -65,74 +68,76 @@ const HomePage: React.FC = () => {
                       </div>
                     </div>
                     {section.items?.map((item, i) => {
-                      if (item.type === "Stats") {
-                        return (
-                          <div key={i} className="grid grid-cols-2 gap-4">
-                            {item.stat?.map((s, idx) => (
-                              <div
-                                key={idx}
-                                className="bg-gray-50 rounded-xl p-4 border border-gray-100"
-                              >
-                                <div
-                                  className={`w-8 h-8 ${s.color} rounded-lg mb-2`}
-                                />
-                                <p className="text-xl md:text-2xl text-gray-900">
-                                  {s.value}
-                                </p>
-                                <p className="text-xs md:text-sm text-gray-500">
-                                  {s.label}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      }
-                      if (item.type === "chart") {
-                        return (
-                          <div
-                            key={i}
-                            className="bg-linear-to-br from-blue-50 to-teal-50 rounded-xl p-4 border border-blue-100"
-                          >
-                            <p className="text-xs md:text-sm text-gray-600 mb-3">
-                              {item.title}
-                            </p>
-                            <div className="flex items-end gap-2 h-20">
-                              {item.charts?.map((h, idx) => (
+                      if ("type" in item) {
+                        if (item.type === "Stats") {
+                          return (
+                            <div key={i} className="grid grid-cols-2 gap-4">
+                              {item.stat?.map((s, idx) => (
                                 <div
                                   key={idx}
-                                  className="flex-1 bg-linear-to-t from-blue-500 to-teal-400 rounded-t"
-                                  style={{ height: `${h}%` }}
-                                />
+                                  className="bg-gray-50 rounded-xl p-4 border border-gray-100"
+                                >
+                                  <div
+                                    className={`w-8 h-8 ${s.color} rounded-lg mb-2`}
+                                  />
+                                  <p className="text-xl md:text-2xl text-gray-900">
+                                    {s.value}
+                                  </p>
+                                  <p className="text-xs md:text-sm text-gray-500">
+                                    {s.label}
+                                  </p>
+                                </div>
                               ))}
                             </div>
-                          </div>
-                        );
-                      }
-                      if (item.type === "timeTable") {
-                        return (
-                          <div key={i} className="space-y-2">
-                            <p className="text-xs md:text-sm text-gray-600">
-                              {item.title}
-                            </p>
-                            {item.timeTables?.map((time, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
-                              >
-                                <span className="text-xs md:text-sm text-gray-500">
-                                  {time.time}
-                                </span>
-                                <span
-                                  className={`px-3 py-1 rounded-md text-xs md:text-sm ${time.color}`}
-                                >
-                                  {time.subject}
-                                </span>
+                          );
+                        }
+                        if (item.type === "chart") {
+                          return (
+                            <div
+                              key={i}
+                              className="bg-linear-to-br from-blue-50 to-teal-50 rounded-xl p-4 border border-blue-100"
+                            >
+                              <p className="text-xs md:text-sm text-gray-600 mb-3">
+                                {item.title}
+                              </p>
+                              <div className="flex items-end gap-2 h-20">
+                                {item.charts?.map((h, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex-1 bg-linear-to-t from-blue-500 to-teal-400 rounded-t"
+                                    style={{ height: `${h}%` }}
+                                  />
+                                ))}
                               </div>
-                            ))}
-                          </div>
-                        );
+                            </div>
+                          );
+                        }
+                        if (item.type === "timeTable") {
+                          return (
+                            <div key={i} className="space-y-2">
+                              <p className="text-xs md:text-sm text-gray-600">
+                                {item.title}
+                              </p>
+                              {item.timeTables?.map((time, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                                >
+                                  <span className="text-xs md:text-sm text-gray-500">
+                                    {time.time}
+                                  </span>
+                                  <span
+                                    className={`px-3 py-1 rounded-md text-xs md:text-sm ${time.color}`}
+                                  >
+                                    {time.subject}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        }
+                        return null;
                       }
-                      return null;
                     })}
                   </div>
                 </div>
@@ -187,9 +192,11 @@ const HomePage: React.FC = () => {
                       key={i}
                       className="flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity"
                     >
-                      <item.icon className="w-8 h-8 text-gray-600" />
+                      {"icon" in item && item.icon ? (
+                        <item.icon className="w-8 h-8 text-gray-600" />
+                      ) : null}
                       <span className="text-xs text-gray-600 text-center">
-                        {item?.name}
+                        {"name" in item ? item.name : null}
                       </span>
                     </div>
                   ))}

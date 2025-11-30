@@ -1,6 +1,5 @@
 import { CheckCircle } from "lucide-react";
 
-import Image from "next/image";
 
 export interface ModuleItems {
   title: string;
