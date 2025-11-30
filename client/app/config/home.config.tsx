@@ -154,7 +154,8 @@ export const homeConfig = (): homeConfigProps => {
         },
       },
       {
-        type: "iconCard",
+        type:"card",
+        cardType: "iconCard",
         title: "Everything you need to run",
         title2: "modern school",
         desc: "Powerful features designed to streamline every aspect of school administration",
@@ -325,7 +326,8 @@ export const homeConfig = (): homeConfigProps => {
         },
       },
       {
-        type: "testimonial",
+        type: "card",
+        cardType: "testimonial",
         title: "Loved by",
         title2: "educators worldwide",
         desc: "Hear what school administrators have to say about our platform",

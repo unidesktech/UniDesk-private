@@ -11,15 +11,15 @@ export interface homeConfigProps {
     type:
       | "hero"
       | "trustLogos"
-      | "iconCard"
+      | "card"
       | "dashboardmockup"
       | "imgModule"
-      | "testimonial"
       | "pricing"
       | "accordian"
       | "timeTable"
       | "chart"
       | "Stats";
+    cardType?:any;
 
     title?: string;
     title2?: string;

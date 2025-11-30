@@ -18,6 +18,7 @@ import {
 import { CheckCircle } from "lucide-react";
 import StatCard from "../components/Cards/StatCard";
 import { CSSProperties } from "react";
+import CardRenderer from "../components/Cards/CardRenderer";
 
 interface ConfigItem {
   type: string;
@@ -44,38 +45,8 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
 }) => {
   if (!config) return null;
   switch (config.type?.toLowerCase()) {
-    case "iconcard":
-      return (
-        <div
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.classNames}`}
-          style={config.styles?.inlineStyles || {}}
-        >
-          {(config.items || []).map((item, i) => (
-            <IconCard
-              key={i}
-              Icon={item?.Icon || item?.icon}
-              title={item?.title}
-              desc={item?.desc}
-              styles={item?.styles}
-            />
-          ))}
-        </div>
-      );
-    case "testimonial":
-      return (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(config.items || []).map((item, i) => (
-            <TestimonialCard
-              key={i}
-              name={item.name}
-              quote={item.quote}
-              role={item.role}
-              rating={item.rating}
-              img={item.rating}
-            />
-          ))}
-        </div>
-      );
+    case "card":
+      return <CardRenderer config={config} />;
     case "dashboardmockup":
       return (
         <section className="bg-linear-to-b from-white to-gray-50">
