@@ -8,14 +8,7 @@ import {
 } from "@/app/components/ui/dropdown-menu";
 import { cn } from "@/app/lib/utils";
 import { ChevronDown } from "lucide-react";
-
-interface DropdownProps {
-  placeholder: string;
-  options: { label: string; value: string }[];
-  value?: string;
-  onChange?: (val: string | null) => void;
-  className?: string;
-}
+import { DropdownProps } from "@/app/models/dropdown.modal";
 
 const Dropdown: React.FC<DropdownProps> = ({
   placeholder,
@@ -23,10 +16,27 @@ const Dropdown: React.FC<DropdownProps> = ({
   value,
   onChange,
   className,
+  onBlur,
+  resetFlag,
+  id,
 }) => {
-  const [selected, setSelected] = React.useState<string | null>(value ?? null);
+  const [selected, setSelected] = React.useState<string | number | null>(
+    value ?? null
+  );
 
-  const handleSelect = (val: string) => {
+  React.useEffect(() => {
+    setSelected(value ?? null);
+  }, [value]);
+
+  React.useEffect(() => {
+    if (!resetFlag) return;
+    if (selected !== null) {
+      setSelected(null);
+      onChange?.(null);
+    }
+  }, [resetFlag, onChange, selected]);
+
+  const handleSelect = (val: string | number | null) => {
     if (val === selected) {
       setSelected(null);
       onChange?.(null);
@@ -39,18 +49,24 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        id={id}
+        onBlur={onBlur}
         className={cn(
-          "group px-4 py-2 rounded-md border bg-background text-foreground w-48 flex items-center justify-between gap-2",
+          "group h-9 px-3 py-1 rounded-md border bg-background text-gray-500 text-[0.9rem]  w-full flex items-center justify-between gap-2",
           className
         )}
       >
-        <span className="truncate">
+        <span
+          className={cn(
+            "truncate",
+            !selected ? "placeholder:text-muted-foreground" : "text-foreground"
+          )}
+        >
           {selected
-            ? options.find((o) => o.value === selected)?.label
+            ? options.find((o) => o.id === selected)?.value
             : placeholder}
         </span>
 
-        {/* Chevron Icon */}
         <ChevronDown
           className={cn(
             "h-4 w-4 shrink-0 transition-transform duration-300",
@@ -69,16 +85,14 @@ const Dropdown: React.FC<DropdownProps> = ({
       >
         {options.map((option) => (
           <DropdownMenuItem
-            key={option.value}
-            onClick={() => handleSelect(option.value)}
+            key={option.id}
+            onClick={() => handleSelect(option.id)}
             className={cn(
-              selected === option.value
-                ? "bg-accent text-accent-foreground"
-                : "",
+              selected === option.id ? "bg-accent text-accent-foreground" : "",
               "cursor-pointer"
             )}
           >
-            {option.label}
+            {option.value}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
