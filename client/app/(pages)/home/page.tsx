@@ -41,7 +41,7 @@ const HomePage: React.FC = () => {
                           <Button
                             key={i}
                             variant={btn.variant}
-                            className={btn.styles?.classNames}
+                            className={btn.styles?.className}
                             onClick={btn.onClick}
                           >
                             {btn.title}
@@ -57,7 +57,7 @@ const HomePage: React.FC = () => {
               {section.type === "hero" && section.position === "right" && (
                 <div className="relative mt-8 md:mt-0">
                   <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 space-y-4">
-                    <div className={`${section.styles?.classNames}`}>
+                    <div className={`${section.styles?.className}`}>
                       <h3 className="text-gray-900 font-semibold md:text-lg">
                         {section.title}
                       </h3>
@@ -152,7 +152,7 @@ const HomePage: React.FC = () => {
           <section
             key={i}
             style={section?.styles?.containerStyles?.inlineStyles || {}}
-            className={section?.styles?.containerStyles?.classNames}
+            className={section?.styles?.containerStyles?.className}
           >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
               {/* heading */}
@@ -160,7 +160,7 @@ const HomePage: React.FC = () => {
                 {section.title && (
                   <h2
                     style={section?.styles?.titleStyles?.inlineStyles || {}}
-                    className={`text-2xl md:text-3xl lg::text-4xl text-gray-900 mb-4 ${section?.styles?.titleStyles?.classNames}`}
+                    className={`text-2xl md:text-3xl lg::text-4xl text-gray-900 mb-4 ${section?.styles?.titleStyles?.className}`}
                   >
                     {section.title}{" "}
                     {section.title2 && (
@@ -168,7 +168,7 @@ const HomePage: React.FC = () => {
                         style={
                           section?.styles?.title2Styles?.inlineStyles || {}
                         }
-                        className={`text-blue-600 ${section?.styles?.title2Styles?.classNames}`}
+                        className={`text-blue-600 ${section?.styles?.title2Styles?.className}`}
                       >
                         {section.title2}
                       </span>
@@ -178,7 +178,7 @@ const HomePage: React.FC = () => {
                 {section.desc && (
                   <p
                     style={section?.styles?.descStyles?.inlineStyles || {}}
-                    className={`md:text-xl text-gray-600 max-w-2xl mx-auto ${section?.styles?.descStyles?.classNames}`}
+                    className={`md:text-xl text-gray-600 max-w-2xl mx-auto ${section?.styles?.descStyles?.className}`}
                   >
                     {section.desc}
                   </p>

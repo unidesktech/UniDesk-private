@@ -1,3 +1,4 @@
+import { StyleConfig } from "@/app/models/resusable.mode";
 import React from "react";
 export interface StatItem {
   label: string;
@@ -6,34 +7,24 @@ export interface StatItem {
   bg?: string;
   color?: string;
 }
-
 export interface StatCardProps {
-  item: StatItem; 
+  item: StatItem;
   styles?: {
-    lableStyles?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    IconContainerStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    IconStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    valueStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
+    lableStyles?: StyleConfig;
+    IconContainerStyle?: StyleConfig;
+    IconStyle?: StyleConfig;
+    valueStyle?: StyleConfig;
   };
 }
 
-const StatCard: React.FC<StatCardProps> = ({
-  item,
-  styles = {},
-}) => {
-    const { label, value, icon: Icon, bg = "bg-gray-100", color = "text-gray-700" } = item;
+const StatCard: React.FC<StatCardProps> = ({ item, styles = {} }) => {
+  const {
+    label,
+    value,
+    icon: Icon,
+    bg = "bg-gray-100",
+    color = "text-gray-700",
+  } = item;
 
   return (
     <div className="bg-white w-full rounded-xl p-6 border border-gray-200 shadow-sm">
