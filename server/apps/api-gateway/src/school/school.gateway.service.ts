@@ -31,4 +31,12 @@ export class SchoolGatewayService {
     const response = await axios.get<ResponseDto<string>>(url);
     return response.data;
   }
+
+  @Track()
+  async validateSchoolCode(code: string): Promise<ResponseDto<string>> {
+    const url = `${process.env.ENDPOINTURL}:${process.env.SCHOOLPORT}/school/validate-code/${code}`;
+
+    const response = await axios.get<ResponseDto<string>>(url);
+    return response.data;
+  }
 }

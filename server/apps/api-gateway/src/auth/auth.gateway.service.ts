@@ -11,4 +11,12 @@ export class AuthGatewayService {
 
     return response.data;
   }
+
+  @Track()
+  async login(body: any): Promise<any> {
+    const url = `${process.env.ENDPOINTURL}:${process.env.AUTHPORT}/auth/login`;
+    const response = await axios.post(url, body);
+
+    return response.data;
+  }
 }

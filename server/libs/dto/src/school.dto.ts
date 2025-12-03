@@ -38,3 +38,11 @@ export interface SchoolBrandingDTO {
   login_screen_config?: JsonValue | null;
   header_footer_config?: JsonValue | null;
 }
+
+export interface SchoolPreview {
+  school_id: string;
+  name: string;
+  address?: string;
+  logo_url?: string;
+  is_active: boolean;
+}

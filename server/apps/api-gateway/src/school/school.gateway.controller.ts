@@ -13,12 +13,20 @@ export class SchoolGatewayController {
   }
 
   @Get('get')
+  @Track()
   getAllSchool() {
     return this.schoolGatewayService.getSchool();
   }
 
   @Get('get/:id')
+  @Track()
   getSchool(@Param('id') id: string) {
     return this.schoolGatewayService.getSchool(id);
+  }
+
+  @Get('validate-code/:code')
+  @Track()
+  validateSchoolCode(@Param('code') code: string) {
+    return this.schoolGatewayService.validateSchoolCode(code);
   }
 }

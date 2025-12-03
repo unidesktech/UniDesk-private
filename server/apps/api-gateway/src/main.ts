@@ -6,6 +6,12 @@ import { LoggingInterceptor } from '@app/common/logger/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
+
+  app.enableCors({
+    origin: process.env.FRONTENDURL,
+    methods: 'GET,HEAD,POST,PUT,DELETE,PATCH',
+    credentials: true,
+  });
   app.useGlobalInterceptors(
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),

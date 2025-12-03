@@ -11,4 +11,10 @@ export class AuthGatewayController {
   addInitialUser(@Body() body: any) {
     return this.authGateWayService.addInitialUser(body);
   }
+
+  @Post('login')
+  @Track()
+  login(@Body() body: any) {
+    return this.authGateWayService.login(body);
+  }
 }
