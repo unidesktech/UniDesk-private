@@ -1,16 +1,13 @@
 import { LucideProps } from "lucide-react";
 import { CSSProperties, ForwardRefExoticComponent, RefAttributes } from "react";
 import { barData, lineData } from "./chart.model";
+import { StyleConfig } from "./resusable.mode";
 
 export interface homeConfigProps {
   title?: string;
   description?: string;
   image?: string;
-  styles?: {
-    inlineStyles?: CSSProperties;
-    classNames?: string;
-  };
-
+  styles?: StyleConfig;
   sections: Array<{
     type:
       | "hero"
@@ -34,32 +31,14 @@ export interface homeConfigProps {
     >;
 
     styles?: {
-      titleStyles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
-      itemStyles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
-      containerStyles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
-      descStyles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
-      logoContainerStyles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
-      title2Styles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
+      titleStyles?: StyleConfig;
+      itemStyles?: StyleConfig;
+      containerStyles?: StyleConfig;
+      descStyles?: StyleConfig;
+      logoContainerStyles?: StyleConfig;
+      title2Styles?: StyleConfig;
       inlineStyles?: CSSProperties;
-      classNames?: string;
+      className?: string;
     };
 
     text?: string;
@@ -90,7 +69,7 @@ export type HomeSectionItem =
         | undefined;
       styles?: {
         inlineStyles?: CSSProperties;
-        classNames?: string;
+        className?: string;
       };
     }
   | {
@@ -102,7 +81,7 @@ export type HomeSectionItem =
       }>;
       styles?: {
         inlineStyles?: CSSProperties;
-        classNames?: string;
+        className?: string;
       };
     }
   | {
@@ -110,18 +89,9 @@ export type HomeSectionItem =
       title?: string;
       charts: number[];
       styles?: {
-        containerStyles?: {
-          inlineStyles?: CSSProperties;
-          classNames?: string;
-        };
-        chartStyles?: {
-          inlineStyles?: CSSProperties;
-          classNames?: string;
-        };
-        barsStyles?: {
-          inlineStyles?: CSSProperties;
-          classNames?: string;
-        };
+        containerStyles?: StyleConfig;
+        chartStyles?: StyleConfig;
+        barsStyles?: StyleConfig;
       };
     }
   | {
@@ -132,10 +102,7 @@ export type HomeSectionItem =
         subject: string;
         color?: string;
       }>;
-      styles?: {
-        inlineStyles?: CSSProperties;
-        classNames?: string;
-      };
+      styles?: StyleConfig;
     }
   | {
       // merged small icon/name variants (keeps shape compact)
