@@ -62,6 +62,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/request-demo/tsconfig.app.json"
       }
+    },
+    "school": {
+      "type": "application",
+      "root": "apps/school",
+      "entryFile": "main",
+      "sourceRoot": "apps/school/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/school/tsconfig.app.json"
+      }
     }
   }
 }

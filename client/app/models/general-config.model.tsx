@@ -6,24 +6,29 @@ export interface generalConfigType {
         inlineStyles: string;
         classNames: string;
     };
+    badges?: Array<{
+    label: string;
+    color: string; 
+  }>;
     sections: Array<{
         type: string;
         title: string;
         description: string;
-        icon: string;
+        icon?: string;
         styles: {
             inlineStyles: string;
             classNames: string;
-            itemStyles: {
+            itemStyles?: {
                 inlineStyles: string;
                 classNames: string;
             };
         };
         items: Array<{
-            type: string;
+            type?: string;
+            icon: string; 
             title: string;
             description: string;
-            styles: {
+            styles?: {
                 inlineStyles: string;
                 classNames: string;
             };

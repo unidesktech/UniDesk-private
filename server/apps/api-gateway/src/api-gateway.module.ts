@@ -5,6 +5,8 @@ import { AuthGatewayController } from './auth/auth.gateway.controller';
 import { RequestDemoGatewayController } from './request-demo/request-demo.gateway.controller';
 import { AuthGatewayService } from './auth/auth.gateway.service';
 import { RequestDemoGateWayService } from './request-demo/request-demo.gateway.service';
+import { SchoolGatewayController } from './school/school.gateway.controller';
+import { SchoolGatewayService } from './school/school.gateway.service';
 
 @Module({
   imports: [
@@ -14,8 +16,16 @@ import { RequestDemoGateWayService } from './request-demo/request-demo.gateway.s
       envFilePath: '.env',
     }),
   ],
-  controllers: [AuthGatewayController, RequestDemoGatewayController],
-  providers: [AuthGatewayService, RequestDemoGateWayService],
+  controllers: [
+    AuthGatewayController,
+    RequestDemoGatewayController,
+    SchoolGatewayController,
+  ],
+  providers: [
+    AuthGatewayService,
+    RequestDemoGateWayService,
+    SchoolGatewayService,
+  ],
 })
 export class ApiGatewayModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

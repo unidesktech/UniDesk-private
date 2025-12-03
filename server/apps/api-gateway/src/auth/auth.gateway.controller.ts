@@ -1,12 +1,20 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthGatewayService } from './auth.gateway.service';
+import { Track } from '@app/common/logger/track.decorator';
 
 @Controller('auth')
 export class AuthGatewayController {
   constructor(private readonly authGateWayService: AuthGatewayService) {}
 
+  @Post('add-initial-user')
+  @Track()
+  addInitialUser(@Body() body: any) {
+    return this.authGateWayService.addInitialUser(body);
+  }
+
   @Post('login')
-  login() {
-    return this.authGateWayService.login();
+  @Track()
+  login(@Body() body: any) {
+    return this.authGateWayService.login(body);
   }
 }
