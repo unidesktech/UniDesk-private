@@ -1,6 +1,6 @@
 
 import { ImgModule, ModuleItems } from "../components/ImgModule/img-module";
-import { Plan, Pricing } from "../components/PricingComponent/Pricing";
+import { Plan, Pricing } from "../components/PricingComponent/pricing";
 import FaqAccordion, { FaqItem } from "../components/FAQAccordion/faq-accordion";
 import {
   Bar,
