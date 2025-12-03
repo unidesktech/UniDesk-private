@@ -3,7 +3,11 @@ import { sendEmail } from '@app/common/utils/Email';
 import { getSchoolCreationEmailTemplate } from '@app/common/utils/templates/emails/School';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { ResponseDto } from '@app/dto/response.dto';
-import { SchoolBasicInfoDTO, SchoolBrandingDTO } from '@app/dto/school.dto';
+import {
+  SchoolBasicInfoDTO,
+  SchoolBrandingDTO,
+  SchoolPreview,
+} from '@app/dto/school.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
@@ -212,6 +216,70 @@ export class SchoolService {
       return {
         success: false,
         message: 'Error fetching school details',
+        data: null,
+      };
+    }
+  }
+
+  @Track()
+  async validateSchoolCode(
+    code: string,
+  ): Promise<ResponseDto<SchoolPreview | null> | null> {
+    try {
+      if (!code) {
+        return {
+          success: false,
+          message: 'Please enter a code',
+          data: null,
+        };
+      }
+
+      const school = await this.prismaService.schools.findUnique({
+        where: { school_code: code },
+      });
+
+      if (!school) {
+        return {
+          success: false,
+          message: 'Invalid school code. Please try again.',
+          data: null,
+        };
+      }
+
+      if (!school.is_active) {
+        return {
+          success: false,
+          message:
+            'This school portal is disabled. Please contact your school admin.',
+          data: null,
+        };
+      }
+
+      const schoolBranding = await this.prismaService.school_branding.findFirst(
+        {
+          where: { school_id: school.school_id },
+        },
+      );
+
+      const previewData: SchoolPreview = {
+        school_id: school.school_id,
+        name: school.name,
+        address: school.address ?? '',
+        logo_url: schoolBranding?.logo_url ?? '',
+        is_active: school.is_active,
+      };
+
+      return {
+        success: true,
+        message: 'School details fetched successfully',
+        data: previewData,
+      };
+    } catch (err) {
+      writeToConsole.error(`Error validating school code: ${String(err)}`);
+
+      return {
+        success: false,
+        message: 'Error validating school code',
         data: null,
       };
     }
