@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 import { usePathname } from "next/navigation";
-import { BreadcrumbProps, Crumb } from "@/app/models/breadcrumb.model";
+import { Crumb } from "@/app/models/breadcrumb.model";
 
 export const BreadcrumbComponent = () => {
   const pathName = usePathname();

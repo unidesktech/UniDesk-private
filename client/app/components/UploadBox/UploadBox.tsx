@@ -9,7 +9,7 @@ interface UploadBoxProps {
   label?: string;
   onFilesChange?: (files: File[]) => void;
   value?: File[];
-  onBlur?: (value: any | undefined) => void;
+  onBlur?: (value: React.FocusEvent<HTMLInputElement, Element> | undefined) => void;
 }
 
 const UploadBox: React.FC<UploadBoxProps> = ({

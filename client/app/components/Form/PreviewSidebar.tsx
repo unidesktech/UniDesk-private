@@ -1,23 +1,11 @@
-import { User } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { FormPreview } from "@/app/models/form.model";
 
-interface PreviewFieldConfig {
-  type: "text" | "badge" | "heading";
-  key?: string;
-  displayName?: string;
-  avatarKey?: string;
-  icon?:any;
-}
-
-interface PreviewSectionConfig {
-  sectionName?: string;
-  fields: PreviewFieldConfig[];
-}
 
 interface PreviewSidebarProps {
   entityType: string;
-  formData: any;
-  config?: (PreviewFieldConfig | PreviewSectionConfig)[];
+  formData: Record<string,unknown>;
+  config?: (FormPreview)[];
 }
 
 export function PreviewSidebar({
@@ -44,7 +32,7 @@ export function PreviewSidebar({
                 )}
 
                 {item.fields.map((field) => {
-                  const value = field.key ? formData[field.key] : null;
+                  const value: string = formData[field.key] as string?? "";
 
                   switch (field.type) {
                     case "text":

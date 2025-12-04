@@ -12,12 +12,12 @@ import { PreviewSidebar } from "./PreviewSidebar";
 import { FormFooter } from "./FormFooter";
 import { formConfig } from "@/app/config/form.config";
 import useDebounce from "@/app/hooks/useDebounce";
-import { FieldProps, FormProps, SectionProps } from "@/app/models/form.model";
+import { FieldProps, FormProps, InfoItem, SectionProps } from "@/app/models/form.model";
 
 const Form = ({ type, mode, id }: FormProps) => {
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [resetFlag, setResetFlag] = useState(false);
-  const [errors, setErrors] = useState<Record<string, any>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [disabled, setDisabled] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [saveStatus, setSaveStatus] = useState<
@@ -26,9 +26,9 @@ const Form = ({ type, mode, id }: FormProps) => {
 
   const { sections, info, preview } = formConfig[type] || {};
 
-  const title = info?.find((item: any) => item.type === "title")?.mode?.[mode]
+  const title = info?.find((item: InfoItem) => item.type === "title")?.mode?.[mode]
     ?.value;
-  const subtitle = info?.find((item: any) => item.type === "desc")?.mode?.[mode]
+  const subtitle = info?.find((item: InfoItem) => item.type === "desc")?.mode?.[mode]
     ?.value;
 
   const formSchema = useMemo(() => getFormSchema(sections ?? []), [sections]);
@@ -41,7 +41,7 @@ const Form = ({ type, mode, id }: FormProps) => {
     }
   }, [type]);
 
-  const saveToStorage = (data: any) => {
+  const saveToStorage = (data: unknown) => {
     setSaveStatus("saving");
     sessionStorage.setItem(`${type}-formData`, JSON.stringify(data));
     setTimeout(() => setSaveStatus("saved"), 500);
@@ -101,7 +101,7 @@ const Form = ({ type, mode, id }: FormProps) => {
     setSaveStatus("idle");
   };
 
-  const handleChange = (key: string, value: any) => {
+  const handleChange = (key: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -111,8 +111,8 @@ const Form = ({ type, mode, id }: FormProps) => {
         <FormHeader
           onSave={handleSave}
           onCancel={() => setResetFlag(true)}
-          title={title}
-          subtitle={subtitle}
+          title={title ?? ""}
+          subtitle={subtitle ?? ""}
           autoSave={autoSave}
           onToggleAutoSave={() => setAutoSave((p) => !p)}
         />
@@ -151,7 +151,7 @@ const Form = ({ type, mode, id }: FormProps) => {
                             name={field.name}
                             placeholder={field.placeholder}
                             // value={getInputValue(name, type)}
-                            value={formData[field.name] ?? ""}
+                            value={formData[field.name] as string}
                             pattern={field?.pattern}
                             onBlur={() => handleBlur(field)}
                             onChange={(e) =>
@@ -185,7 +185,7 @@ const Form = ({ type, mode, id }: FormProps) => {
                           </Label>
                           <Dropdown
                             id={field.name}
-                            value={formData[field.name] ?? ""}
+                            value={formData[field.name] as string ?? ""}
                             options={field.options || []}
                             placeholder={field?.placeholder ?? ""}
                             resetFlag={resetFlag}
@@ -217,7 +217,7 @@ const Form = ({ type, mode, id }: FormProps) => {
                           <Textarea
                             name={field.name}
                             placeholder={field.placeholder}
-                            value={formData[field.name] || ""}
+                            value={formData[field.name] as string ?? ""}
                             onChange={(e) =>
                               handleChange(field.name, e.target.value)
                             }
@@ -243,7 +243,7 @@ const Form = ({ type, mode, id }: FormProps) => {
                           <DatePicker
                             id={field.name}
                             name={field.name}
-                            value={formData[field.name] || ""}
+                            value={formData[field.name] as Date}
                             onBlur={() => handleBlur(field)}
                             onChange={(value) =>
                               handleChange(field.name, value)
@@ -268,7 +268,7 @@ const Form = ({ type, mode, id }: FormProps) => {
                           </Label>
                           <UploadBox
                             key={idx}
-                            value={formData[field.name] || []}
+                            value={formData[field.name] as File[]}
                             onFilesChange={(e) => handleChange(field.name, e)}
                             onBlur={() => handleBlur(field)}
                           />

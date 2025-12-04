@@ -1,4 +1,5 @@
 export interface DropdownProps {
+  id?: string;
   placeholder: string;
   options: DropDownOption[];
   value?: string;
@@ -6,10 +7,9 @@ export interface DropdownProps {
   className?: string;
   onBlur?: () => void;
   resetFlag?: boolean;
-  id?: any;
 }
 
 export interface DropDownOption {
-  id: any;
+  id: string | number;
   value: string;
 }

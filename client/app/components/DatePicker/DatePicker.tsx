@@ -11,9 +11,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
+import { Matcher } from "react-day-picker";
 
 interface CalendarFieldProps {
-  id?: any;
+  id?: string;
   name: string;
   label?: string;
   value?: Date;
@@ -79,7 +80,7 @@ export const DatePicker: React.FC<CalendarFieldProps> = ({
               [
                 minDate ? { before: minDate } : null,
                 maxDate ? { after: maxDate } : null,
-              ].filter(Boolean) as any
+              ].filter(Boolean) as Matcher[]
             }
           />
         </PopoverContent>

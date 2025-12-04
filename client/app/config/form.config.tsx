@@ -1,7 +1,8 @@
 import { User } from "lucide-react";
 import { DropDownOption } from "../models/dropdown.modal";
+import { ConfigType } from "../models/form.model";
 
-export const formConfig = {
+export const formConfig: Record<string, ConfigType> = {
   test: {
     info: [
       {
@@ -89,7 +90,7 @@ export const formConfig = {
               { id: 10, value: "Ten" },
               { id: 20, value: "Twenty" },
               { id: 30, value: "Thirty" },
-            ] as DropDownOption[],
+            ],
           },
           {
             name: "productImages",
