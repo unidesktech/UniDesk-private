@@ -1,31 +1,17 @@
 import React from "react";
 import { Card } from "../ui/card";
+import { StyleConfig } from "@/app/models/resusable.mode";
 
 interface IconCardProps {
   Icon: React.ElementType;
   title: string;
   desc: string;
   styles?: {
-    CardStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    IconContainerStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    IconStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    TitleStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
-    DescStyle?: {
-      className?: string;
-      inlineStyles?: React.CSSProperties;
-    };
+    CardStyle?: StyleConfig;
+    IconContainerStyle?: StyleConfig;
+    IconStyle?: StyleConfig;
+    TitleStyle?: StyleConfig;
+    DescStyle?: StyleConfig;
   };
 }
 
@@ -37,7 +23,7 @@ const IconCard: React.FC<IconCardProps> = ({
 }) => {
   return (
     <Card
-      className={`p-6 border border-gray-200 hover:border-blue-300 hover:shadow-lg 
+      className={`p-6 border gap-2 border-gray-200 hover:border-blue-300 hover:shadow-lg 
       transition-all duration-300 bg-white rounded-xl group cursor-pointer 
       ${styles.CardStyle?.className || ""}`}
       style={styles.CardStyle?.inlineStyles}
@@ -56,8 +42,9 @@ const IconCard: React.FC<IconCardProps> = ({
         />
       </div>
       <h3
-        className={`text-lg font-semibold text-gray-900 mb-2 
-        ${styles.TitleStyle?.className || ""}`}
+        className={`text-lg font-semibold text-gray-900 mb-2 ${
+          styles.TitleStyle?.className || ""
+        }`}
         style={styles.TitleStyle?.inlineStyles}
       >
         {title}

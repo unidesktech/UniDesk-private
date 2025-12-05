@@ -43,7 +43,7 @@ export const homeConfig = (): homeConfigProps => {
             Icon: ArrowRight,
             onClick: () => {},
             styles: {
-              classNames:
+              className:
                 "bg-blue-600 hover:bg-blue-700 text-white px-8 py-5 rounded-xl shadow-lg shadow-blue-600/30 cursor-pointer",
             },
           },
@@ -53,7 +53,7 @@ export const homeConfig = (): homeConfigProps => {
             variant: "outline",
             onClick: () => {},
             styles: {
-              classNames: "border-gray-300 rounded-xl cursor-pointer px-6 py-5",
+              className: "border-gray-300 rounded-xl cursor-pointer px-6 py-5",
             },
           },
         ],
@@ -63,7 +63,7 @@ export const homeConfig = (): homeConfigProps => {
         position: "right",
         title: "Dashboard Overview",
         styles: {
-          classNames:
+          className:
             "flex items-center justify-between pb-4 border-b border-gray-100",
         },
         items: [
@@ -76,7 +76,7 @@ export const homeConfig = (): homeConfigProps => {
               { label: "Revenue", value: "₹45K", color: "bg-purple-500" },
             ],
             styles: {
-              classNames: "bg-gray-50 rounded-xl p-4 border border-gray-100",
+              className: "bg-gray-50 rounded-xl p-4 border border-gray-100",
             },
           },
           {
@@ -85,14 +85,14 @@ export const homeConfig = (): homeConfigProps => {
             charts: [40, 70, 45, 80, 60, 90, 75],
             styles: {
               containerStyles: {
-                classNames:
+                className:
                   "bg-linear-to-br from-blue-50 to-teal-50 rounded-xl p-4 border border-blue-100",
               },
               chartStyles: {
-                classNames: "flex items-end gap-2 h-20",
+                className: "flex items-end gap-2 h-20",
               },
               barsStyles: {
-                classNames:
+                className:
                   "flex-1 bg-gradient-to-t from-blue-500 to-teal-400 rounded-t",
               },
             },
@@ -113,7 +113,7 @@ export const homeConfig = (): homeConfigProps => {
               },
             ],
             styles: {
-              classNames: "flex items-center gap-3 p-3 bg-gray-50 rounded-lg",
+              className: "flex items-center gap-3 p-3 bg-gray-50 rounded-lg",
             },
           },
         ],
@@ -131,13 +131,13 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           descStyles: {
-            classNames: "text-center text-gray-500 mb-10",
+            className: "text-center text-gray-500 mb-10",
           },
           containerStyles: {
-            classNames: "py-16 bg-white border-y border-gray-100",
+            className: "py-16 bg-white border-y border-gray-100",
           },
           logoContainerStyles: {
-            classNames:
+            className:
               "flex flex-col items-center gap-2 opacity-50 hover:opacity-100 transition-opacity",
           },
         },
@@ -197,7 +197,7 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           containerStyles: {
-            classNames: "py-24 bg-gradient-to-b from-white to-gray-50",
+            className: "py-24 bg-gradient-to-b from-white to-gray-50",
           },
         },
       },
@@ -261,7 +261,7 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           containerStyles: {
-            classNames: "py-24 bg-gradient-to-b from-white to-gray-50",
+            className: "py-24 bg-gradient-to-b from-white to-gray-50",
           },
         },
       },
@@ -307,7 +307,7 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           containerStyles: {
-            classNames: "py-24 bg-gradient-to-b from-white to-gray-50",
+            className: "py-24 bg-gradient-to-b from-white to-gray-50",
           },
         },
       },
@@ -348,7 +348,7 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           containerStyles: {
-            classNames: "py-24 bg-gradient-to-b from-gray-50 to-white",
+            className: "py-24 bg-gradient-to-b from-gray-50 to-white",
           },
         },
       },
@@ -412,7 +412,7 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           containerStyles: {
-            classNames: "py-24 bg-white",
+            className: "py-24 bg-white",
           },
         },
       },
@@ -465,7 +465,7 @@ export const homeConfig = (): homeConfigProps => {
         ],
         styles: {
           containerStyles: {
-            classNames: "py-24 bg-gradient-to-b from-white to-gray-50",
+            className: "py-24 bg-gradient-to-b from-white to-gray-50",
           },
         },
       },

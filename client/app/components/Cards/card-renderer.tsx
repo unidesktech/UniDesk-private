@@ -3,6 +3,7 @@ import IconCard from "./icon-card";
 import StatCard from "./stat-card";
 import TestimonialCard from "./testimonial-card";
 import { barData, lineData } from "@/app/models/chart.model";
+import TeamCard from "./team-card";
 
 interface CardRendererProps {
   config: {
@@ -14,7 +15,7 @@ interface CardRendererProps {
     features?: string[];
     styles?: {
       inlineStyles?: CSSProperties | undefined;
-      classNames?: string;
+      className?: string;
     };
   };
 }
@@ -24,7 +25,7 @@ const CardRenderer: React.FC<CardRendererProps> = ({ config }) => {
     case "iconcard":
       return (
         <div
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.classNames}`}
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.className}`}
           style={config.styles?.inlineStyles || {}}
         >
           {(config.items || []).map((item, i) => (
@@ -41,7 +42,7 @@ const CardRenderer: React.FC<CardRendererProps> = ({ config }) => {
     case "testimonial":
       return (
         <div
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.classNames}`}
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.className}`}
           style={config.styles?.inlineStyles || {}}
         >
           {(config.items || []).map((item, i) => (
@@ -59,11 +60,31 @@ const CardRenderer: React.FC<CardRendererProps> = ({ config }) => {
     case "statcard":
       return (
         <div
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.classNames}`}
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.className}`}
           style={config.styles?.inlineStyles || {}}
         >
           {(config.items || []).map((item, i) => (
             <StatCard key={i} item={item} styles={item.styles} />
+          ))}
+        </div>
+      );
+    case "teamcard":
+      return (
+        <div
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 ${config?.styles?.className}`}
+          style={config.styles?.inlineStyles || {}}
+        >
+          {(config.items || []).map((item, i) => (
+            <TeamCard
+              key={i}
+              bio={item.bio}
+              name={item.name}
+              role={item.role}
+              AvatarIcon={item.AvatarIcon}
+              icons={item.icons}
+              img={item.img}
+              styles={item.styles}
+            />
           ))}
         </div>
       );
