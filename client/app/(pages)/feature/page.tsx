@@ -10,8 +10,7 @@ export default function FeaturesPage() {
   return (
     <div>
       <div
-        className={`min-h-screen ${config.styles.classNames} ${config.styles.inlineStyles}`}
-      >
+        className={`min-h-screen ${config.styles.classNames} ${config.styles.inlineStyles}`} >
         <div className="max-w-7xl mx-auto px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-left">
             <h1 className="text-5xl text-gray-900 mb-6 text-left">
