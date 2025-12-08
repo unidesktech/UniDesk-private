@@ -7,6 +7,11 @@ const getSchemaForField = (field: any) => {
     case "text":
     case "textarea":
       schema = z.string().trim().optional();
+      if (field.minLength)
+        schema = schema.min(
+          field.minLength,
+          `${field.label} must be at least ${field.minLength} characters`
+        );
       if (field.maxLength)
         schema = schema.max(
           field.maxLength,
@@ -25,6 +30,17 @@ const getSchemaForField = (field: any) => {
           .refine((val) => !(val === "" || val === undefined), {
             message: `${field.label} is required`,
           });
+      }
+      if (field.type === "text" && field.name === "password") {
+        schema = z
+          .string()
+          .min(8, "Minimum 8 characters required")
+          .max(32, "Password must be less than 32 characters")
+          .regex(/[0-9]/, "Must include at least 1 number")
+          .regex(/[A-Z]/, "Must include at least 1 uppercase letter")
+          .regex(/[^A-Za-z0-9]/, "Must include at least 1 special character");
+
+        if (!field.required) schema = schema.optional();
       }
       break;
 
@@ -100,6 +116,18 @@ const getSchemaForField = (field: any) => {
       }
       break;
 
+    case "password":
+      schema = z
+        .string()
+        .min(8, "Minimum 8 characters required")
+        .max(32, "Password must be less than 32 characters")
+        .regex(/[0-9]/, "Must include at least 1 number")
+        .regex(/[A-Z]/, "Must include at least 1 uppercase letter")
+        .regex(/[^A-Za-z0-9]/, "Must include at least 1 special character");
+
+      if (!field.required) schema = schema.optional();
+      break;
+
     default:
       schema = z.any();
   }
@@ -109,6 +137,7 @@ const getSchemaForField = (field: any) => {
 
 export const getFormSchema = (sections: any[]) => {
   const formSchema: any = {};
+
   sections?.forEach((section) =>
     section.fields?.forEach((field: any) => {
       formSchema[field.name] = getSchemaForField(field);
@@ -116,3 +145,11 @@ export const getFormSchema = (sections: any[]) => {
   );
   return z.object(formSchema);
 };
+
+export const getAuthSchema = (fields: any[]) => {
+const authSchema: any = {};
+fields.forEach((f)=>{
+  authSchema[f.name] = getSchemaForField(f)
+})
+return z.object(authSchema);
+}

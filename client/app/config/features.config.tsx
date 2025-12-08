@@ -1,32 +1,36 @@
-import { featureConfigType } from "../models/feature-config.model";
+import { featureConfigProps } from "../models/feature-config.model";
 import {
+  BarChart3,
   Bell,
+  BookOpen,
   Brain,
   Bus,
   Calendar,
+  CalendarCheck,
   ClipboardCheck,
   Clock,
   DollarSign,
   FileText,
+  GraduationCap,
+  MessageSquare,
   School,
   Smartphone,
   Sparkle,
+  Sparkles,
   TrendingUp,
   UserCheck,
   Users,
   Zap,
 } from "lucide-react";
 
-export const featureConfig = (): featureConfigType => {
+export const featureConfig = (): featureConfigProps => {
   return {
     title: "Powerful Features Built for Modern Schools",
-    description:
-      "Everything you need to manage students, teachers, attendance, fees, communication, and more — all in one place.",
+    desc: "Everything you need to manage students, teachers, attendance, fees, communication, and more — all in one place.",
     image:
       "https://images.unsplash.com/photo-1758411898021-ef0dadaaa295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
     styles: {
-      inlineStyles: "",
-      classNames:
+      className:
         "relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-teal-50 py-20 text-gray-900 text-gray-600 bg-white",
     },
     badges: [
@@ -37,81 +41,258 @@ export const featureConfig = (): featureConfigType => {
 
     sections: [
       {
-        type: "iconcard",
-        title: "Everything you need to run",
-        title2: "modern school",
-        description: "Powerful features designed to streamline every aspect of school administration",
+        type: "card",
+        cardType: "iconcard",
+        title: "Complete School",
+        title2: "Management Suite",
+        desc: "All the tools you need to run your school efficiently",
         items: [
           {
-            icon: Users,
-            title: "Student Management",
-            description: "Complete student records, enrollment, and profile management in one place",
+            Icon: Users,
+            title: "Student Information System",
+            desc: "Complete student profiles and academic records",
             styles: {
-                classNames: "bg-red-600 text-red-600 color-red hover:bg-red-100"
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-blue-100 group-hover:!bg-blue-100",
+              },
+              IconStyle: {
+                className: "text-blue-600 group-hover:!text-blue-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0 ",
+              },
             },
           },
           {
-            icon: UserCheck,
+            Icon: GraduationCap,
             title: "Teacher Management",
-            description: "Manage teacher profiles, assignments, and workload distribution efficiently",
+            desc: "Teacher profiles, schedules, and performance",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-teal-100 group-hover:!bg-teal-100",
+              },
+              IconStyle: {
+                className: "text-teal-600 group-hover:!text-teal-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: ClipboardCheck,
+            Icon: CalendarCheck,
             title: "Smart Attendance",
-            description: "Automated attendance tracking with biometric integration and real-time updates",
+            desc: "Automated tracking with real-time updates",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-green-100 group-hover:!bg-green-100",
+              },
+              IconStyle: {
+                className: "text-green-600 group-hover:!text-green-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: FileText,
-            title: "Exam & Marks Entry",
-            description: "Streamlined exam scheduling, marks entry, and report card generation",
-          },
-          {
-            icon: Calendar,
+            Icon: Calendar,
             title: "Timetable Automation",
-            description: "Auto-generate conflict-free timetables for classes, teachers, and rooms",
+            desc: "AI-powered scheduling with conflict detection",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-purple-100 group-hover:!bg-purple-100",
+              },
+              IconStyle: {
+                className: "text-purple-600 group-hover:!text-purple-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: DollarSign,
-            title: "Fees Management",
-            description: "Online fee collection, automated reminders, and comprehensive reports",
+            Icon: FileText,
+            title: "Exams & Gradebook",
+            desc: "Mark entry, grade calculation, and reports",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-indigo-100 group-hover:!bg-indigo-100",
+              },
+              IconStyle: {
+                className: "text-indigo-600 group-hover:!text-indigo-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: Smartphone,
-            title: "Parent App",
-            description: "Keep parents connected with real-time updates and communication tools",
+            Icon: DollarSign,
+            title: "Fees & Finance",
+            desc: "Online payments and financial reporting",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-green-100 group-hover:!bg-green-100",
+              },
+              IconStyle: {
+                className: "text-green-600 group-hover:!text-green-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: Bus,
+            Icon: MessageSquare,
+            title: "Communication Center",
+            desc: "Messages, announcements, and notifications",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-blue-100 group-hover:!bg-blue-100",
+              },
+              IconStyle: {
+                className: "text-blue-600 group-hover:!text-blue-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
+          },
+          {
+            Icon: Bus,
             title: "Transport Tracking",
-            description: "GPS-enabled bus tracking and route management for student safety",
+            desc: "Route management and real-time GPS tracking",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-orange-100 group-hover:!bg-orange-100",
+              },
+              IconStyle: {
+                className: "text-orange-600 group-hover:!text-orange-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: Bell,
-            title: "Real-time Notifications",
-            description: "Instant alerts and announcements to students, teachers, and parents",
+            Icon: Sparkles,
+            title: "AI Automation",
+            desc: "Smart insights and automated workflows",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-purple-100 group-hover:!bg-purple-100",
+              },
+              IconStyle: {
+                className: "text-purple-600 group-hover:!text-purple-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: Bell,
-            title: "Real-time Notifications",
-            description: "Instant alerts and announcements to students, teachers, and parents",
+            Icon: BookOpen,
+            title: "Library Management",
+            desc: "Book catalog, issue tracking, and fines",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-teal-100 group-hover:!bg-teal-100",
+              },
+              IconStyle: {
+                className: "text-teal-600 group-hover:!text-teal-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: Bell,
-            title: "Real-time Notifications",
-            description: "Instant alerts and announcements to students, teachers, and parents",
+            Icon: BarChart3,
+            title: "Analytics & Reports",
+            desc: "Data-driven insights and custom reports",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-indigo-100 group-hover:!bg-indigo-100",
+              },
+              IconStyle: {
+                className: "text-indigo-600 group-hover:!text-indigo-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
           {
-            icon: Bell,
-            title: "Real-time Notifications",
-            description: "Instant alerts and announcements to students, teachers, and parents",
+            Icon: Smartphone,
+            title: "Mobile App",
+            desc: "iOS & Android apps for parents and students",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 bg-blue-100 group-hover:!bg-blue-100",
+              },
+              IconStyle: {
+                className: "text-blue-600 group-hover:!text-blue-600",
+              },
+              TitleStyle: {
+                className: "!font-normal !mb-0",
+              },
+            },
           },
         ],
         styles: {
-          classNames: "grid md:grid-cols-2 lg:grid-cols-4 gap-6",
-        //   containerStyles: {
-        //     inlineStyles: "",
-        //     classNames: "py-24 bg-gradient-to-b from-white to-gray-50   ",
-        //   },
+          className: "grid md:grid-cols-2 lg:grid-cols-4 gap-6",
+          containerStyles: {
+            className: "py-20 bg-white",
+          },
         },
       },
       {
@@ -119,9 +300,11 @@ export const featureConfig = (): featureConfigType => {
         items: [
           {
             title: "Student Management",
-            subtitle: "Complete Management System",
+            desc: "Complete student information system with comprehensive profiles, academic records, and parent information all in one place.",
+            Icon: Users,
             image:
-              "https://images.unsplash.com/photo-1758270704534-fd9715bffc0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50cyUyMGNsYXNzcm9vbSUyMHRlY2hub2xvZ3l8ZW58MXx8fHwxNzYzMjA1MjAwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+              "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwY2xhc3Nyb29tJTIwbGVhcm5pbmd8ZW58MXx8fHwxNzYzNDA4MDcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+            reversed: false,
             points: [
               "Complete student profiles with photos and documents",
               "Academic records and attendance tracking",
@@ -129,13 +312,20 @@ export const featureConfig = (): featureConfigType => {
               "Enrollment and promotion management",
               "Student document repository",
             ],
-            reversed: false,
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-blue-500 to-blue-600 text-white",
+              },
+            },
           },
           {
             title: "Teacher Management",
-            subtitle: "Smart Scheduling & Tracking",
+            desc: "Efficiently manage your teaching staff with comprehensive profiles, schedule management, and performance tracking.",
+            Icon: GraduationCap,
             image:
-              "https://images.unsplash.com/photo-1610888662651-05dbdec7cfae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzY2hvb2wlMjB0aW1ldGFibGUlMjBzY2hlZHVsZXxlbnwxfHx8fDE3NjMyODc0OTF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              "https://images.unsplash.com/photo-1758685734511-4f49ce9a382b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0ZWFjaGVyJTIwY2xhc3Nyb29tJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc2MzMxNzg2OHww&ixlib=rb-4.1.0&q=80&w=1080",
+            reversed: true,
             points: [
               "Teacher profiles with qualifications and experience",
               "Class and subject assignments",
@@ -143,27 +333,20 @@ export const featureConfig = (): featureConfigType => {
               "Attendance and leave management",
               "Performance tracking and evaluations",
             ],
-            reversed: true,
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-teal-500 to-teal-600 text-white",
+              },
+            },
           },
           {
             title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
+            desc: "Automated attendance tracking with multiple input methods and real-time parent notifications.",
+            Icon: CalendarCheck,
             image:
-              "https://images.unsplash.com/photo-1758411898021-ef0dadaaa295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-            points: [
-              "Daily attendance with multiple marking options",
-              "Biometric and RFID device integration",
-              "Real-time attendance reports and analytics",
-              "Automatic notifications to parents",
-              "Leave management and approval workflow",
-            ],
+              "https://images.unsplash.com/photo-1748609160056-7b95f30041f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXRhJTIwYW5hbHl0aWNzJTIwY2hhcnR8ZW58MXx8fHwxNzYzMzkxMTU3fDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: false,
-          },
-          {
-            title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
-            image:
-              "https://images.unsplash.com/photo-1607609972034-e8c1c6eb3e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXltZW50JTIwZmluYW5jZSUyMGludGVyZmFjZXxlbnwxfHx8fDE3NjMyODc0OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
             points: [
               "Daily attendance with multiple marking options",
               "Biometric and RFID device integration",
@@ -171,179 +354,394 @@ export const featureConfig = (): featureConfigType => {
               "Automatic notifications to parents",
               "Leave management and approval workflow",
             ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-green-500 to-green-600 text-white",
+              },
+            },
+          },
+          {
+            title: "Timetable Automation",
+            desc: "AI-powered timetable generation with drag-and-drop interface and automatic conflict detection.",
+            Icon: Calendar,
+            image:
+              "https://images.unsplash.com/photo-1758411898021-ef0dadaaa295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXNoYm9hcmQlMjBpbnRlcmZhY2UlMjBtb2Rlcm58ZW58MXx8fHwxNzYzMzcyNzQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: true,
+            points: [
+              "Automated timetable generation with AI",
+              "Drag-and-drop schedule builder",
+              "Conflict detection and resolution",
+              "Teacher availability management",
+              "Room and resource allocation",
+            ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-purple-500 to-purple-600 text-white",
+              },
+            },
           },
           {
-            title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
+            title: "Exams & Gradebook",
+            desc: "Comprehensive examination management from mark entry to report card generation with detailed analytics.",
+            Icon: FileText,
             image:
-              "https://images.unsplash.com/photo-1607609972034-e8c1c6eb3e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXltZW50JTIwZmluYW5jZSUyMGludGVyZmFjZXxlbnwxfHx8fDE3NjMyODc0OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-            points: [
-              "Daily attendance with multiple marking options",
-              "Biometric and RFID device integration",
-              "Real-time attendance reports and analytics",
-              "Automatic notifications to parents",
-              "Leave management and approval workflow",
-            ],
+              "https://images.unsplash.com/photo-1748609160056-7b95f30041f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXRhJTIwYW5hbHl0aWNzJTIwY2hhcnR8ZW58MXx8fHwxNzYzMzkxMTU3fDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: false,
+            points: [
+              "Easy marks entry and grade calculation",
+              "Multiple grading systems support",
+              "Automated report card generation",
+              "Student performance analytics",
+              "Exam schedule management",
+            ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white",
+              },
+            },
           },
           {
-            title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
+            title: "Fees & Finance",
+            desc: "Complete fee management system with online payments, automated reminders, and detailed financial reporting.",
+            Icon: DollarSign,
             image:
-              "https://images.unsplash.com/photo-1607609972034-e8c1c6eb3e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXltZW50JTIwZmluYW5jZSUyMGludGVyZmFjZXxlbnwxfHx8fDE3NjMyODc0OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-            points: [
-              "Daily attendance with multiple marking options",
-              "Biometric and RFID device integration",
-              "Real-time attendance reports and analytics",
-              "Automatic notifications to parents",
-              "Leave management and approval workflow",
-            ],
+              "https://images.unsplash.com/photo-1758411898021-ef0dadaaa295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXNoYm9hcmQlMjBpbnRlcmZhY2UlMjBtb2Rlcm58ZW58MXx8fHwxNzYzMzcyNzQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: true,
+            points: [
+              "Fee structure setup and management",
+              "Online payment integration (multiple gateways)",
+              "Automated payment reminders",
+              "Financial reports and analytics",
+              "Receipt generation and management",
+            ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-green-500 to-green-600 text-white",
+              },
+            },
           },
           {
-            title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
+            title: "Communication Center",
+            desc: "Centralized communication hub for announcements, messaging, and notifications to keep everyone connected.",
+            Icon: MessageSquare,
             image:
-              "https://images.unsplash.com/photo-1607609972034-e8c1c6eb3e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXltZW50JTIwZmluYW5jZSUyMGludGVyZmFjZXxlbnwxfHx8fDE3NjMyODc0OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-            points: [
-              "Daily attendance with multiple marking options",
-              "Biometric and RFID device integration",
-              "Real-time attendance reports and analytics",
-              "Automatic notifications to parents",
-              "Leave management and approval workflow",
-            ],
+              "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwY2xhc3Nyb29tJTIwbGVhcm5pbmd8ZW58MXx8fHwxNzYzNDA4MDcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: false,
+            points: [
+              "School-wide announcements and notices",
+              "Direct messaging between teachers and parents",
+              "SMS and email notifications",
+              "Push notifications via mobile app",
+              "Communication history and archives",
+            ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-blue-500 to-teal-500 text-white",
+              },
+            },
           },
           {
-            title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
+            title: "Transport Management",
+            desc: "Manage school transportation with route planning, driver management, and real-time GPS tracking.",
+            Icon: Bus,
             image:
-              "https://images.unsplash.com/photo-1607609972034-e8c1c6eb3e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXltZW50JTIwZmluYW5jZSUyMGludGVyZmFjZXxlbnwxfHx8fDE3NjMyODc0OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-            points: [
-              "Daily attendance with multiple marking options",
-              "Biometric and RFID device integration",
-              "Real-time attendance reports and analytics",
-              "Automatic notifications to parents",
-              "Leave management and approval workflow",
-            ],
+              "https://images.unsplash.com/photo-1758411898021-ef0dadaaa295?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkYXNoYm9hcmQlMjBpbnRlcmZhY2UlMjBtb2Rlcm58ZW58MXx8fHwxNzYzMzcyNzQwfDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: true,
+            points: [
+              "Bus route planning and management",
+              "Driver and vehicle information",
+              "Real-time GPS tracking integration",
+              "Pickup and drop-off schedules",
+              "Parent notifications for bus status",
+            ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-orange-500 to-orange-600 text-white",
+              },
+            },
           },
           {
-            title: "Smart Attendance",
-            subtitle: "Seamless Payment Management",
+            title: "Parent & Student Portal",
+            desc: "Dedicated portals for parents and students to access all information and stay connected with the school.",
+            Icon: Smartphone,
             image:
-              "https://images.unsplash.com/photo-1607609972034-e8c1c6eb3e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXltZW50JTIwZmluYW5jZSUyMGludGVyZmFjZXxlbnwxfHx8fDE3NjMyODc0OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-            points: [
-              "Daily attendance with multiple marking options",
-              "Biometric and RFID device integration",
-              "Real-time attendance reports and analytics",
-              "Automatic notifications to parents",
-              "Leave management and approval workflow",
-            ],
+              "https://images.unsplash.com/photo-1654366698665-e6d611a9aaa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwY2xhc3Nyb29tJTIwbGVhcm5pbmd8ZW58MXx8fHwxNzYzNDA4MDcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
             reversed: false,
+            points: [
+              "View homework and assignments",
+              "Check attendance and leave status",
+              "Access fee details and payment history",
+              "Read announcements and notices",
+              "Track academic performance and grades",
+            ],
+            styles: {
+              IconContainerStyle: {
+                className:
+                  "bg-gradient-to-br from-blue-600 to-teal-500 text-white",
+              },
+            },
           },
         ],
         styles: {
           containerStyles: {
-            inlineStyles: "",
-            classNames: "py-24 bg-gradient-to-b from-white to-gray-50",
+            className: "py-24 bg-gradient-to-b from-white to-gray-50",
           },
         },
       },
       {
-        type: "premium-feature",
+        type: "card",
+        cardType: "iconcard",
         badges: [{ label: "Premium Feature", color: "bg-purple-200" }],
-        title: "AI-Powered Automation",
-        description:
-          "Harness the power of artificial intelligence to automate routine tasks and gain intelligent insights.",
-
-        styles: {
-          classNames: "bg-gradient-to-b from-[#f6f7ff] to-[#e8f3ff]",
-          inlineStyles: "",
-          itemStyles: { classNames: "", inlineStyles: "" },
-        },
-
+        title: "AI-Powered",
+        title2: "Automation",
+        desc: "Harness the power of artificial intelligence to automate routine tasks and gain intelligent insights.",
         items: [
           {
-            icon: Brain,
+            Icon: Brain,
             title: "Smart Timetable Generator",
-            description:
-              "AI creates optimized schedules considering teacher availability, room capacity, and subject requirements.",
-            bgColor: "#9333EA",
+            desc: "AI creates optimized schedules considering teacher availability, room capacity, and subject requirements.",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 !bg-[#9333EA] group-hover:!bg-[#9333EA]",
+              },
+              IconStyle: {
+                className: "w-7 h-7 text-white group-hover:!text-white",
+              },
+              TitleStyle: {
+                className:
+                  "!font-normal md:text-2xl text-lg text-gray-900 mb-3",
+              },
+              DescStyle: {
+                className: "text-gray-600 leading-relaxed md:text-base text-sm",
+              },
+            },
           },
           {
-            icon: TrendingUp,
+            Icon: TrendingUp,
             title: "Fee Prediction & Analytics",
-            description:
-              "Predictive analytics for fee patterns and automated reminders to improve cash flow.",
-            bgColor: "#2563EB",
+            desc: "Predictive analytics for fee patterns and automated reminders to improve cash flow.",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 !bg-[#2563EB] group-hover:!bg-[#2563EB]",
+              },
+              IconStyle: {
+                className: "w-7 h-7 text-white group-hover:!text-white",
+              },
+              TitleStyle: {
+                className:
+                  "!font-normal md:text-2xl text-lg text-gray-900 mb-3",
+              },
+              DescStyle: {
+                className: "text-gray-600 leading-relaxed md:text-base text-sm",
+              },
+            },
           },
           {
-            icon: Sparkle,
+            Icon: Sparkle,
             title: "Automatic Attendance Insights",
-            description:
-              "AI detects attendance issues and flags at-risk students automatically.",
-            bgColor: "#059669",
+            desc: "AI detects attendance issues and flags at-risk students automatically.",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 !bg-[#059669] group-hover:!bg-[#059669]",
+              },
+              IconStyle: {
+                className: "w-7 h-7 text-white group-hover:!text-white",
+              },
+              TitleStyle: {
+                className:
+                  "!font-normal md:text-2xl text-lg text-gray-900 mb-3",
+              },
+              DescStyle: {
+                className: "text-gray-600 leading-relaxed md:text-base text-sm",
+              },
+            },
           },
           {
-            icon: Zap,
+            Icon: Zap,
             title: "Intelligent Notifications",
-            description:
-              "Smart notifications send contextual alerts to the right people at the right time.",
-            bgColor: "#6366F1",
+            desc: "Smart notifications send contextual alerts to the right people at the right time.",
+            styles: {
+              CardStyle: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+              IconContainerStyle: {
+                className: "w-14 h-14 !bg-[#6366F1] group-hover:!bg-[#6366F1]",
+              },
+              IconStyle: {
+                className: "w-7 h-7 text-white group-hover:!text-white",
+              },
+              TitleStyle: {
+                className:
+                  "!font-normal md:text-2xl text-lg text-gray-900 mb-3",
+              },
+              DescStyle: {
+                className: "text-gray-600 leading-relaxed md:text-base text-sm",
+              },
+            },
           },
         ],
+        styles: {
+          className: "md:!grid-cols-2",
+          containerStyles: {
+            className:
+              "py-20 bg-gradient-to-br from-purple-50 via-blue-50 to-teal-50 relative overflow-hidden",
+          },
+        },
       },
       {
-        type: "stats",
-        title: "Trusted by Schools Worldwide",
-        description:
-          "Join thousands of educators using our platform to streamline operations",
-
+        type: "card",
+        cardType: "teamcard",
+        title: "Trusted by",
+        title2: "Schools Worldwide",
+        desc: "Join thousands of educators using our platform to streamline operations",
         styles: {
-          inlineStyles: "",
-          classNames: "py-24 bg-white",
+          className: "lg:!grid-cols-4",
+          containerStyles: {
+            className: "py-20 bg-white",
+          },
         },
-
         items: [
           {
-            icon: School,
-            value: "50+",
-            label: "Schools Using",
-            color: "bg-blue-600",
+            AvatarIcon: School,
+            name: "50+",
+            bio: "Schools Using",
+            styles: {
+              avatarStyles: {
+                className:
+                  "bg-linear-to-br from-blue-500 to-blue-600 !w-16 !h-16",
+              },
+              cardContentStyles: {
+                className: "flex flex-col items-center text-center gap-2 mb-1",
+              },
+              avatarIconStyles: {
+                className: "!w-8 !h-8",
+              },
+              titleStyles: {
+                className:
+                  "text-2xl md:text-4xl font-semibold text-gray-900 -mt-3",
+              },
+              bioStyles: {
+                className: "text-gray-600 text-center -mt-4",
+              },
+              card: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+            },
           },
           {
-            icon: Users,
-            value: "10,000+",
-            label: "Students",
-            color: "bg-teal-600",
+            AvatarIcon: Users,
+            name: "10,000+",
+            bio: "Students",
+            styles: {
+              avatarStyles: {
+                className:
+                  "bg-linear-to-br from-teal-500 to-teal-600 !w-16 !h-16",
+              },
+              cardContentStyles: {
+                className: "flex flex-col items-center text-center gap-2 mb-1",
+              },
+              avatarIconStyles: {
+                className: "!w-8 !h-8",
+              },
+              titleStyles: {
+                className:
+                  "text-2xl md:text-4xl font-semibold text-gray-900 -mt-3",
+              },
+              bioStyles: {
+                className: "text-gray-600 text-center -mt-4",
+              },
+              card: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+            },
           },
           {
-            icon: Sparkle,
-            value: "30+",
-            label: "Features",
-            color: "bg-purple-600",
+            AvatarIcon: Sparkle,
+            name: "30+",
+            bio: "Features",
+            styles: {
+              avatarStyles: {
+                className:
+                  "bg-linear-to-br from-purple-500 to-purple-600 !w-16 !h-16",
+              },
+              cardContentStyles: {
+                className: "flex flex-col items-center text-center gap-2 mb-1",
+              },
+              avatarIconStyles: {
+                className: "!w-8 !h-8",
+              },
+              titleStyles: {
+                className:
+                  "text-2xl md:text-4xl font-semibold text-gray-900 -mt-3",
+              },
+              bioStyles: {
+                className: "text-gray-600 text-center -mt-4",
+              },
+              card: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+            },
           },
           {
-            icon: Clock,
-            value: "99.9%",
-            label: "Uptime",
-            color: "bg-green-600",
+            AvatarIcon: Clock,
+            name: "99.9%",
+            bio: "Uptime",
+            styles: {
+              avatarStyles: {
+                className:
+                  "bg-linear-to-br from-green-500 to-green-600 !w-16 !h-16",
+              },
+              cardContentStyles: {
+                className: "flex flex-col items-center text-center gap-2 mb-1",
+              },
+              avatarIconStyles: {
+                className: "!w-8 !h-8",
+              },
+              titleStyles: {
+                className:
+                  "text-2xl md:text-4xl font-semibold text-gray-900 -mt-3",
+              },
+              bioStyles: {
+                className: "text-gray-600 text-center -mt-4",
+              },
+              card: {
+                className:
+                  "hover:shadow-xl transition-all hover:-translate-y-1 hover:border-gray-200",
+              },
+            },
           },
         ],
       },
       {
         type: "comparison-table",
-        title: "Why We're Different",
-        description:
-          "See how we stack up against traditional school management systems",
+        title: "Why",
+        title2: "We're Different",
+        desc: "See how we stack up against traditional school management systems",
         styles: {
-          inlineStyles: "",
-          classNames: "bg-gradient-to-b from-white to-sky-50",
-          itemStyles: {
-            inlineStyles: "",
-            classNames: "",
+          containerStyles: {
+            className: "py-20 bg-gradient-to-br from-gray-50 to-blue-50/30",
           },
         },
         headers: {
@@ -366,46 +764,46 @@ export const featureConfig = (): featureConfigType => {
         rows: [
           {
             feature: "Simple & Intuitive Interface",
-            description: "No training required - anyone can use it",
+            desc: "No training required - anyone can use it",
             values: { ours: "check", traditional: "cross" },
           },
           {
             feature: "Fully Integrated System",
-            description: "All modules work seamlessly together",
+            desc: "All modules work seamlessly together",
             values: { ours: "check", traditional: "cross" },
           },
           {
             feature: "Enterprise-Grade Security",
-            description: "Bank-level encryption and data protection",
+            desc: "Bank-level encryption and data protection",
             values: { ours: "check", traditional: "cross" },
           },
           {
             feature: "Modern, Beautiful UI",
-            description: "Clean, professional design users love",
+            desc: "Clean, professional design users love",
             values: { ours: "check", traditional: "cross" },
           },
           {
             feature: "AI-Powered Automation",
-            description: "Smart features that save hours of work",
+            desc: "Smart features that save hours of work",
             values: { ours: "check", traditional: "cross" },
           },
           {
             feature: "24/7 Customer Support",
-            description: "Always here when you need us",
+            desc: "Always here when you need us",
             values: { ours: "check", traditional: "cross" },
           },
           {
             feature: "Mobile Apps Included",
-            description: "Native apps for parents, teachers and admins",
+            desc: "Native apps for parents, teachers and admins",
             values: { ours: "check", traditional: "cross" },
           },
         ],
-        items: [],
       },
       {
         type: "accordian",
-        title: "Frequently Asked Questions",
-        description: "Everything you need to know about our platform",
+        title: "Frequently Asked",
+        title2: "Questions",
+        desc: "Everything you need to know about our platform",
         items: [
           {
             question: "How quickly can we get started?",
@@ -449,34 +847,9 @@ export const featureConfig = (): featureConfigType => {
           },
         ],
         styles: {
-        //   containerStyles: {
-        //     inlineStyles: "",
-        //     classNames: "py-24 bg-gradient-to-b from-white to-gray-50",
-        //   },
-        },
-      },
-
-      {
-        type: "cta-section",
-        title: "Experience the Future of School Management",
-        subtitle:
-          "Join 50+ schools already using SchoolSphere to transform their operations. Start your free trial today and see the difference.",
-        primaryButton: {
-          label: "Get Started Free",
-          link: "",
-        },
-        secondaryButton: {
-          label: "Request a Demo",
-          link: "",
-        },
-        highlights: [
-          { label: "14-day free trial" },
-          { label: "No credit card required" },
-          { label: "Full feature access" },
-        ],
-        styles: {
-          className: "bg-primary text-white p-12 pb-16 text-center",
-          inlineStyle: "",
+          containerStyles: {
+            className: "py-20 bg-white",
+          },
         },
       },
     ],

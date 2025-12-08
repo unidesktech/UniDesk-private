@@ -1,3 +1,4 @@
+"use client"
 import { footerConfig } from "@/app/config/header-footer.config";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

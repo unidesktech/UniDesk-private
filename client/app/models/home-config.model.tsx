@@ -1,7 +1,7 @@
 import { LucideProps } from "lucide-react";
 import { CSSProperties, ForwardRefExoticComponent, RefAttributes } from "react";
 import { barData, lineData } from "./chart.model";
-import { StyleConfig } from "./resusable.mode";
+import { StyleConfig } from "./resusable.model";
 
 export interface homeConfigProps {
   title?: string;

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { ForwardRefExoticComponent, RefAttributes } from "react";
 import { Card } from "../ui/card";
-import { StyleConfig } from "@/app/models/resusable.mode";
+import { StyleConfig } from "@/app/models/resusable.model";
+import { LucideProps } from "lucide-react";
+import { IconType } from "@/app/models/types/icon.type";
 
-interface IconCardProps {
-  Icon: React.ElementType;
+export interface IconCardProps {
+  Icon: IconType;
   title: string;
   desc: string;
   styles?: {

@@ -13,7 +13,10 @@ export interface FaqItem {
 }
 
 interface FaqAccordionProps {
-  faqs: FaqItem[];
+  faqs: {
+    question: string;
+    answer: string;
+  }[];
 }
 
 const FaqAccordion: React.FC<FaqAccordionProps> = ({ faqs }) => {
@@ -23,13 +26,13 @@ const FaqAccordion: React.FC<FaqAccordionProps> = ({ faqs }) => {
         <AccordionItem
           key={idx}
           value={`faq-${idx}`}
-          className="bg-white border border-gray-200 rounded-xl px-6 overflow-hidden"
+          className="rounded-2xl border border-border/50 overflow-hidden backdrop-blur-xl bg-background/95 dark:bg-slate-900/95 shadow-lg px-6 data-[state=open]:shadow-xl transition-all"
         >
           <AccordionTrigger className="text-left text-gray-900 hover:no-underline py-5">
             {faq.question}
           </AccordionTrigger>
 
-          <AccordionContent className="text-gray-600 pb-5">
+          <AccordionContent className="pb-5 text-muted-foreground">
             {faq.answer}
           </AccordionContent>
         </AccordionItem>

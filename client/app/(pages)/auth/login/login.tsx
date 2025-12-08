@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/ImgModule/image-with-fallback";
 import { SchoolPreview } from "@/app/models/school.model";
 import { authPage } from "@/app/config/auth.config";
 import { login } from "@/app/services/auth.service";
+import { getFormSchema } from "@/app/utils/zod";
 
 type FieldConfig = {
   name: string;
@@ -27,18 +28,41 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ErrorType>({});
 
+  const authSchema = useMemo(
+    () => getFormSchema(config.fields ?? []),
+    [config.fields]
+  );
+
   const disableButton =
-  isLoading ||
-  config.fields.some((f) => !formData[f.name]) ||
-  Object.values(error).some((e) => e);
+    isLoading ||
+    config.fields.some((f) => !formData[f.name]) ||
+    Object.values(error).some((e) => e);
 
   useEffect(() => {
     if (!schoolData) return;
 
-    config.fields.map((field)=> {
-      setFormData({...formData, [field.name]: "", code: schoolData.code})
-    })
+    config.fields.map((field) => {
+      setFormData({ ...formData, [field.name]: "", code: schoolData.code });
+    });
   }, []);
+
+  const handleBlur = (field: FieldConfig) => {
+    const authFieldSchema = authSchema.shape[field.name];
+    if (!authFieldSchema) return;
+    const result = authFieldSchema.safeParse(formData[field.name]);
+    if (!result.success) {
+      setError((prev) => ({
+        ...prev,
+        [field.name]: result.error.issues[0]?.message,
+      }));
+    } else {
+      setError((prev) => {
+        const updated = { ...prev };
+        delete updated[field.name];
+        return updated;
+      });
+    }
+  };
 
   const handleChange = (field: FieldConfig, value: string) => {
     setFormData((prev) => ({
@@ -50,13 +74,25 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
     // return () => clearTimeout(timer);
   };
 
-  const handleLogin = async(e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const result = authSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        const key = issue.path[0]?.toString();
+        if (key) fieldErrors[key] = issue.message;
+      });
+      setError(fieldErrors);
+      return;
+    }
+    setError({});
+    setIsLoading(true);
     if (disableButton) return;
     setIsLoading(true);
 
     const res = await login(formData);
-    console.log(res)
+    console.log(res);
     // TODO: Add your API call here
 
     setIsLoading(false);
@@ -143,6 +179,7 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
                         }
                         value={formData[field.name] ?? ""}
                         onChange={(e) => handleChange(field, e.target.value)}
+                        onBlur={() => handleBlur(field)}
                         disabled={field.disabled}
                         placeholder={field.placeholder}
                         required={field.required}
@@ -163,6 +200,11 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
                         </button>
                       )}
                     </div>
+                    {error[field.name] && (
+                      <span className="text-red-500 text-xs -mt-1">
+                        {error[field.name]}
+                      </span>
+                    )}
                   </div>
                 ))}
 

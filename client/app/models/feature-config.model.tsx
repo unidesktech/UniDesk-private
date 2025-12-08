@@ -1,161 +1,54 @@
-import { IconType } from "./types/icon.type";
+import { CSSProperties, ForwardRefExoticComponent, RefAttributes } from "react";
+import { StyleConfig } from "./resusable.model";
+import { LucideProps } from "lucide-react";
+import { ModuleItems } from "../components/ImgModule/img-module";
+import { IconCardProps } from "../components/Cards/icon-card";
+import { TeamCardProps } from "../components/Cards/team-card";
+import { FaqItem } from "../components/FAQAccordion/faq-accordion";
 
-export interface IconCardItem {
-  icon: IconType;
-  title: string;
-  description: string;
-  styles?: { classNames: string; inlineStyles?: string };
-}
-
-export interface ImageModuleItem {
-  title: string;
-  subtitle: string;
-  image: string;
-  points?: string[];
-  reversed?: boolean;
-}
-
-export interface FaqItem {
-  question: string;
-  answer: string;
-}
-
-export interface StatsItem {
-  icon: IconType;
-  value: string;
+type featureSectionItem = IconCardProps | ModuleItems | TeamCardProps | FaqItem;
+interface badgesProp {
   label: string;
   color: string;
 }
-
-export interface PremiumFeatureItem {
-  icon: IconType;
-  title: string;
-  description: string;
-  bgColor: string;
-}
-
-export interface IconCardSection {
-  type: "iconcard";
-  title: string;
-  title2?: string;
-  description: string;
-  items: IconCardItem[];
-  styles: {
-    classNames?: string;
-    inlineStyles?: string;
-  };
-}
-
-export interface ImageModuleSection {
-  type: "imgModule";
-  items: ImageModuleItem[];
-  styles?: {
-    containerStyles?: {
-      inlineStyles?: string;
-      classNames?: string;
+export interface featureConfigProps {
+  title?: string;
+  desc?: string;
+  image?: string;
+  styles?: StyleConfig;
+  badges: badgesProp[];
+  sections: Array<{
+    type: "imgModule" | "comparison-table" | "card" | "accordian";
+    cardType?: "iconcard" | "teamcard";
+    title?: string;
+    title2?: string;
+    desc?: string;
+    headers?: {
+      [key: string]: string | undefined;
     };
-  };
-}
-
-export interface PremiumFeatureSection {
-  type: "premium-feature";
-  badges?: { label: string; color: string }[];
-  title: string;
-  description: string;
-  styles: {
-    classNames?: string;
-    inlineStyles?: string;
-    itemStyles?: { classNames?: string; inlineStyles?: string };
-  };
-  items: PremiumFeatureItem[];
-}
-
-export interface StatsSection {
-  type: "stats";
-  title: string;
-  description: string;
-  styles: {
-    inlineStyles?: string;
-    classNames?: string;
-  };
-  items: StatsItem[];
-}
-
-export interface ComparisonTableSection {
-  type: "comparison-table";
-  title: string;
-  description: string;
-  styles: {
-    inlineStyles?: string;
-    classNames?: string;
-    itemStyles?: { inlineStyles?: string; classNames?: string };
-  };
-  headers: {
-    feature: string;
-    ours: string;
-    traditional: string;
-  };
-  columns: Array<{
-    key?: string;
-    label?: string;
-    highlight?: boolean;
-    color?: string;
+    columns?: {
+      key?: string;
+      label?: string;
+      highlight?: boolean;
+      color?: string;
+    }[];
+    rows?: {
+      feature?: string;
+      desc?: string;
+      values?: {
+        [key: string]: string | undefined;
+      };
+    }[];
+    badges?: badgesProp[];
+    items?: featureSectionItem[];
+    styles?: {
+      titleStyles?: StyleConfig;
+      containerStyles?: StyleConfig;
+      imgContainerStyles?: StyleConfig;
+      imgStyles?: StyleConfig;
+      descStyles?: StyleConfig;
+      inlineStyles?: CSSProperties;
+      className?: string;
+    };
   }>;
-  rows: Array<{
-    feature: string;
-    description: string;
-    values: { ours?: string; traditional?: string };
-  }>;
-  items: [];
-}
-
-export interface AccordionSection {
-  type: "accordian";
-  title: string;
-  description: string;
-  items: FaqItem[];
-  styles?: {
-    inlineStyles?: string;
-    classNames?: string;
-  };
-}
-
-export interface CtaSection {
-  type: "cta-section";
-  title: string;
-  subtitle: string;
-  primaryButton: {
-    label: string;
-    link: string;
-  };
-  secondaryButton: {
-    label: string;
-    link: string;
-  };
-  highlights: { label: string }[];
-  styles: {
-    className?: string;
-    inlineStyle?: string;
-  };
-}
-
-export type FeatureSection =
-  | IconCardSection
-  | ImageModuleSection
-  | PremiumFeatureSection
-  | StatsSection
-  | ComparisonTableSection
-  | AccordionSection
-  | CtaSection;
-
-export interface featureConfigType {
-  title: string;
-  description: string;
-  image: string;
-  styles: {
-    inlineStyles: string;
-    classNames: string;
-  };
-  badges?: { label: string; color: string }[];
-  sections: FeatureSection[];
 }
