@@ -1,5 +1,5 @@
 import { CSSProperties, ForwardRefExoticComponent, RefAttributes } from "react";
-import { IconLink, StyleConfig } from "./resusable.mode";
+import { IconLink, StyleConfig } from "./resusable.model";
 import { LucideProps } from "lucide-react";
 
 export interface aboutConfigProps {

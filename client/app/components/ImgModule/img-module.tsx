@@ -1,14 +1,25 @@
-import { CheckCircle } from "lucide-react";
-
+import { StyleConfig } from "@/app/models/resusable.model";
+import { CheckCircle, LucideProps } from "lucide-react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export interface ModuleItems {
   title: string;
+  desc?: string;
   subtitle: string;
   image: string;
   points: string[];
   reversed?: boolean;
+  Icon?: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  styles?: {
+    IconContainerStyle: StyleConfig;
+    IconStyle: StyleConfig;
+    subtitle: StyleConfig;
+    title: StyleConfig;
+    desc: StyleConfig;
+  };
 }
-
 interface ImgModuleProps {
   modules: ModuleItems[];
 }
@@ -25,14 +36,48 @@ export const ImgModule: React.FC<ImgModuleProps> = ({ modules }) => {
             }`}
           >
             <div className="flex-1">
-              <p className="text-blue-600 mb-2">{module.subtitle}</p>
-              <h2 className="text-4xl text-gray-900 mb-6">{module.title}</h2>
-
+              {module.Icon && (
+                <div
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${module.styles?.IconContainerStyle?.className}`}
+                  style={module.styles?.IconContainerStyle?.inlineStyles}
+                >
+                  <module.Icon
+                    className={`w-7 h-7 text-white ${module.styles?.IconStyle?.className}`}
+                    style={module.styles?.IconStyle?.inlineStyles}
+                  />
+                </div>
+              )}
+              {module.subtitle && (
+                <p
+                  className={`text-blue-600 mb-2 ${module?.styles?.subtitle?.className}`}
+                  style={module?.styles?.subtitle?.inlineStyles}
+                >
+                  {module.subtitle}
+                </p>
+              )}
+              {module.title && (
+                <h2
+                  className={`text-4xl text-gray-900 mb-6 ${module.styles?.title?.className}`}
+                  style={module.styles?.title?.inlineStyles}
+                >
+                  {module.title}
+                </h2>
+              )}
+              {module.desc && (
+                <p
+                  className={`text-xl text-gray-600 mb-8 leading-relaxed ${module.styles?.desc?.className}`}
+                  style={module.styles?.desc?.inlineStyles}
+                >
+                  {module.desc}
+                </p>
+              )}
               <div className="space-y-4">
                 {module.points.map((point, j) => (
                   <div key={j} className="flex items-start gap-3">
                     <CheckCircle className="w-6 h-6 text-blue-600 mt-0.5" />
-                    <p className="text-lg text-gray-700">{point}</p>
+                    <p className="text-base md:text-lg text-gray-700">
+                      {point}
+                    </p>
                   </div>
                 ))}
               </div>

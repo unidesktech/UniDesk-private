@@ -19,7 +19,7 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import { homeConfigProps } from "../models/home-config.models";
+import { homeConfigProps } from "../models/home-config.model";
 
 export const homeConfig = (): homeConfigProps => {
   return {

@@ -1,4 +1,4 @@
-import { StyleConfig } from "@/app/models/resusable.mode";
+import { StyleConfig } from "@/app/models/resusable.model";
 import React from "react";
 export interface StatItem {
   label: string;
