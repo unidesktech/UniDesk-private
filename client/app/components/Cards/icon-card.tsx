@@ -1,7 +1,6 @@
-import React, { ForwardRefExoticComponent, RefAttributes } from "react";
+import React from "react";
 import { Card } from "../ui/card";
 import { StyleConfig } from "@/app/models/resusable.model";
-import { LucideProps } from "lucide-react";
 import { IconType } from "@/app/models/types/icon.type";
 
 export interface IconCardProps {

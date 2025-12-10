@@ -1,13 +1,11 @@
 import { featureConfigProps } from "../models/feature-config.model";
 import {
   BarChart3,
-  Bell,
   BookOpen,
   Brain,
   Bus,
   Calendar,
   CalendarCheck,
-  ClipboardCheck,
   Clock,
   DollarSign,
   FileText,
@@ -18,7 +16,6 @@ import {
   Sparkle,
   Sparkles,
   TrendingUp,
-  UserCheck,
   Users,
   Zap,
 } from "lucide-react";

@@ -1,6 +1,5 @@
-import { CSSProperties, ForwardRefExoticComponent, RefAttributes } from "react";
+import { CSSProperties } from "react";
 import { StyleConfig } from "./resusable.model";
-import { LucideProps } from "lucide-react";
 import { ModuleItems } from "../components/ImgModule/img-module";
 import { IconCardProps } from "../components/Cards/icon-card";
 import { TeamCardProps } from "../components/Cards/team-card";

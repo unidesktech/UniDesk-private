@@ -28,7 +28,7 @@ const FaqAccordion: React.FC<FaqAccordionProps> = ({ faqs }) => {
           value={`faq-${idx}`}
           className="rounded-2xl border border-border/50 overflow-hidden backdrop-blur-xl bg-background/95 dark:bg-slate-900/95 shadow-lg px-6 data-[state=open]:shadow-xl transition-all"
         >
-          <AccordionTrigger className="text-left text-gray-900 hover:no-underline py-5">
+          <AccordionTrigger className="text-left text-gray-900 hover:no-underline py-5 cursor-pointer">
             {faq.question}
           </AccordionTrigger>
 

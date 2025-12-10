@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { featureConfig } from "../../config/features.config";
-import { Sparkles, Check, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { DynamicRenderer } from "@/app/utils/dynamic-render";
 
 export default function FeaturesPage() {
