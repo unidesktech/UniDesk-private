@@ -4,7 +4,7 @@ import StatCard from "./stat-card";
 import TestimonialCard from "./testimonial-card";
 import { barData, lineData } from "@/app/models/chart.model";
 import TeamCard from "./team-card";
-import ContactUsCard from "./contactUs-card";
+import ContactUsCard from "./contactus-card";
 
 interface CardRendererProps {
   config: {

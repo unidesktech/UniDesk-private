@@ -1,10 +1,6 @@
 import { Sparkles, Mail, Phone, MapPin, Instagram, Facebook, Twitter , Clock ,MessageSquare , CircleQuestionMark , WrenchIcon ,GraduationCap, CreditCard} from "lucide-react";
-import { ContactSectionType } from "../models/contactUs-config.model";
-import {
-  UserCheck,
-  Users,
-} from "lucide-react";
-import { map } from "zod";
+import { ContactSectionType } from "../models/contactus-config.model";
+
 
 export const contactConfig = (): ContactSectionType => {
   return {
@@ -28,7 +24,6 @@ export const contactConfig = (): ContactSectionType => {
     ],
 
     styles: {
-      inlineStyles: "",
       classNames: "bg-white"
     },
 
@@ -63,7 +58,6 @@ export const contactConfig = (): ContactSectionType => {
           }, 
         ],
         styles: {
-            inlineStyles: "",
             className: "py-2 bg-gradient-to-b from-white to-gray-50  grid md:grid-cols-2 lg:grid-cols-3 gap-6",
         },
       },
@@ -74,8 +68,7 @@ export const contactConfig = (): ContactSectionType => {
           "Fill out the form below and our support team will get back to you as soon as possible.",
 
         styles: {
-          inlineStyles: "",
-          classNames: "bg-white"
+          className: "bg-white"
         },
 
         fields: [
@@ -216,7 +209,6 @@ export const contactConfig = (): ContactSectionType => {
           }, 
         ],
         styles: {
-           inlineStyles: "",
             className: "py-2 bg-gradient-to-b from-white to-gray-50 grid md:grid-cols-2 lg:grid-cols-4 gap-6",
         },
       },

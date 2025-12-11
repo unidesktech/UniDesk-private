@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import * as Icons from "lucide-react";
-import { contactConfig } from "../../config/contactUs.config";
+import { contactConfig } from "../../config/contactus.config";
 import { DynamicRenderer } from "@/app/utils/dynamic-render";
 
 export default function ContactPage() {
@@ -101,8 +101,6 @@ export default function ContactPage() {
         return (
           <section
             key={index}
-            style={section?.styles?.containerStyles?.inlineStyles || {}}
-            className={section?.styles?.containerStyles?.className}
           >
             <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 ">
               {/* title desc */}
@@ -110,16 +108,14 @@ export default function ContactPage() {
                 <div className="text-center p-16 max-w-3xl mx-auto ">
                   {section.title && (
                     <span
-                      style={section?.styles?.titleStyles?.inlineStyles || {}}
-                      className={`text-xl md:text-3xl lg:text-3xl text-gray-900 md:mb-4 gap-6 ${section?.styles?.titleStyles?.className}`}
+                      className={`text-xl md:text-3xl lg:text-3xl text-gray-900 md:mb-4 gap-6`}
                     >
                       {section.title}
                     </span>
                   )}
                   {section.desc && (
                     <p
-                      style={section?.styles?.descStyles?.inlineStyles || {}}
-                      className={`text-sm md:text-xl text-gray-600 max-w-2xl mx-auto ${section?.styles?.descStyles?.className}`}
+                      className={`text-sm md:text-xl text-gray-600 max-w-2xl mx-auto`}
                     >
                       {section.desc}
                     </p>
@@ -128,7 +124,7 @@ export default function ContactPage() {
               )}
               { <DynamicRenderer config={section} index={index} key={index} />}
               {section.type === "contact-form" && (
-                <div key={index} className="max-w-7xl mx-auto px-6 mt-20 grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div key={"key"+index} className="max-w-7xl mx-auto px-6 mt-20 grid grid-cols-1 lg:grid-cols-3 gap-10">
 
 
                 {/* LEFT: FORM */}
@@ -141,7 +137,6 @@ export default function ContactPage() {
 
                     {/* Dynamic Fields */}
                     {section.fields.map((field, i) => {
-                      const InputIcon = field.icon as never;
 
                       return (
                         <div key={i}>
@@ -174,8 +169,8 @@ export default function ContactPage() {
                             )}
 
                             {/* Input Icon */}
-                            {InputIcon && (
-                              <InputIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            {field.icon && (
+                              <field.icon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             )}
                           </div>
                         </div>

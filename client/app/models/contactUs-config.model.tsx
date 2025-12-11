@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { IconType } from "./types/icon.type";
 
 export interface ContactFormField {
@@ -37,18 +38,19 @@ export interface ContactCardSection {
     onClick?: () => void;
     }>;
   styles?: {
-    inlineStyles?: string;
+    inlineStyles?: CSSProperties;
     className?: string; 
     };
 }
 
 export interface ContactFormSection {
   type: "contact-form";
-  title: string;
+  title?: string;
   title2?: string;
   description: string;
+  desc?: string;
   styles: {
-    inlineStyles: string;
+    inlineStyles?: CSSProperties;
     className: string;
   };
   fields: ContactFormField[];
@@ -80,7 +82,7 @@ export interface ContactFormSection {
   };
 }
 
-export type ContactSection = ContactFormSection | ContactCardSection;
+export type ContactSection = ContactCardSection | ContactFormSection ;
 
 export interface ContactSectionType {
   type: string;
@@ -98,7 +100,7 @@ export interface ContactSectionType {
   }>;
 
   styles: {
-    inlineStyles: string;
+    inlineStyles?: CSSProperties;
     classNames: string;
   };
 
