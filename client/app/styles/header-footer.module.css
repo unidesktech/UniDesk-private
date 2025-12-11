@@ -1,0 +1,6 @@
+.nav-active {
+    padding: 0.5rem;
+    color: white;
+    background: linear-gradient(to bottom right, #60a5fa, #14b8a6);
+    border-radius: 10px;
+}

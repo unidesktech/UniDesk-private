@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { homeConfig } from "@/app/config/home.config";
 import { Button } from "@/app/components/ui/button";
 import { DynamicRenderer } from "@/app/utils/dynamic-render";
-import { homeConfigProps } from "@/app/models/home-config.models";
+import { homeConfigProps } from "@/app/models/home-config.model";
 
 const HomePage: React.FC = () => {
   const config: homeConfigProps = useMemo(() => homeConfig(), []);

@@ -6,5 +6,5 @@ export interface StyleConfig {
 export interface IconLink {
   icon: React.ElementType;
   href?: string;
-  label?:string;
+  label?: string;
 }

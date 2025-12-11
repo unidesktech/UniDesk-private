@@ -2,15 +2,12 @@
 
 import React from "react";
 import { Card, CardContent } from "../ui/card";
-import { IconLink, StyleConfig } from "@/app/models/resusable.mode";
-
-
-
-interface TeamCardProps {
-  name: string;
-  role: string;
+import { IconLink, StyleConfig } from "@/app/models/resusable.model";
+export interface TeamCardProps {
+  name?: string;
+  role?: string;
   img?: string;
-  bio: string;
+  bio?: string;
   AvatarIcon?: React.ElementType;
   icons?: IconLink[];
   styles?: {
@@ -24,7 +21,6 @@ interface TeamCardProps {
     iconContainerStyles?: StyleConfig;
   };
 }
-
 const TeamCard: React.FC<TeamCardProps> = ({
   img,
   name,
@@ -35,7 +31,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
   styles,
 }) => {
   const initials = name
-    .split(" ")
+    ?.split(" ")
     .slice(0, 2)
     .map((n) => n[0])
     .join("")
@@ -94,7 +90,9 @@ const TeamCard: React.FC<TeamCardProps> = ({
             )}
             {icons && (
               <div
-                className={`flex gap-2 ${styles?.iconContainerStyles?.className || ""}`}
+                className={`flex gap-2 ${
+                  styles?.iconContainerStyles?.className || ""
+                }`}
                 style={styles?.iconContainerStyles?.inlineStyles}
               >
                 {icons.map((iconItem, index) => {

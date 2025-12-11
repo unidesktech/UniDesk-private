@@ -1,6 +1,6 @@
 
 import { ImgModule, ModuleItems } from "../components/ImgModule/img-module";
-import { Plan, Pricing } from "../components/PricingComponent/Pricing";
+import { Plan, Pricing } from "../components/PricingComponent/pricing";
 import FaqAccordion, { FaqItem } from "../components/FAQAccordion/faq-accordion";
 import {
   Bar,
@@ -120,7 +120,6 @@ export const DynamicRenderer: React.FC<DynamicRendererProps> = ({
 
     case "pricing":
       return <Pricing plans={config.items as Plan[]} />;
-
     case "accordian":
       return <FaqAccordion faqs={config.items as FaqItem[]} />;
   }
