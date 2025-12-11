@@ -1,5 +1,6 @@
 
 import { ImgModule, ModuleItems } from "../components/ImgModule/img-module";
+import { Plan, Pricing } from "../components/PricingComponent/pricing";
 import FaqAccordion, { FaqItem } from "../components/FAQAccordion/faq-accordion";
 import {
   Bar,
@@ -17,7 +18,6 @@ import StatCard from "../components/Cards/stat-card";
 import { CSSProperties } from "react";
 import CardRenderer from "../components/Cards/card-renderer";
 import { barData, lineData } from "../models/chart.model";
-import { Plan, Pricing } from "../components/PricingComponent/pricing";
 
 interface ConfigItem {
   type: string;

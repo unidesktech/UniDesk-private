@@ -4,6 +4,7 @@ import StatCard from "./stat-card";
 import TestimonialCard from "./testimonial-card";
 import { barData, lineData } from "@/app/models/chart.model";
 import TeamCard from "./team-card";
+import ContactUsCard from "./contactus-card";
 
 interface CardRendererProps {
   config: {
@@ -84,6 +85,28 @@ const CardRenderer: React.FC<CardRendererProps> = ({ config }) => {
               icons={item.icons}
               img={item.img}
               styles={item.styles}
+            />
+          ))}
+        </div>
+      );
+    case "contactuscard":
+      return (
+        <div
+          className={` ${config?.styles?.className}`}
+          style={config.styles?.inlineStyles || {}}
+        >
+          {(config.items || []).map((item, i) => (
+            <ContactUsCard
+              key={i}
+              icon={item.icon}
+              title={item?.title || "General Questions"}
+              description={
+                item?.description ||
+                "Get answers to common questions about our platform and services"}
+              buttonText={item?.buttonText || "Learn More"}
+              color={item?.color || "text-blue-600"}
+              onClick={item?.onClick}
+              styles={item?.styles}
             />
           ))}
         </div>
