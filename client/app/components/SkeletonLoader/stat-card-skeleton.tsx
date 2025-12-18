@@ -15,7 +15,7 @@ export interface StatCardSkeletonProps {
 const StatCardSkeleton: React.FC<StatCardSkeletonProps> = ({ styles = {} }) => {
   return (
     <div
-      className={`bg-white w-full rounded-xl p-6 border border-gray-200 shadow-sm ${styles?.cardStyle?.className}`}
+      className={`bg-white w-full rounded-xl p-5 border border-gray-200 shadow-sm ${styles?.cardStyle?.className}`}
       style={styles?.cardStyle?.inlineStyles || {}}
     >
       <div

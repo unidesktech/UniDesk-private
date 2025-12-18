@@ -166,7 +166,7 @@ const page = () => {
                   <StatCardSkeleton
                     styles={{
                       lableStyles: {
-                        className: "!h-9 order-2 mt-1",
+                        className: "!h-8 !w-14 order-2 mt-1",
                       },
                       valueStyle: { className: "h-4 w-24" },
                       IconContainerStyle: {
@@ -176,6 +176,9 @@ const page = () => {
                       containerStyle: {
                         className: "flex-col items-start justify-start gap-2",
                       },
+                      cardStyle:{
+                        className: "min-h-[163px]"
+                      }
                     }}
                   />
                 )}
