@@ -11,10 +11,12 @@ import {
 import { usePathname } from "next/navigation";
 import { Crumb } from "@/app/models/breadcrumb.model";
 
-export const BreadcrumbComponent = () => {
+export const BreadcrumbComponent = ({
+  defaultRoute = { label: "Home", href: "/" },
+}) => {
   const pathName = usePathname();
   const paths = pathName.split("/").filter(Boolean);
-  const routes: Crumb[] = [{ label: "Home", href: "/" }];
+  const routes: Crumb[] = [defaultRoute];
   paths.forEach((p, i) => {
     const href = "/" + paths.slice(0, i + 1).join("/");
     routes.push({

@@ -106,7 +106,7 @@ export const formConfig: Record<string, ConfigType> = {
         key: "productName",
         displayName: "Product Name",
         avatarKey: "productImages",
-        icon : User
+        icon: User,
       },
       {
         sectionName: "Basic Information",
@@ -126,6 +126,110 @@ export const formConfig: Record<string, ConfigType> = {
         fields: [
           { type: "text", key: "releaseDate", displayName: "Release Date" },
           { type: "text", key: "time", displayName: "Time" },
+        ],
+      },
+    ],
+  },
+  student: {
+    info: [
+      {
+        type: "title",
+        mode: {
+          add: { value: "Add New Student" },
+          edit: { value: "Edit Student Details" },
+        },
+      },
+      {
+        type: "desc",
+        mode: {
+          add: { value: "Fill in the details to register a new student" },
+          edit: { value: "Update the student information below" },
+        },
+      },
+    ],
+
+    sections: [
+      {
+        title: "Basic Information",
+        fields: [
+          {
+            name: "name",
+            type: "text",
+            label: "Student Name",
+            required: true,
+            placeholder: "Enter full name",
+          },
+          {
+            name: "rollNo",
+            type: "text",
+            label: "Roll Number",
+            required: true,
+            placeholder: "e.g. 001",
+          },
+          {
+            type: "dropdown",
+            name: "classes",
+            fieldName: "name",
+            collectionName: "class",
+            label: "Class",
+            placeholder: "Select class",
+            required: true,
+            options: [],
+            isDistinct: true,
+          },
+          {
+            name: "status",
+            type: "dropdown",
+            label: "Status",
+            required: true,
+            placeholder: "Select Status",
+            options: [
+              { id: "active", value: "Active" },
+              { id: "inactive", value: "Inactive" },
+            ] as DropDownOption[],
+          },
+        ],
+      },
+
+      {
+        title: "Contact & Profile",
+        fields: [
+          {
+            name: "contact",
+            type: "text",
+            label: "Contact Number",
+            required: true,
+            placeholder: "+91 XXXXX XXXXX",
+          },
+          // {
+          //   name: "avatar",
+          //   type: "uploadbox",
+          //   label: "Profile Photo",
+          // },
+        ],
+      },
+    ],
+
+    preview: [
+      {
+        type: "heading",
+        key: "name",
+        displayName: "Student Name",
+        avatarKey: "avatar",
+        icon: User,
+      },
+      {
+        sectionName: "Basic Information",
+        fields: [
+          { type: "text", key: "rollNo", displayName: "Roll Number" },
+          { type: "text", key: "class", displayName: "Class" },
+          { type: "text", key: "status", displayName: "Status" },
+        ],
+      },
+      {
+        sectionName: "Contact & Profile",
+        fields: [
+          { type: "text", key: "contact", displayName: "Contact Number" },
         ],
       },
     ],

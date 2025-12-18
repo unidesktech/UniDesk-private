@@ -14,6 +14,8 @@ export interface StatCardProps {
     IconContainerStyle?: StyleConfig;
     IconStyle?: StyleConfig;
     valueStyle?: StyleConfig;
+    cardStyle?: StyleConfig;
+    containerStyle?: StyleConfig;
   };
 }
 
@@ -27,8 +29,14 @@ const StatCard: React.FC<StatCardProps> = ({ item, styles = {} }) => {
   } = item;
 
   return (
-    <div className="bg-white w-full rounded-xl p-6 border border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between mb-2">
+    <div
+      className={`bg-white w-full rounded-xl p-6 border border-gray-200 shadow-sm ${styles?.cardStyle?.className}`}
+      style={styles?.cardStyle?.inlineStyles || {}}
+    >
+      <div
+        className={`flex items-center justify-between mb-2 ${styles?.containerStyle?.className}`}
+        style={styles?.containerStyle?.inlineStyles || {}}
+      >
         <span
           style={styles?.lableStyles?.inlineStyles || {}}
           className={`text-sm text-gray-600 ${styles?.lableStyles?.className}`}

@@ -19,6 +19,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   onBlur,
   resetFlag,
   id,
+  disabled,
 }) => {
   const [selected, setSelected] = React.useState<string | number | null>(
     value ?? null
@@ -55,6 +56,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           "group h-9 px-3 py-1 rounded-md border bg-background text-gray-500 text-[0.9rem]  w-full flex items-center justify-between gap-2",
           className
         )}
+        disabled={disabled}        
       >
         <span
           className={cn(
@@ -87,6 +89,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           <DropdownMenuItem
             key={option.id}
             onClick={() => handleSelect(option.id)}
+            disabled={disabled}
             className={cn(
               selected === option.id ? "bg-accent text-accent-foreground" : "",
               "cursor-pointer"
