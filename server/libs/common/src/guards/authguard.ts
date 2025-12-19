@@ -66,6 +66,7 @@ export class AuthGuard implements CanActivate {
       },
       select: {
         user_id: true,
+        school_id: true,
         name: true,
         email: true,
         profile_photo_url: true,
