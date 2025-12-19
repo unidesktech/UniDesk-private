@@ -45,6 +45,15 @@
         "tsConfigPath": "libs/dto/tsconfig.lib.json"
       }
     },
+    "management": {
+      "type": "application",
+      "root": "apps/student/management",
+      "entryFile": "main",
+      "sourceRoot": "apps/student/management/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/student/management/tsconfig.app.json"
+      }
+    },
     "prisma": {
       "type": "library",
       "root": "libs/prisma",
@@ -70,6 +79,15 @@
       "sourceRoot": "apps/school/src",
       "compilerOptions": {
         "tsConfigPath": "apps/school/tsconfig.app.json"
+      }
+    },
+    "student": {
+      "type": "application",
+      "root": "apps/management/student",
+      "entryFile": "main",
+      "sourceRoot": "apps/management/student/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/management/student/tsconfig.app.json"
       }
     }
   }
