@@ -1,7 +1,7 @@
 generator client {
   provider   = "prisma-client-js"
-  engineType = "binary"
   output     = "../libs/prisma/generated"
+  engineType = "binary"
 }
 
 datasource db {
@@ -10,14 +10,12 @@ datasource db {
 }
 
 model unidesk_users {
-  user_id String @id @db.Uuid
-
+  user_id    String   @id @db.Uuid
   full_name  String
-  email      String  @unique
-  role       String // super-admin, sales, implementation, support
+  email      String   @unique
+  role       String
   password   String
   avatar_url String?
-
   created_at DateTime @default(now())
   updated_at DateTime
   created_by String?  @db.Uuid
@@ -30,98 +28,30 @@ model unidesk_users {
 }
 
 model schools {
-  school_id   String    @id @db.Uuid
-  school_code String    @unique
-  name        String
-  address     String?
-  phone       String?
-  email       String
-  website     String?
-  established DateTime?
-  config      Json?
-  created_at  DateTime  @default(now())
-  created_by  String?
-  updated_at  DateTime
-  updated_by  String?
-  is_active   Boolean   @default(true)
-  is_deleted  Boolean   @default(false)
-  comments    String?
-
-  // Relations
-
+  school_id                  String                       @id @db.Uuid
+  name                       String
+  address                    String?
+  phone                      String?
+  email                      String
+  config                     Json?
+  created_at                 DateTime                     @default(now())
+  created_by                 String?
+  updated_at                 DateTime
+  updated_by                 String?
+  is_active                  Boolean                      @default(true)
+  is_deleted                 Boolean                      @default(false)
+  comments                   String?
+  established                DateTime?
+  school_code                String                       @unique
+  website                    String?
   demo_requests              demo_requests[]
+  roles                      roles[]
+  school_branding            school_branding?
+  school_initial_setup       school_initial_setup?
   school_pricing_plans       school_pricing_plans[]
+  school_settings            school_settings[]
   school_subscription_status school_subscription_status[]
   users                      users[]
-  school_branding            school_branding?
-  school_settings            school_settings[]
-  school_initial_setup       school_initial_setup?
-  roles                      roles[]
-  // activity_logs          activity_logs[]
-  // academic_years         academic_years[]
-  // period_templates       period_templates[]
-  // timetables             timetables[]
-  // attendance_sessions    attendance_sessions[]
-  // attendance_batch_imports attendance_batch_imports[]
-  // attendance_insights    attendance_insights[]
-  // attendance_ai_jobs     attendance_ai_jobs[]
-  // exam_types             exam_types[]
-  // exam_groups            exam_groups[]
-  // assignments            assignments[]
-  // question_bank          question_bank[]
-  // study_materials        study_materials[]
-  // doubts                 doubts[]
-  // ai_learning_paths      ai_learning_paths[]
-  // ai_learning_jobs       ai_learning_jobs[]
-  // weekly_plans           weekly_plans[]
-  // lesson_plan_templates  lesson_plan_templates[]
-  // fee_categories         fee_categories[]
-  // fee_items              fee_items[]
-  // fee_structures         fee_structures[]
-  // student_fee_assignments student_fee_assignments[]
-  // fee_invoices           fee_invoices[]
-  // fee_discounts          fee_discounts[]
-  // payment_methods        payment_methods[]
-  // fee_notifications      fee_notifications[]
-  // transport_vehicles     transport_vehicles[]
-  // transport_drivers      transport_drivers[]
-  // transport_routes       transport_routes[]
-  // vehicle_route_assignments vehicle_route_assignments[]
-  // transport_events       transport_events[]
-  // inventory_categories   inventory_categories[]
-  // inventory_items        inventory_items[]
-  // inventory_vendors      inventory_vendors[]
-  // purchase_orders        purchase_orders[]
-  // stock_master           stock_master[]
-  // issue_requests         issue_requests[]
-  // stock_audits           stock_audits[]
-  // books                  books[]
-  // library_members        library_members[]
-  // announcements          announcements[]
-  // notifications          notifications[]
-  // ai_notification_summaries ai_notification_summaries[]
-  // ptm_events             ptm_events[]
-  // conversations          conversations[]
-  // event_groups           event_groups[]
-  // events                 events[]
-  // school_calendars       school_calendars[]
-  // leave_types            leave_types[]
-  // leave_requests         leave_requests[]
-  // media_albums           media_albums[]
-  // media_items            media_items[]
-  // media_tags             media_tags[]
-  // media_upload_sessions  media_upload_sessions[]
-  // media_settings         media_settings?
-  // online_class_providers online_class_providers[]
-  // online_classes         online_classes[]
-  // class_sessions         class_sessions[]
-  // import_jobs            import_jobs[]
-  // export_jobs            export_jobs[]
-  // report_definitions     report_definitions[]
-  // ai_report_jobs         ai_report_jobs[]
-  // feature_flags          feature_flags[]
-  // communication_templates communication_templates[]
-  // ai_template_jobs       ai_template_jobs[]
 
   @@schema("unidesk")
 }
@@ -129,47 +59,41 @@ model schools {
 model school_subscription_status {
   status_id  String    @id @db.Uuid
   school_id  String    @db.Uuid
-  status     String // "trial", "active", "inactive", "suspended"
+  status     String
   valid_from DateTime
   valid_to   DateTime?
-  reason     String? // For suspended/inactive
-
-  created_at DateTime @default(now())
-  created_by String?
+  reason     String?
+  created_at DateTime  @default(now())
   updated_at DateTime
-  updated_by String?
-  is_active  Boolean  @default(true)
-  is_deleted Boolean  @default(false)
   comments   String?
-
-  school schools @relation(fields: [school_id], references: [school_id])
+  created_by String?
+  is_active  Boolean   @default(true)
+  is_deleted Boolean   @default(false)
+  updated_by String?
+  school     schools   @relation(fields: [school_id], references: [school_id])
 
   @@index([school_id])
   @@schema("unidesk")
 }
 
 model school_pricing_plans {
-  plan_id   String @id @db.Uuid
-  school_id String @db.Uuid
-
-  plan_type       String // "standard", "pro", "enterprise", "custom"
+  plan_id         String    @id @db.Uuid
+  school_id       String    @db.Uuid
+  plan_type       String
   price_per_month Float?
-  billing_cycle   String? // monthly, yearly
-  features        Json? // feature flags
-  custom_notes    String? // for custom plans
-
-  valid_from DateTime
-  valid_to   DateTime?
-
-  created_at DateTime @default(now())
-  created_by String?
-  updated_at DateTime
-  updated_by String?
-  is_active  Boolean  @default(true)
-  is_deleted Boolean  @default(false)
-  comments   String?
-
-  school schools @relation(fields: [school_id], references: [school_id])
+  billing_cycle   String?
+  features        Json?
+  custom_notes    String?
+  valid_from      DateTime
+  valid_to        DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime
+  comments        String?
+  created_by      String?
+  is_active       Boolean   @default(true)
+  is_deleted      Boolean   @default(false)
+  updated_by      String?
+  school          schools   @relation(fields: [school_id], references: [school_id])
 
   @@index([school_id])
   @@schema("unidesk")
@@ -193,8 +117,7 @@ model school_branding {
   is_active            Boolean  @default(true)
   is_deleted           Boolean  @default(false)
   comments             String?
-
-  school schools? @relation(fields: [school_id], references: [school_id])
+  school               schools? @relation(fields: [school_id], references: [school_id])
 
   @@schema("unidesk")
 }
@@ -213,42 +136,34 @@ model school_settings {
   is_active   Boolean  @default(true)
   is_deleted  Boolean  @default(false)
   comments    String?
-
-  school schools? @relation(fields: [school_id], references: [school_id])
+  school      schools? @relation(fields: [school_id], references: [school_id])
 
   @@unique([school_id, category, key])
   @@schema("unidesk")
 }
 
 model school_initial_setup {
-  setup_id  String @id @db.Uuid
-  school_id String @db.Uuid
-
-  is_completed    Boolean @default(false)
+  setup_id        String    @id @db.Uuid
+  school_id       String    @unique @db.Uuid
+  is_completed    Boolean   @default(false)
   steps_completed Json?
-  setup_version   Int     @default(1)
+  setup_version   Int       @default(1)
+  completed_at    DateTime?
+  created_at      DateTime
+  created_by      String?
+  updated_at      DateTime
+  updated_by      String?
+  is_active       Boolean   @default(true)
+  is_deleted      Boolean   @default(false)
+  comments        String?
+  school          schools   @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
 
-  completed_at DateTime?
-
-  created_at DateTime
-  created_by String?
-  updated_at DateTime
-  updated_by String?
-
-  is_active  Boolean @default(true)
-  is_deleted Boolean @default(false)
-  comments   String?
-
-  school schools @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
-
-  @@unique([school_id])
   @@schema("unidesk")
 }
 
 model demo_requests {
-  request_id String  @id @db.Uuid
-  school_id  String? @db.Uuid
-
+  request_id        String    @id @db.Uuid
+  school_id         String?   @db.Uuid
   organization      String
   organization_size String
   full_name         String
@@ -256,21 +171,16 @@ model demo_requests {
   contact_phone     String?
   country           String?
   city              String?
-
-  message String?
-  source  String?
-
-  status String @default("new")
-
+  message           String?
+  source            String?
+  status            String    @default("new")
   scheduled_demo_at DateTime?
-
-  is_active  Boolean  @default(true)
-  is_deleted Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime
-  comments   String?
-
-  school schools? @relation(fields: [school_id], references: [school_id])
+  is_active         Boolean   @default(true)
+  is_deleted        Boolean   @default(false)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime
+  comments          String?
+  school            schools?  @relation(fields: [school_id], references: [school_id])
 
   @@index([contact_email])
   @@index([status])
@@ -278,44 +188,31 @@ model demo_requests {
 }
 
 model users {
-  user_id           String    @id @db.Uuid
-  school_id         String?   @db.Uuid
-  user_code         String    @unique
-  name              String?
-  email             String?
-  phone             String?
-  password_hash     String?
-  status            String?
-  last_login_at     DateTime?
-  profile_photo_url String?
-  config            Json?
-  created_by        String?
-  updated_by        String?
-  is_active         Boolean   @default(true)
-  is_deleted        Boolean   @default(false)
-  comments          String?
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @default(now())
-
-  // Relations
-  school                 schools?                @relation(fields: [school_id], references: [school_id])
-  user_roles             user_roles[]
-  user_preferences       user_preferences?
+  user_id                String                  @id @db.Uuid
+  school_id              String?                 @db.Uuid
+  user_code              String                  @unique
+  name                   String?
+  email                  String?                @unique
+  phone                  String?
+  password_hash          String?
+  status                 String?
+  last_login_at          DateTime?
+  profile_photo_url      String?
+  config                 Json?
+  created_by             String?
+  updated_by             String?
+  is_active              Boolean                 @default(true)
+  is_deleted             Boolean                 @default(false)
+  comments               String?
+  created_at             DateTime                @default(now())
+  updated_at             DateTime                @default(now())
   user_onboarding_status user_onboarding_status?
-  // auth_tokens  auth_tokens[]
-  // otp          otp[]
-  // activity_logs activity_logs[]
-  // doubt_replies doubt_replies[]
-  // assignment_comments assignment_comments[]
-  // fcm_tokens   fcm_tokens[]
-  // notification_logs notification_logs[]
-  // presence     presence?
-  // messages_sent messages[] @relation("MessageSender")
-  // ptm_notes_teacher ptm_notes[] @relation("PTMNotesTeacher")
-  // ptm_bookings_parent ptm_bookings[] @relation("PTMParent")
-  // student_profiles student_profiles?
-  // teacher_profiles teacher_profiles?
-  // parent_profiles parent_profiles?
+  user_preferences       user_preferences?
+  user_roles             user_roles[]
+  school                 schools?                @relation(fields: [school_id], references: [school_id])
+
+  student_profiles student_profiles?
+  parent_profiles  parent_profiles?
 
   @@schema("unidesk")
 }
@@ -335,8 +232,7 @@ model user_onboarding_status {
   is_active          Boolean   @default(true)
   is_deleted         Boolean   @default(false)
   comments           String?
-
-  user users? @relation(fields: [user_id], references: [user_id])
+  user               users     @relation(fields: [user_id], references: [user_id])
 
   @@schema("unidesk")
 }
@@ -358,49 +254,151 @@ model user_preferences {
   is_active             Boolean  @default(true)
   is_deleted            Boolean  @default(false)
   comments              String?
-
-  user users? @relation(fields: [user_id], references: [user_id])
+  user                  users    @relation(fields: [user_id], references: [user_id])
 
   @@schema("unidesk")
 }
 
 model roles {
-  role_id     String   @id @db.Uuid
-  school_id   String?  @db.Uuid
+  role_id     String       @id @db.Uuid
+  school_id   String?      @db.Uuid
   name        String
   description String?
   created_at  DateTime
   created_by  String?
   updated_at  DateTime
   updated_by  String?
-  is_active   Boolean  @default(true)
-  is_deleted  Boolean  @default(false)
+  is_active   Boolean      @default(true)
+  is_deleted  Boolean      @default(false)
   comments    String?
-
-  school     schools?     @relation(fields: [school_id], references: [school_id])
-  user_roles user_roles[]
+  school      schools?     @relation(fields: [school_id], references: [school_id])
+  user_roles  user_roles[]
 
   @@schema("unidesk")
 }
 
 model user_roles {
-  user_role_id String @id @db.Uuid
-  user_id      String @db.Uuid
-  role_id      String @db.Uuid
-
-  is_active  Boolean  @default(true)
-  created_at DateTime
-  created_by String?
-  updated_at DateTime
-  updated_by String?
-  is_deleted Boolean  @default(false)
-  comments   String?
-
-  user users @relation(fields: [user_id], references: [user_id])
-  role roles @relation(fields: [role_id], references: [role_id])
+  user_role_id String   @id @db.Uuid
+  user_id      String   @db.Uuid
+  role_id      String   @db.Uuid
+  is_active    Boolean  @default(true)
+  created_at   DateTime
+  created_by   String?
+  updated_at   DateTime
+  updated_by   String?
+  is_deleted   Boolean  @default(false)
+  comments     String?
+  role         roles    @relation(fields: [role_id], references: [role_id])
+  user         users    @relation(fields: [user_id], references: [user_id])
 
   @@unique([user_id, role_id], name: "ux_user_role_per_school")
   @@index([user_id])
   @@index([role_id])
+  @@schema("unidesk")
+}
+
+model Article {
+  article_id  String      @id
+  question    String
+  answer      String
+  points      String[]
+  created_at  DateTime    @default(now())
+  updated_at  DateTime
+  category_id String
+  topic_id    String
+  FaqCategory FaqCategory @relation(fields: [category_id], references: [faq_id])
+  FaqTopic    FaqTopic    @relation(fields: [topic_id], references: [topic_id])
+
+  @@schema("unidesk")
+}
+
+model FaqCategory {
+  faq_id     String    @id @unique
+  name       String
+  created_at DateTime  @default(now())
+  updated_at DateTime
+  desc       String
+  icon       String
+  color      String
+  Article    Article[]
+
+  @@schema("unidesk")
+}
+
+model FaqTopic {
+  topic_id String    @id @unique
+  name     String
+  icon     String
+  Article  Article[]
+
+  @@schema("unidesk")
+}
+
+model student_profiles {
+  student_id String @id @default(uuid()) @db.Uuid
+  user_id    String @unique @db.Uuid
+
+  admission_no       String
+  dob                DateTime
+  gender             String?
+  blood_group        String?
+  emergencyContactNo String?
+
+  class_id   String?
+  section_id String?
+
+  comments   String?
+  is_deleted Boolean @default(false)
+
+  created_at DateTime @default(now())
+  created_by String?
+  updated_at DateTime @updatedAt
+  updated_by String?
+
+  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  student_parent_map student_parent_map[]
+
+  @@schema("unidesk")
+}
+
+model parent_profiles {
+  parent_id String @id @default(uuid()) @db.Uuid
+  user_id   String @unique @db.Uuid
+
+  occupation          String?
+  relation_to_student String?
+  annual_income       Decimal? @db.Decimal(12, 2)
+
+  created_at DateTime @default(now())
+  created_by String?
+  updated_at DateTime @updatedAt
+  updated_by String?
+  is_deleted Boolean  @default(false)
+  comments   String?
+
+  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  student_parent_map student_parent_map[]
+
+  @@schema("unidesk")
+}
+
+model student_parent_map {
+  student_parent_map_id String @id @default(uuid()) @db.Uuid
+  student_id            String @db.Uuid
+  parent_id             String @db.Uuid
+
+  created_at DateTime @default(now())
+  created_by String?
+  updated_at DateTime @updatedAt
+  updated_by String?
+  is_deleted Boolean  @default(false)
+  comments   String?
+
+  student_profiles student_profiles @relation(fields: [student_id], references: [student_id], onDelete: Cascade)
+  parent_profiles  parent_profiles  @relation(fields: [parent_id], references: [parent_id], onDelete: Cascade)
+
+  @@unique([student_id, parent_id])
   @@schema("unidesk")
 }

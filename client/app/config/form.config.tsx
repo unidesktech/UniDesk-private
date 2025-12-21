@@ -147,7 +147,6 @@ export const formConfig: Record<string, ConfigType> = {
         },
       },
     ],
-
     sections: [
       {
         title: "Basic Information",
@@ -186,7 +185,7 @@ export const formConfig: Record<string, ConfigType> = {
             options: [
               { id: "active", value: "Active" },
               { id: "inactive", value: "Inactive" },
-            ] as DropDownOption[],
+            ],
           },
         ],
       },
@@ -208,8 +207,129 @@ export const formConfig: Record<string, ConfigType> = {
           // },
         ],
       },
-    ],
 
+      /* =========================
+     Parent / Guardian Section
+     ========================= */
+      {
+        title: "Parent / Guardian Information",
+        fields: [
+          {
+            name: "fatherName",
+            type: "text",
+            label: "Father's Name",
+            required: true,
+            placeholder: "Enter father's full name",
+          },
+          {
+            name: "motherName",
+            type: "text",
+            label: "Mother's Name",
+            required: false,
+            placeholder: "Enter mother's full name",
+          },
+          {
+            name: "parentContact",
+            type: "text",
+            label: "Parent Contact Number",
+            required: true,
+            placeholder: "+91 XXXXX XXXXX",
+          },
+          {
+            name: "parentEmail",
+            type: "text",
+            label: "Parent Email",
+            required: false,
+            placeholder: "example@email.com",
+          },
+          {
+            name: "guardianRelation",
+            type: "dropdown",
+            label: "Guardian Relation",
+            required: true,
+            placeholder: "Select relation",
+            options: [
+              { id: "father", value: "Father" },
+              { id: "mother", value: "Mother" },
+              { id: "guardian", value: "Guardian" },
+            ],
+          },
+        ],
+      },
+
+      /* =========================
+     Enrollment Section
+     ========================= */
+      {
+        title: "Enrollment Information",
+        fields: [
+          {
+            name: "admissionNo",
+            type: "text",
+            label: "Admission Number",
+            required: true,
+            placeholder: "Auto / Manual Admission No",
+          },
+          {
+            name: "admissionDate",
+            type: "date",
+            label: "Admission Date",
+            required: true,
+          },
+          {
+            name: "academicYear",
+            type: "dropdown",
+            label: "Academic Year",
+            required: true,
+            placeholder: "Select academic year",
+            options: [
+              { id: "2024-25", value: "2024 - 2025" },
+              { id: "2025-26", value: "2025 - 2026" },
+            ],
+          },
+          {
+            name: "previousSchool",
+            type: "text",
+            label: "Previous School",
+            required: false,
+            placeholder: "If applicable",
+          },
+        ],
+      },
+
+      /* =========================
+     Documents Section
+     ========================= */
+      {
+        title: "Documents & Verification",
+        fields: [
+          {
+            name: "birthCertificate",
+            type: "uploadbox",
+            label: "Birth Certificate",
+            required: true,
+          },
+          {
+            name: "aadharCard",
+            type: "uploadbox",
+            label: "Aadhar Card (Student)",
+            required: true,
+          },
+          {
+            name: "parentAadhar",
+            type: "uploadbox",
+            label: "Aadhar Card (Parent/Guardian)",
+            required: false,
+          },
+          {
+            name: "transferCertificate",
+            type: "uploadbox",
+            label: "Transfer Certificate (TC)",
+            required: false,
+          },
+        ],
+      },
+    ],
     preview: [
       {
         type: "heading",
