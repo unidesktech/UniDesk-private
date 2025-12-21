@@ -7,13 +7,13 @@ import axios from 'axios';
 export class SchoolGatewayService {
   @Track()
   async saveSchool(body: any): Promise<ResponseDto<string>> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.SCHOOLPORT}/school/save`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.SCHOOLPORT}/school/save`;
 
     const schoolResponse = await axios.post<ResponseDto<string>>(url, body);
 
     let response;
     if (schoolResponse.data.success) {
-      const url = `${process.env.ENDPOINTURL}:${process.env.APIGATEWAYPORT}/auth/add-initial-user/`;
+      const url = `${process.env.ENDPOINT_URL}:${process.env.APIGATEWAYPORT}/auth/add-initial-user/`;
       response = await axios.post<ResponseDto<string>>(
         url,
         schoolResponse.data.data,
@@ -26,7 +26,7 @@ export class SchoolGatewayService {
 
   @Track()
   async getSchool(id?: string): Promise<ResponseDto<string>> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.SCHOOLPORT}/school/get/${id}`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.SCHOOLPORT}/school/get/${id}`;
 
     const response = await axios.get<ResponseDto<string>>(url);
     return response.data;
@@ -34,7 +34,7 @@ export class SchoolGatewayService {
 
   @Track()
   async validateSchoolCode(code: string): Promise<ResponseDto<string>> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.SCHOOLPORT}/school/validate-code/${code}`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.SCHOOLPORT}/school/validate-code/${code}`;
 
     const response = await axios.get<ResponseDto<string>>(url);
     return response.data;

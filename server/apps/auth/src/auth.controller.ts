@@ -28,7 +28,25 @@ export class AuthController {
   @Track()
   async requestOtp(
     @Body() body: any,
-  ): Promise<ResponseDto<string | null> | null> {
+  ): Promise<
+    ResponseDto<{ otpId: string; email: string; schoolCode: string } | null>
+  > {
     return await this.authService.requestOtp(body);
+  }
+
+  @Post('otp/verify')
+  @Track()
+  async verifyOtp(
+    @Body() body: any,
+  ): Promise<ResponseDto<{ token: string } | null>> {
+    return await this.authService.verifyOtp(body);
+  }
+
+  @Post('reset-password')
+  @Track()
+  async resetPassword(
+    @Body() body: any,
+  ): Promise<ResponseDto<{ token: string } | null>> {
+    return await this.authService.resetPassword(body);
   }
 }

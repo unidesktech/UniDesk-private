@@ -1,5 +1,6 @@
 export const getPasswordResetOtpEmailTemplate = (
   otp: string,
+  otpPageUrl: string,
   expiryMinutes: number = 5,
 ) => {
   const unideskLogoUrl =
@@ -27,6 +28,9 @@ export const getPasswordResetOtpEmailTemplate = (
           font-size: 28px !important;
           letter-spacing: 6px !important;
         }
+        .cta-btn {
+          width: 100% !important;
+        }
       }
     </style>
   </head>
@@ -52,7 +56,7 @@ export const getPasswordResetOtpEmailTemplate = (
 
           <p style="font-size:16px; text-align:center; margin:0 0 26px; line-height:1.6;">
             We received a request to reset your UniDesk account password.
-            Use the One-Time Password (OTP) below to proceed.
+            Use the verification code below or click the button to proceed.
           </p>
 
           <!-- OTP Box -->
@@ -62,7 +66,7 @@ export const getPasswordResetOtpEmailTemplate = (
             border-radius:12px;
             padding:24px;
             text-align:center;
-            margin-bottom:32px;
+            margin-bottom:28px;
           ">
             <p style="margin:0 0 10px; font-size:15px; color:#555;">
               Your verification code
@@ -84,13 +88,36 @@ export const getPasswordResetOtpEmailTemplate = (
             </p>
           </div>
 
+          <!-- CTA Button -->
+          <table width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:32px;">
+            <tr>
+              <td align="center">
+                <a href="${otpPageUrl}"
+                   class="cta-btn"
+                   style="
+                     display:inline-block;
+                     background:#0B63E5;
+                     color:#ffffff;
+                     text-decoration:none;
+                     font-size:16px;
+                     font-weight:600;
+                     padding:14px 28px;
+                     border-radius:8px;
+                     text-align:center;
+                   ">
+                  Verify OTP & Reset Password
+                </a>
+              </td>
+            </tr>
+          </table>
+
           <!-- Security Notes -->
           <h3 style="margin:0 0 12px; font-size:20px; color:#0B63E5;">Security Notice</h3>
 
           <ul style="font-size:15px; line-height:1.8; padding-left:20px; margin:0 0 26px;">
             <li>Do not share this OTP with anyone.</li>
-            <li>UniDesk will never ask you for your OTP via phone or email.</li>
-            <li>If you did not request a password reset, you can safely ignore this email.</li>
+            <li>UniDesk will never ask for your OTP via phone or email.</li>
+            <li>If you didn’t request this reset, you can safely ignore this email.</li>
           </ul>
 
           <p style="font-size:15px; margin:0;">

@@ -5,7 +5,7 @@ import axios from 'axios';
 @Injectable()
 export class RequestDemoGateWayService {
   async saveDemo(body: any, id?: string): Promise<ResponseDto<string>> {
-    let url = `${process.env.ENDPOINTURL}:${process.env.REQUESTDEMOPORT}/request-demo/save`;
+    let url = `${process.env.ENDPOINT_URL}:${process.env.REQUESTDEMOPORT}/request-demo/save`;
     if (id) {
       url += `/${id}`;
     }
@@ -15,7 +15,7 @@ export class RequestDemoGateWayService {
   }
 
   async getDemo(id?: string): Promise<ResponseDto<string>> {
-    let url = `${process.env.ENDPOINTURL}:${process.env.REQUESTDEMOPORT}/request-demo/get`;
+    let url = `${process.env.ENDPOINT_URL}:${process.env.REQUESTDEMOPORT}/request-demo/get`;
     if (id) {
       url += `/${id}`;
     }

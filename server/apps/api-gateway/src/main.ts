@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
 
   app.enableCors({
-    origin: process.env.FRONTENDURL,
+    origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,POST,PUT,DELETE,PATCH',
     credentials: true,
   });

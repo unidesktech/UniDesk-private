@@ -8,7 +8,7 @@ import axios, { AxiosResponse } from 'axios';
 export class AuthGatewayService {
   @Track()
   async addInitialUser(body: any): Promise<any> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.AUTHPORT}/auth/add-inital-user`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.AUTHPORT}/auth/add-inital-user`;
     const response = await axios.post(url, body);
 
     return response.data;
@@ -16,7 +16,7 @@ export class AuthGatewayService {
 
   @Track()
   async login(body: any, req: AuthenticatedRequest): Promise<ResponseDto<any>> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.AUTHPORT}/auth/login`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.AUTHPORT}/auth/login`;
 
     const forwardedIp = typeof req.ip === 'string' ? req.ip : '';
     const userAgent =
@@ -44,21 +44,21 @@ export class AuthGatewayService {
 
   @Track()
   async requestOtp(body: any): Promise<any> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.AUTHPORT}/auth/otp/request`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.AUTHPORT}/auth/otp/request`;
     const response = await axios.post(url, body);
     return response.data;
   }
 
   @Track()
   async verifyOtp(body: any): Promise<any> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.AUTHPORT}/auth/otp/verify`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.AUTHPORT}/auth/otp/verify`;
     const response = await axios.post(url, body);
     return response.data;
   }
 
   @Track()
   async resetPassword(body: any): Promise<any> {
-    const url = `${process.env.ENDPOINTURL}:${process.env.AUTHPORT}/auth/otp/reset-password`;
+    const url = `${process.env.ENDPOINT_URL}:${process.env.AUTHPORT}/auth/reset-password`;
     const response = await axios.post(url, body);
     return response.data;
   }

@@ -6,6 +6,8 @@ import { SchoolPreview } from "@/app/models/school.model";
 import { authPage } from "@/app/config/auth.config";
 import { login } from "@/app/services/auth.service";
 import { getFormSchema } from "@/app/utils/zod";
+import { useRouter } from "next/navigation";
+import { showToast } from "@/app/utils/toast";
 
 type FieldConfig = {
   name: string;
@@ -22,6 +24,8 @@ type ErrorType = Record<string, string | null>;
 
 const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
   const config = authPage();
+
+  const router = useRouter();
 
   const [formData, setFormData] = useState<FormDataType>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -91,9 +95,21 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
     if (disableButton) return;
     setIsLoading(true);
 
+    showToast("Signing in...", { isLoading: true, id: "login-toast" });
+
     const res = await login(formData);
     console.log(res);
-    // TODO: Add your API call here
+
+    if (res.success) {
+      showToast("Login successful!", "success", { id: "login-toast" });
+      router.push("/");
+    } else {
+      showToast(
+        res.message || "Login failed. Please try again.",
+        "error",
+        { id: "login-toast" }
+      );
+    }
 
     setIsLoading(false);
   };
@@ -209,6 +225,7 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
                 ))}
 
                 <button
+                onClick={() => router.push('/auth/forget-password')}
                   type="button"
                   className="text-slate-600 bg-primary-color cursor-pointer dark:text-slate-400 hover:opacity-80 transition-opacity"
                 >

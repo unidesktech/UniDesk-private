@@ -9,13 +9,22 @@ import { sendEmail } from '@app/common/utils/Email';
 import { getSuperAdminUserCreationEmail } from '@app/common/utils/templates/emails/User';
 import { LoginDto, RequestOTPDto } from '@app/dto';
 import { signAccessToken, signRefreshToken } from '@app/common/utils/Token';
-import { genCsrf, genJti } from '@app/common/utils/Crypto';
+import {
+  genCsrf,
+  generateOtp,
+  genJti,
+  hashOtp,
+} from '@app/common/utils/Crypto';
 import { AuthenticatedRequest } from '@app/dto/types/request';
 import { getPasswordResetOtpEmailTemplate } from '@app/common/utils/templates/emails/Otp';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   cookieOptions = {
     httpOnly: true,
@@ -252,7 +261,11 @@ export class AuthService {
     }
   }
 
-  async requestOtp(body: RequestOTPDto): Promise<ResponseDto<null>> {
+  async requestOtp(
+    body: RequestOTPDto,
+  ): Promise<
+    ResponseDto<{ otpId: string; email: string; schoolCode: string } | null>
+  > {
     try {
       const { schoolCode, email } = body;
 
@@ -299,50 +312,50 @@ export class AuthService {
         where: {
           user_email: email,
           is_used: false,
-          is_expired: false,
+          expires_at: {
+            gt: new Date(),
+          },
         },
-        data: { is_expired: true },
+        data: {
+          is_used: true,
+        },
       });
 
-      let otpValue = '';
-      let attempts = 0;
-      while (attempts < 5) {
-        otpValue = Math.floor(100000 + Math.random() * 900000).toString();
-        const existing = await this.prismaService.otp.findFirst({
-          where: {
-            otp: otpValue,
-            is_used: false,
-            is_expired: false,
-          },
-        });
-        if (!existing) break;
-        attempts++;
-      }
+      const otpValue = generateOtp();
+      const hashedOtp = hashOtp(otpValue);
 
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-      await this.prismaService.otp.create({
+      const otpRow = await this.prismaService.otp.create({
         data: {
           otp_id: randomUUID(),
-          otp: otpValue,
+          otp: hashedOtp,
           user_email: email,
           expires_at: expiresAt,
-          is_expired: false,
           is_used: false,
-          created_at: new Date(),
         },
       });
 
       await sendEmail(
-        user.email ?? '',
-        'UniDesk password reset request.',
-        getPasswordResetOtpEmailTemplate(otpValue),
+        user.email!,
+        'UniDesk password reset request',
+        getPasswordResetOtpEmailTemplate(
+          otpValue,
+          `${process.env.FRONTEND_URL}/auth/verify-otp?id=${otpRow.otp_id}&schoolCode=${schoolCode}&email=${encodeURIComponent(
+            email,
+          )}`,
+          5,
+        ),
       );
 
       return {
         success: true,
         message: 'OTP sent successfully',
-        data: null,
+        data: {
+          otpId: otpRow.otp_id,
+          email,
+          schoolCode,
+        },
       };
     } catch (error) {
       writeToConsole.error(`Error in requestOtp: ${String(error)}`);
@@ -365,7 +378,7 @@ export class AuthService {
       if (!schoolCode || !email || !otp) {
         return {
           success: false,
-          message: 'School code, email and otp are required',
+          message: 'School code, email and OTP are required',
           data: null,
         };
       }
@@ -398,12 +411,16 @@ export class AuthService {
         };
       }
 
+      const hashedOtp = hashOtp(otp);
+
       const otpRow = await this.prismaService.otp.findFirst({
         where: {
           user_email: email,
-          otp,
+          otp: hashedOtp,
           is_used: false,
-          is_expired: false,
+          expires_at: {
+            gt: new Date(),
+          },
         },
         orderBy: { created_at: 'desc' },
       });
@@ -411,20 +428,7 @@ export class AuthService {
       if (!otpRow) {
         return {
           success: false,
-          message: 'Invalid OTP',
-          data: null,
-        };
-      }
-
-      if (otpRow.expires_at < new Date()) {
-        await this.prismaService.otp.update({
-          where: { otp_id: otpRow.otp_id },
-          data: { is_expired: true },
-        });
-
-        return {
-          success: false,
-          message: 'OTP expired',
+          message: 'Invalid or expired OTP',
           data: null,
         };
       }
@@ -434,7 +438,14 @@ export class AuthService {
         data: { is_used: true },
       });
 
-      const token = otpRow.otp_id;
+      const token = this.jwtService.sign(
+        {
+          sub: user.user_id,
+          email: user.email,
+          purpose: 'PASSWORD_RESET',
+        },
+        { expiresIn: '5m' },
+      );
 
       return {
         success: true,
@@ -458,6 +469,8 @@ export class AuthService {
     try {
       const { token, password } = body;
 
+      console.log(token, password)
+
       if (!token || !password) {
         return {
           success: false,
@@ -466,11 +479,11 @@ export class AuthService {
         };
       }
 
-      const otpRow = await this.prismaService.otp.findUnique({
-        where: { otp_id: token },
-      });
+      let payload: { sub: string; email: string; purpose: string };
 
-      if (!otpRow || otpRow.is_expired || !otpRow.is_used) {
+      try {
+        payload = this.jwtService.verify(token);
+      } catch {
         return {
           success: false,
           message: 'Invalid or expired token',
@@ -478,9 +491,18 @@ export class AuthService {
         };
       }
 
+      if (payload.purpose !== 'PASSWORD_RESET') {
+        return {
+          success: false,
+          message: 'Invalid token purpose',
+          data: null,
+        };
+      }
+
       const user = await this.prismaService.users.findFirst({
         where: {
-          email: otpRow.user_email,
+          user_id: payload.sub,
+          email: payload.email,
           is_deleted: false,
         },
       });
@@ -493,9 +515,9 @@ export class AuthService {
         };
       }
 
-      const samePassword = await bcrypt.compare(password, user.password_hash);
+      const isSamePassword = await bcrypt.compare(password, user.password_hash);
 
-      if (samePassword) {
+      if (isSamePassword) {
         return {
           success: false,
           message: 'New password cannot be same as old password',
@@ -512,11 +534,6 @@ export class AuthService {
           password_hash: newHash,
           updated_at: new Date(),
         },
-      });
-
-      await this.prismaService.otp.update({
-        where: { otp_id: otpRow.otp_id },
-        data: { is_expired: true },
       });
 
       return {

@@ -12,6 +12,8 @@ import { HelpModal } from "@/app/components/Modals/school-code-help";
 import { isValidSchoolCode } from "@/app/services/school.service";
 import SchoolPreviewCard from "./school-preview";
 import { SchoolPreview } from "@/app/models/school.model";
+import { useAppDispatch } from "@/app/store/hooks";
+import { setSchool } from "@/app/store/app.slice";
 
 const SchoolCodePage = ({
   schoolData,
@@ -22,6 +24,9 @@ const SchoolCodePage = ({
   setShowLogin: Dispatch<SetStateAction<boolean>>;
   setSchoolData: Dispatch<SetStateAction<SchoolPreview | null>>
 }) => {
+
+  const dispatch = useAppDispatch();
+
   const [schoolCode, setSchoolCode] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState("");
@@ -72,9 +77,8 @@ const SchoolCodePage = ({
   const validateSchoolCode = async (schoolCode: string): Promise<boolean> => {
     const res = await isValidSchoolCode(schoolCode);
 
-    console.log(res, "response")
-
     if (res.success) {
+      dispatch(setSchool({...res.data , code: schoolCode}));
       setSchoolData({...res.data , code: schoolCode});
       setError('')
     }

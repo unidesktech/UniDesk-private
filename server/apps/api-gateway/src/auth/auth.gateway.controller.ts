@@ -48,7 +48,7 @@ export class AuthGatewayController {
     return this.authGateWayService.verifyOtp(body);
   }
 
-  @Post('otp/reset-password')
+  @Post('reset-password')
   @Track()
   resetPassword(@Body() body: any) {
     return this.authGateWayService.resetPassword(body);
