@@ -210,9 +210,24 @@ model users {
   user_preferences       user_preferences?
   user_roles             user_roles[]
   school                 schools?                @relation(fields: [school_id], references: [school_id])
-
-  student_profiles student_profiles?
-  parent_profiles  parent_profiles?
+  user_roles             user_roles[]
+  user_preferences       user_preferences?
+  user_onboarding_status user_onboarding_status?
+  // auth_tokens  auth_tokens[]
+  // otp          otp[]
+  // activity_logs activity_logs[]
+  // doubt_replies doubt_replies[]
+  // assignment_comments assignment_comments[]
+  // fcm_tokens   fcm_tokens[]
+  // notification_logs notification_logs[]
+  // presence     presence?
+  // messages_sent messages[] @relation("MessageSender")
+  // ptm_notes_teacher ptm_notes[] @relation("PTMNotesTeacher")
+  // ptm_bookings_parent ptm_bookings[] @relation("PTMParent")
+  // student_profiles student_profiles?
+  // teacher_profiles teacher_profiles?
+  // parent_profiles parent_profiles?
+  authTokens             auth_tokens[]
 
   @@schema("unidesk")
 }
@@ -294,6 +309,35 @@ model user_roles {
   @@unique([user_id, role_id], name: "ux_user_role_per_school")
   @@index([user_id])
   @@index([role_id])
+  @@schema("unidesk")
+}
+
+model auth_tokens {
+  token_id String @id @default(uuid()) @db.Uuid
+  user_id  String @db.Uuid
+
+  refresh_token String
+  user_agent    String?
+  ip_address    String?
+  expires_at    DateTime?
+  revoked       Boolean   @default(false)
+  created_at    DateTime  @default(now())
+
+  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@schema("unidesk")
+}
+
+model otp {
+  otp_id     String   @id @db.Uuid
+  otp        String
+  user_email String
+  expires_at DateTime
+  is_expired Boolean  @default(false)
+  is_used    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@index([user_email])
   @@schema("unidesk")
 }
 

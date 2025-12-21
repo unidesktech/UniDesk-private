@@ -7,10 +7,21 @@ import { randomUUID, randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '@app/common/utils/Email';
 import { getSuperAdminUserCreationEmail } from '@app/common/utils/templates/emails/User';
+import { LoginDto, RequestOTPDto } from '@app/dto';
+import { signAccessToken, signRefreshToken } from '@app/common/utils/Token';
+import { genCsrf, genJti } from '@app/common/utils/Crypto';
+import { AuthenticatedRequest } from '@app/dto/types/request';
+import { getPasswordResetOtpEmailTemplate } from '@app/common/utils/templates/emails/Otp';
 
 @Injectable()
 export class AuthService {
   constructor(private prismaService: PrismaService) {}
+
+  cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict' as const,
+  };
 
   async addInitialUser(
     body: SchoolBasicInfoDTO,
@@ -30,8 +41,9 @@ export class AuthService {
         };
       }
 
+      const plainPassword = randomBytes(6).toString('hex');
+
       const user = await this.prismaService.$transaction(async (prisma) => {
-        const plainPassword = randomBytes(6).toString('hex');
         const saltRounds = parseInt(process.env.SALT_ROUNDS ?? '10', 10);
         const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
         const prefix = (body.school_code ?? '').slice(0, -4);
@@ -114,7 +126,7 @@ export class AuthService {
             'Super-Admin',
             body.name,
             user.user_code,
-            user.password_hash ?? '',
+            plainPassword ?? '',
             user.email ?? '',
             user.phone ?? '',
             user.name ?? '',
@@ -133,6 +145,390 @@ export class AuthService {
       return {
         success: false,
         message: 'Login failed',
+        data: null,
+      };
+    }
+  }
+
+  async login(
+    dto: LoginDto,
+    req: AuthenticatedRequest,
+  ): Promise<ResponseDto<any>> {
+    try {
+      const { schoolCode, emailOrUid, password } = dto;
+
+      const school = await this.prismaService.schools.findFirst({
+        where: {
+          school_code: schoolCode,
+        },
+      });
+
+      if (!school) {
+        return {
+          success: false,
+          message: 'Invalid school code',
+          data: null,
+        };
+      }
+
+      const user = await this.prismaService.users.findFirst({
+        where: {
+          OR: [{ email: emailOrUid }, { user_code: emailOrUid }],
+          AND: [{ school_id: school.school_id }],
+          is_deleted: false,
+        },
+      });
+
+      if (!user || !user.password_hash) {
+        return {
+          success: false,
+          message: 'User not found',
+          data: null,
+        };
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password_hash);
+      if (!isMatch) {
+        return {
+          success: false,
+          message: 'Invalid credentials',
+          data: null,
+        };
+      }
+
+      const ip = req.ip;
+      const ua = req.headers['user-agent'] || '';
+
+      const jti = genJti();
+      const refreshToken = signRefreshToken({ userId: user.user_id, jti });
+      const accessToken = signAccessToken({
+        userId: user.user_id,
+        email: user.email,
+      });
+      const csrf = genCsrf();
+
+      try {
+        await this.prismaService.auth_tokens.create({
+          data: {
+            token_id: randomUUID(),
+            user_id: user.user_id,
+            refresh_token: refreshToken,
+            user_agent: ua,
+            ip_address: ip,
+            revoked: false,
+            expires_at: new Date(Date.now() + 30 * 86400000),
+            created_at: new Date(),
+          },
+        });
+      } catch (e) {
+        writeToConsole.error(`auth_tokens insert error: ${String(e)}`);
+      }
+
+      return {
+        success: true,
+        message: 'Login successful',
+        data: {
+          user_id: user.user_id,
+          name: user.name,
+          email: user.email,
+          user_code: user.user_code,
+          accessToken,
+          csrf,
+        },
+        cookies: [
+          `accessToken=${accessToken}; HttpOnly; Path=/; Max-Age=600`,
+          `refreshToken=${refreshToken}; HttpOnly; Path=/; Max-Age=2592000`,
+          `csrfToken=${csrf}; Path=/`,
+        ],
+      };
+    } catch (error) {
+      writeToConsole.error(`Login Error: ${String(error)}`);
+
+      return {
+        success: false,
+        message: 'Something went wrong during login',
+        data: null,
+      };
+    }
+  }
+
+  async requestOtp(body: RequestOTPDto): Promise<ResponseDto<null>> {
+    try {
+      const { schoolCode, email } = body;
+
+      if (!schoolCode || !email) {
+        return {
+          success: false,
+          message: 'School code and email are required',
+          data: null,
+        };
+      }
+
+      const school = await this.prismaService.schools.findFirst({
+        where: {
+          school_code: schoolCode,
+          is_deleted: false,
+        },
+      });
+
+      if (!school) {
+        return {
+          success: false,
+          message: 'Invalid school code',
+          data: null,
+        };
+      }
+
+      const user = await this.prismaService.users.findFirst({
+        where: {
+          school_id: school.school_id,
+          email,
+          is_deleted: false,
+        },
+      });
+
+      if (!user) {
+        return {
+          success: false,
+          message: 'User not found for this school',
+          data: null,
+        };
+      }
+
+      await this.prismaService.otp.updateMany({
+        where: {
+          user_email: email,
+          is_used: false,
+          is_expired: false,
+        },
+        data: { is_expired: true },
+      });
+
+      let otpValue = '';
+      let attempts = 0;
+      while (attempts < 5) {
+        otpValue = Math.floor(100000 + Math.random() * 900000).toString();
+        const existing = await this.prismaService.otp.findFirst({
+          where: {
+            otp: otpValue,
+            is_used: false,
+            is_expired: false,
+          },
+        });
+        if (!existing) break;
+        attempts++;
+      }
+
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+
+      await this.prismaService.otp.create({
+        data: {
+          otp_id: randomUUID(),
+          otp: otpValue,
+          user_email: email,
+          expires_at: expiresAt,
+          is_expired: false,
+          is_used: false,
+          created_at: new Date(),
+        },
+      });
+
+      await sendEmail(
+        user.email ?? '',
+        'UniDesk password reset request.',
+        getPasswordResetOtpEmailTemplate(otpValue),
+      );
+
+      return {
+        success: true,
+        message: 'OTP sent successfully',
+        data: null,
+      };
+    } catch (error) {
+      writeToConsole.error(`Error in requestOtp: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to generate OTP',
+        data: null,
+      };
+    }
+  }
+
+  async verifyOtp(body: {
+    schoolCode: string;
+    email: string;
+    otp: string;
+  }): Promise<ResponseDto<{ token: string } | null>> {
+    try {
+      const { schoolCode, email, otp } = body;
+
+      if (!schoolCode || !email || !otp) {
+        return {
+          success: false,
+          message: 'School code, email and otp are required',
+          data: null,
+        };
+      }
+
+      const school = await this.prismaService.schools.findFirst({
+        where: { school_code: schoolCode, is_deleted: false },
+      });
+
+      if (!school) {
+        return {
+          success: false,
+          message: 'Invalid school code',
+          data: null,
+        };
+      }
+
+      const user = await this.prismaService.users.findFirst({
+        where: {
+          school_id: school.school_id,
+          email,
+          is_deleted: false,
+        },
+      });
+
+      if (!user) {
+        return {
+          success: false,
+          message: 'User not found for this school',
+          data: null,
+        };
+      }
+
+      const otpRow = await this.prismaService.otp.findFirst({
+        where: {
+          user_email: email,
+          otp,
+          is_used: false,
+          is_expired: false,
+        },
+        orderBy: { created_at: 'desc' },
+      });
+
+      if (!otpRow) {
+        return {
+          success: false,
+          message: 'Invalid OTP',
+          data: null,
+        };
+      }
+
+      if (otpRow.expires_at < new Date()) {
+        await this.prismaService.otp.update({
+          where: { otp_id: otpRow.otp_id },
+          data: { is_expired: true },
+        });
+
+        return {
+          success: false,
+          message: 'OTP expired',
+          data: null,
+        };
+      }
+
+      await this.prismaService.otp.update({
+        where: { otp_id: otpRow.otp_id },
+        data: { is_used: true },
+      });
+
+      const token = otpRow.otp_id;
+
+      return {
+        success: true,
+        message: 'OTP verified successfully',
+        data: { token },
+      };
+    } catch (error) {
+      writeToConsole.error(`Error in verifyOtp: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to verify OTP',
+        data: null,
+      };
+    }
+  }
+
+  async resetPassword(body: {
+    token: string;
+    password: string;
+  }): Promise<ResponseDto<null>> {
+    try {
+      const { token, password } = body;
+
+      if (!token || !password) {
+        return {
+          success: false,
+          message: 'Token and new password are required',
+          data: null,
+        };
+      }
+
+      const otpRow = await this.prismaService.otp.findUnique({
+        where: { otp_id: token },
+      });
+
+      if (!otpRow || otpRow.is_expired || !otpRow.is_used) {
+        return {
+          success: false,
+          message: 'Invalid or expired token',
+          data: null,
+        };
+      }
+
+      const user = await this.prismaService.users.findFirst({
+        where: {
+          email: otpRow.user_email,
+          is_deleted: false,
+        },
+      });
+
+      if (!user || !user.password_hash) {
+        return {
+          success: false,
+          message: 'User not found',
+          data: null,
+        };
+      }
+
+      const samePassword = await bcrypt.compare(password, user.password_hash);
+
+      if (samePassword) {
+        return {
+          success: false,
+          message: 'New password cannot be same as old password',
+          data: null,
+        };
+      }
+
+      const saltRounds = parseInt(process.env.SALT_ROUNDS ?? '10', 10);
+      const newHash = await bcrypt.hash(password, saltRounds);
+
+      await this.prismaService.users.update({
+        where: { user_id: user.user_id },
+        data: {
+          password_hash: newHash,
+          updated_at: new Date(),
+        },
+      });
+
+      await this.prismaService.otp.update({
+        where: { otp_id: otpRow.otp_id },
+        data: { is_expired: true },
+      });
+
+      return {
+        success: true,
+        message: 'Password reset successfully',
+        data: null,
+      };
+    } catch (error) {
+      writeToConsole.error(`Error in resetPassword: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to reset password',
         data: null,
       };
     }

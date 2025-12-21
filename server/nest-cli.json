@@ -36,6 +36,15 @@
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
     },
+    "commons": {
+      "type": "application",
+      "root": "apps/commons",
+      "entryFile": "main",
+      "sourceRoot": "apps/commons/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/commons/tsconfig.app.json"
+      }
+    },
     "dto": {
       "type": "library",
       "root": "libs/dto",
