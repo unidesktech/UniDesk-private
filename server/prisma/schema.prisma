@@ -224,9 +224,9 @@ model users {
   // messages_sent messages[] @relation("MessageSender")
   // ptm_notes_teacher ptm_notes[] @relation("PTMNotesTeacher")
   // ptm_bookings_parent ptm_bookings[] @relation("PTMParent")
-  // student_profiles student_profiles?
+   student_profiles student_profiles?
   // teacher_profiles teacher_profiles?
-  // parent_profiles parent_profiles?
+   parent_profiles parent_profiles?
   authTokens             auth_tokens[]
 
   @@schema("unidesk")
