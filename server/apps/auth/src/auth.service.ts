@@ -469,8 +469,6 @@ export class AuthService {
     try {
       const { token, password } = body;
 
-      console.log(token, password)
-
       if (!token || !password) {
         return {
           success: false,
