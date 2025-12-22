@@ -206,11 +206,8 @@ model users {
   comments               String?
   created_at             DateTime                @default(now())
   updated_at             DateTime                @default(now())
-  user_onboarding_status user_onboarding_status?
-  user_preferences       user_preferences?
   user_roles             user_roles[]
   school                 schools?                @relation(fields: [school_id], references: [school_id])
-  user_roles             user_roles[]
   user_preferences       user_preferences?
   user_onboarding_status user_onboarding_status?
   // auth_tokens  auth_tokens[]
@@ -229,6 +226,7 @@ model users {
    parent_profiles parent_profiles?
   authTokens             auth_tokens[]
 
+  @@unique([email, school_id])
   @@schema("unidesk")
 }
 
