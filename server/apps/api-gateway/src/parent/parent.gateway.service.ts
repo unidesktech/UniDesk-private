@@ -3,18 +3,16 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
-export class StudentGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.STUDENTPORT}/student`;
-  async saveStudent(body: any): Promise<ResponseDto<string>> {
-    const response = await axios.post<ResponseDto<string>>(
-      `${this.baseUrl}/student`,
-      body,
-    );
+export class ParentGatewayService {
+  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.PARENTPORT}/student`;
+  
+  async saveParent(body: any): Promise<ResponseDto<string>> {
+    const response = await axios.post<ResponseDto<string>>(`${this.baseUrl}/parent`, body);
 
     return response.data;
   }
 
-  async getAllStudents(params?: {
+  async getAllParent(params?: {
     page?: number;
     limit?: number;
   }): Promise<ResponseDto<any>> {
@@ -28,13 +26,13 @@ export class StudentGatewayService {
   }
 
   // Get student by ID
-  async getStudentById(id: string): Promise<ResponseDto<any>> {
+  async getParentById(id: string): Promise<ResponseDto<any>> {
     const response = await axios.get<ResponseDto<any>>(`${this.baseUrl}/${id}`);
     return response.data;
   }
 
   // Soft delete student by ID
-  async softDeleteStudent(
+  async softDeleteParent(
     id: string,
     body: { reason: string },
   ): Promise<ResponseDto<null>> {

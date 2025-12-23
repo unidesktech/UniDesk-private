@@ -444,3 +444,73 @@ model student_parent_map {
   @@unique([student_id, parent_id])
   @@schema("unidesk")
 }
+model subjects {
+  subject_id String @id @default(uuid()) @db.Uuid
+  school_id  String @db.Uuid
+  year_id    String @db.Uuid
+
+  name     String
+  code     String
+  category String?
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  created_by String?
+  updated_at DateTime @updatedAt
+  updated_by String?
+
+  class_subjects class_subjects[]
+
+  schools         schools         @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  academic_years  academic_years  @relation(fields: [year_id], references: [year_id], onDelete: Cascade)
+
+  @@unique([school_id, year_id, name])
+  @@schema("unidesk")
+}
+
+model class_subjects {
+  class_subject_id String @id @default(uuid()) @db.Uuid
+  class_id         String @db.Uuid
+  subject_id       String @db.Uuid
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  created_by String?
+  updated_at DateTime @updatedAt
+  updated_by String?
+
+  subjects subjects @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+  classes  classes  @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+
+  teacher_subjects teacher_subjects[]
+
+  @@unique([class_id, subject_id])
+  @@schema("unidesk")
+}
+
+model teacher_subjects {
+  teacher_subject_id String @id @default(uuid()) @db.Uuid
+  teacher_id         String @db.Uuid
+  class_subject_id   String @db.Uuid
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  created_by String?
+  updated_at DateTime @updatedAt
+  updated_by String?
+
+  teacher_profiles teacher_profiles @relation(fields: [teacher_id], references: [teacher_id], onDelete: Cascade)
+  class_subjects   class_subjects   @relation(fields: [class_subject_id], references: [class_subject_id], onDelete: Cascade)
+
+  @@unique([teacher_id, class_subject_id])
+  @@schema("unidesk")
+}

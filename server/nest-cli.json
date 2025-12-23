@@ -98,6 +98,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/student/tsconfig.app.json"
       }
+    },
+    "subject": {
+      "type": "application",
+      "root": "apps/subject",
+      "entryFile": "main",
+      "sourceRoot": "apps/subject/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/subject/tsconfig.app.json"
+      }
     }
   }
 }

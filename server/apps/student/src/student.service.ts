@@ -106,11 +106,13 @@ export class StudentService {
                   occupation: parent.occupation,
                   annual_income: parent.annual_income,
                   is_deleted: false,
+                  relation_to_student: parent.relation,
                 },
                 create: {
                   parent_id: randomUUID(),
                   user_id: parentUser.user_id,
                   occupation: parent.occupation,
+                  relation_to_student: parent.relation,
                   annual_income: parent.annual_income,
                   created_by: creator,
                   updated_by: creator,
@@ -252,29 +254,87 @@ export class StudentService {
     };
   }
   async softDelete(
-    id: string,
+    studentId: string,
     body: { reason: string },
+    updatedBy?: string,
   ): Promise<ResponseDto<null>> {
-    const exists = await this.prismaService.student_profiles.findFirst({
+    const student = await this.prismaService.student_profiles.findFirst({
       where: {
-        student_id: id,
+        student_id: studentId,
         is_deleted: false,
+      },
+      include: {
+        users: true,
+        student_parent_map: {
+          where: { is_deleted: false },
+          include: {
+            parent_profiles: true,
+          },
+        },
       },
     });
 
-    if (!exists) {
+    if (!student) {
       throw new NotFoundException('Student not found or already deleted');
     }
 
-    await this.prismaService.student_profiles.update({
-      where: {
-        student_id: id,
-      },
-      data: {
-        is_deleted: true,
-        comments: body.reason,
-        updated_at: new Date(),
-      },
+    await this.prismaService.$transaction(async (prisma) => {
+      await prisma.student_profiles.update({
+        where: { student_id: studentId },
+        data: {
+          is_deleted: true,
+          comments: body.reason,
+          updated_by: updatedBy,
+        },
+      });
+      await prisma.users.update({
+        where: { user_id: student.user_id },
+        data: {
+          is_deleted: true,
+          comments: body.reason,
+          updated_by: updatedBy,
+        },
+      });
+      for (const map of student.student_parent_map) {
+        const parentId = map.parent_id;
+        const activeMappings = await prisma.student_parent_map.findMany({
+          where: {
+            parent_id: parentId,
+            is_deleted: false,
+            student_profiles: {
+              is_deleted: false,
+            },
+          }, 
+          select: { student_parent_map_id: true },
+        });
+        await prisma.student_parent_map.update({
+          where: {
+            student_parent_map_id: map.student_parent_map_id,
+          },
+          data: {
+            is_deleted: true,
+            updated_by: updatedBy,
+          },
+        });
+        if (activeMappings.length === 1) {
+          await prisma.parent_profiles.update({
+            where: { parent_id: parentId },
+            data: {
+              is_deleted: true,
+              comments: body.reason,
+              updated_by: updatedBy,
+            },
+          });
+          await prisma.users.update({
+            where: { user_id: map.parent_profiles.user_id },
+            data: {
+              is_deleted: true,
+              comments: body.reason,
+              updated_by: updatedBy,
+            },
+          });
+        }
+      }
     });
 
     return {

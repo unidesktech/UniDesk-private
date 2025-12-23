@@ -41,12 +41,17 @@ export class StudentController {
   }
 
   @Get(':id')
-  async getById(@Param('id') id: string,) {
+  async getById(@Param('id') id: string) {
     return this.studentService.getById(id);
   }
 
   @Post(':id/delete')
-  async softDelete(@Param('id') id: string, @Body() body: { reason: string }) {
-    return this.studentService.softDelete(id, body);
+  async softDelete(
+    @Param('id') id: string,
+    @Body() body: { reason: string },
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const updatedBy = req.user?.user_id;
+    return this.studentService.softDelete(id, body, updatedBy);
   }
 }

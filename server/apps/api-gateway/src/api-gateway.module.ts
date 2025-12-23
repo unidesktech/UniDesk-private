@@ -11,6 +11,8 @@ import { commonGateWayService } from './common/common.gateway.service';
 import { CommonGatewayController } from './common/common.gateway.controller';
 import { StudentGatewayService } from './student/student.gateway.service';
 import { StudentGatewayController } from './student/student.gateway.controller';
+import { ParentGatewayController } from './parent/parent.gateway.controller';
+import { ParentGatewayService } from './parent/parent.gateway.service';
 
 @Module({
   imports: [
@@ -25,7 +27,9 @@ import { StudentGatewayController } from './student/student.gateway.controller';
     RequestDemoGatewayController,
     SchoolGatewayController,
     CommonGatewayController,
-    StudentGatewayController
+    StudentGatewayController,
+    ParentGatewayController,
+    SubjectGat
   ],
   providers: [
     AuthGatewayService,
@@ -33,6 +37,7 @@ import { StudentGatewayController } from './student/student.gateway.controller';
     SchoolGatewayService,
     commonGateWayService,
     StudentGatewayService,
+    ParentGatewayService,
   ],
 })
 export class ApiGatewayModule implements NestModule {
