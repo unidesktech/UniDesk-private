@@ -222,7 +222,7 @@ model users {
   // ptm_notes_teacher ptm_notes[] @relation("PTMNotesTeacher")
   // ptm_bookings_parent ptm_bookings[] @relation("PTMParent")
    student_profiles student_profiles?
-  // teacher_profiles teacher_profiles?
+  teacher_profiles teacher_profiles?
    parent_profiles parent_profiles?
   authTokens             auth_tokens[]
 
@@ -444,3 +444,68 @@ model student_parent_map {
   @@unique([student_id, parent_id])
   @@schema("unidesk")
 }
+
+model teacher_profiles {
+  teacher_id String @id @default(uuid()) @db.Uuid
+  user_id    String @unique @db.Uuid
+
+  employee_code       String?
+  qualification       String?
+  joining_date        DateTime?
+  experience_in_years Int?
+
+  created_at DateTime @default(now())
+  created_by String?  @db.Uuid
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.Uuid
+
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@schema("unidesk")
+}
+
+model classes {
+  class_id  String @id @default(uuid()) @db.Uuid
+  school_id String @db.Uuid
+  year_id   String @db.Uuid
+
+  name String
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  created_by String?  @db.Uuid
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.Uuid
+
+  sections sections[]
+
+  @@schema("unidesk")
+}
+
+model sections {
+  section_id String @id @default(uuid()) @db.Uuid
+  class_id   String @db.Uuid
+
+  name String
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  created_by String?  @db.Uuid
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.Uuid
+
+  classes classes @relation(fields: [class_id], references: [class_id])
+
+  @@schema("unidesk")
+}
+
+
