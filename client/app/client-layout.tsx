@@ -3,10 +3,11 @@
 import React from 'react'
 import Header from './components/Header/Header';
 import { usePathname } from 'next/navigation';
-import { generalRoutes } from './config/header-footer.config';
+import { generalRoutes, offerRoutes } from './config/header-footer.config';
 import Footer from './components/Footer/Footer';
 import { Provider } from 'react-redux';
 import { store } from './store';
+import { OfferFooter } from './components/Footer/Offer-footer';
 
 const ClientLayout = ({children}: Readonly<{
   children: React.ReactNode;
@@ -14,9 +15,12 @@ const ClientLayout = ({children}: Readonly<{
     const pathName = usePathname()
   return (
     <Provider store={store}>
-    {generalRoutes.includes(pathName) && <Header />}
-    {children}
-    {generalRoutes.includes(pathName) && <Footer />}
+    {(generalRoutes.includes(pathName) || offerRoutes.includes(pathName)) && (
+        <Header />
+      )}
+      {children}
+      {generalRoutes.includes(pathName) && <Footer />}
+      {offerRoutes.includes(pathName) && <OfferFooter />}
     </Provider>
   )
 }

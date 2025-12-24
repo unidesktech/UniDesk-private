@@ -434,3 +434,42 @@ model otp {
   @@index([user_email])
   @@schema("unidesk")
 }
+
+model FaqCategory {
+  faq_id     String    @id @unique @default(uuid())
+  name       String
+  desc       String
+  icon       String
+  color      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  articles   Article[]
+
+  @@schema("unidesk")
+}
+
+model FaqTopic {
+  topic_id String    @id @unique @default(uuid())
+  name     String
+  icon     String
+  articles Article[]
+
+  @@schema("unidesk")
+}
+
+model Article {
+  article_id String   @id @default(uuid())
+  question   String
+  answer     String
+  points     String[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  category_id String
+  category    FaqCategory @relation(fields: [category_id], references: [faq_id])
+
+  topic_id String
+  topic    FaqTopic @relation(fields: [topic_id], references: [topic_id])
+
+  @@schema("unidesk")
+}

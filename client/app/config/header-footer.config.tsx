@@ -1,7 +1,8 @@
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 import Logo from "../assets/UniDesk_Logo.png";
 
-export const generalRoutes = ['/', '/home', "/about", "/feature", "/pricing", "/demo"]
+export const generalRoutes = ['/', '/home', "/about", "/pricing", "/demo", "/faq"]
+export const offerRoutes = ["/feature"]
 
 export const navConfig = () => {
   return {
