@@ -27,6 +27,13 @@ export class StudentGatewayService {
     return response.data;
   }
 
+  async getStudentStats(): Promise<ResponseDto<string>> {
+    const response = await axios.get<ResponseDto<string>>(
+      `${this.baseUrl}/stats`,
+    );
+    return response.data;
+  }
+
   // Get student by ID
   async getStudentById(id: string): Promise<ResponseDto<any>> {
     const response = await axios.get<ResponseDto<any>>(`${this.baseUrl}/${id}`);

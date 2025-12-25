@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
-export class SubjectGatewayService{
+export class SubjectGatewayService {
   private baseUrl = `${process.env.ENDPOINTURL}:${process.env.SUBJPORT}/subject`;
   async saveSubject(body: any): Promise<ResponseDto<string>> {
     const response = await axios.post<ResponseDto<string>>(
@@ -23,6 +23,13 @@ export class SubjectGatewayService{
       {
         params,
       },
+    );
+    return response.data;
+  }
+
+  async getSubjectStats(): Promise<ResponseDto<string>> {
+    const response = await axios.get<ResponseDto<string>>(
+      `${this.baseUrl}/stats`,
     );
     return response.data;
   }

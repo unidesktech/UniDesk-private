@@ -26,8 +26,12 @@ export class TeacherGatewayService {
   }
 
   async getTeacherById(id: string): Promise<ResponseDto<any>> {
-    const response = await axios.get<ResponseDto<any>>(
-      `${this.baseUrl}/${id}`,
+    const response = await axios.get<ResponseDto<any>>(`${this.baseUrl}/${id}`);
+    return response.data;
+  }
+  async getTeacherStats(): Promise<ResponseDto<string>> {
+    const response = await axios.get<ResponseDto<string>>(
+      `${this.baseUrl}/stats`,
     );
     return response.data;
   }

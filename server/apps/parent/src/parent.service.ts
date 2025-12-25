@@ -139,10 +139,7 @@ export class ParentService {
       ]);
 
     return {
-      totalParents,
-      activeParents,
-      inactiveParents,
-      newThisWeek,
+      data: { totalParents, activeParents, inactiveParents, newThisWeek },
     };
   }
 

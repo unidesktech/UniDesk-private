@@ -27,6 +27,11 @@ export class ParentGatewayController {
     });
   }
 
+  @Get('stats')
+  getStats(){
+    return this.parentGatewayService.getParentStats()
+  }
+
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.parentGatewayService.getParentById(id);

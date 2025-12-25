@@ -17,6 +17,11 @@ export class StudentGatewayController {
     });
   }
 
+  @Get('stats')
+  getStats() {
+    return this.studentGatewayService.getStudentStats();
+  }
+
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.studentGatewayService.getStudentById(id);

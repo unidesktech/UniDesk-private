@@ -4,10 +4,13 @@ import axios from 'axios';
 
 @Injectable()
 export class ParentGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.PARENTPORT}/student`;
-  
+  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.PARENTPORT}/parent`;
+
   async saveParent(body: any): Promise<ResponseDto<string>> {
-    const response = await axios.post<ResponseDto<string>>(`${this.baseUrl}/parent`, body);
+    const response = await axios.post<ResponseDto<string>>(
+      `${this.baseUrl}/save`,
+      body,
+    );
 
     return response.data;
   }
@@ -21,6 +24,13 @@ export class ParentGatewayService {
       {
         params,
       },
+    );
+    return response.data;
+  }
+
+  async getParentStats(): Promise<ResponseDto<string>> {
+    const response = await axios.get<ResponseDto<string>>(
+      `${this.baseUrl}/stats`,
     );
     return response.data;
   }

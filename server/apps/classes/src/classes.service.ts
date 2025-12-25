@@ -179,11 +179,13 @@ export class ClassesService {
       : 0;
 
     return {
-      totalClasses,
-      activeClasses,
-      inactiveClasses,
-      totalSections,
-      avgSectionsPerClass: parseFloat(avgSectionsPerClass.toFixed(2)),
+      data: {
+        totalClasses,
+        activeClasses,
+        inactiveClasses,
+        totalSections,
+        avgSectionsPerClass: parseFloat(avgSectionsPerClass.toFixed(2)),
+      },
     };
   }
 

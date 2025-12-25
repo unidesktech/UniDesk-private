@@ -134,10 +134,7 @@ export class TeacherService {
       ]);
 
     return {
-      total,
-      active,
-      onLeave,
-      newThisMonth,
+      data: { total, active, onLeave, newThisMonth },
     };
   }
 

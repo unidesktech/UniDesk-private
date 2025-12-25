@@ -3,9 +3,7 @@ import { TeacherGatewayService } from './teacher.gateway.service';
 
 @Controller('teacher')
 export class TeacherGatewayController {
-  constructor(
-    private readonly teacherGatewayService: TeacherGatewayService,
-  ) {}
+  constructor(private readonly teacherGatewayService: TeacherGatewayService) {}
 
   @Post('/save')
   save(@Body() body: any) {
@@ -18,6 +16,11 @@ export class TeacherGatewayController {
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });
+  }
+
+  @Get('stats')
+  getStats() {
+    return this.teacherGatewayService.getTeacherStats();
   }
 
   @Get(':id')

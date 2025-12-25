@@ -2,29 +2,34 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { SubjectGatewayService } from './subject.gateway.service';
 
 @Controller('subject')
-export class StudentGatewayController {
-  constructor(private readonly studentGatewayService: SubjectGatewayService) {}
+export class SubjectGatewayController {
+  constructor(private readonly subjectGatewayService: SubjectGatewayService) {}
 
   @Post('/save')
   save(@Body() body: any) {
-    return this.studentGatewayService.saveSubject(body);
+    return this.subjectGatewayService.saveSubject(body);
   }
 
   @Get('getAll')
   getAll(@Query('page') page?: number, @Query('limit') limit?: number) {
-    return this.studentGatewayService.getAllSubject({
+    return this.subjectGatewayService.getAllSubject({
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
     });
   }
 
+  @Get('stats')
+  getStats() {
+    return this.subjectGatewayService.getSubjectStats();
+  }
+
   @Get(':id')
   getById(@Param('id') id: string) {
-    return this.studentGatewayService.getSubjectById(id);
+    return this.subjectGatewayService.getSubjectById(id);
   }
 
   @Post(':id/delete')
   softDelete(@Param('id') id: string, @Body() body: { reason: string }) {
-    return this.studentGatewayService.softDeleteSubject(id, body);
+    return this.subjectGatewayService.softDeleteSubject(id, body);
   }
 }

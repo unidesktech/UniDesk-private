@@ -191,8 +191,11 @@ export const getManagementStats = async (entity: string) => {
 };
 
 // export const getManagementStats = async (entity: string) => {
-//   return await axios.get( `${process.env.NEXT_PUBLIC_APIENDPOINT}/${entity.toLowerCase()}/stats`)
-// }
+//   const data = await axios.get(
+//     `${process.env.NEXT_PUBLIC_APIENDPOINT}/${entity.toLowerCase()}/stats`
+//   );
+//   return data.data;
+// };
 
 // export const getManagementList = async (
 //   entity: string,
@@ -227,4 +230,3 @@ export const getManagementList = async (
     total: dummy.length,
   };
 };
-

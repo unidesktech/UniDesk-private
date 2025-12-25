@@ -196,10 +196,7 @@ export class StudentService {
       ]);
 
     return {
-      total,
-      active,
-      inactive,
-      newThisWeek,
+      data: { total, active, inactive, newThisWeek },
     };
   }
 

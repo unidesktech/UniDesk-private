@@ -122,11 +122,13 @@ export class SubjectService {
         : 0;
 
     return {
-      totalSubjects,
-      activeSubjects,
-      inactiveSubjects,
-      newThisWeek,
-      avgTeachersPerSubject: parseFloat(avgTeachersPerSubject.toFixed(2)),
+      data: {
+        totalSubjects,
+        activeSubjects,
+        inactiveSubjects,
+        newThisWeek,
+        avgTeachersPerSubject: parseFloat(avgTeachersPerSubject.toFixed(2)),
+      },
     };
   }
 
