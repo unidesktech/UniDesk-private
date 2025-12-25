@@ -37,8 +37,8 @@ export interface FieldProps {
   min?: number | string;
   max?: number | string;
   options?: DropDownOption[];
-  fieldName?: string;
-  collectionName?: string;
+  columnName?: string;
+  tableName?: string;
   isDistinct?: boolean;
   dependancy?: string[];
 }

@@ -9,8 +9,8 @@ export const useHandleAction = () => {
   const handleAction = (
     action: "navigate" | "modal",
     actionValue: any,
-    actionUse: "edit" | "add" | "delete",
-    data: any
+    data: any,
+    actionUse?: "edit" | "add" | "delete",
   ) => {
     switch (action) {
       case "navigate":

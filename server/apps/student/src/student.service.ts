@@ -158,70 +158,123 @@ export class StudentService {
       };
     }
   }
+  async getStats(schoolId: string) {
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - 7);
+
+    const [total, active, inactive, newThisWeek] =
+      await this.prismaService.$transaction([
+        this.prismaService.student_profiles.count({
+          where: {
+            is_deleted: false,
+            users: { school_id: schoolId },
+          },
+        }),
+        this.prismaService.student_profiles.count({
+          where: {
+            is_deleted: false,
+            users: { school_id: schoolId, status: 'active', is_deleted: false },
+          },
+        }),
+        this.prismaService.student_profiles.count({
+          where: {
+            is_deleted: false,
+            users: {
+              school_id: schoolId,
+              status: 'inactive',
+              is_deleted: false,
+            },
+          },
+        }),
+        this.prismaService.student_profiles.count({
+          where: {
+            created_at: { gte: startOfWeek },
+            is_deleted: false,
+            users: { school_id: schoolId },
+          },
+        }),
+      ]);
+
+    return {
+      total,
+      active,
+      inactive,
+      newThisWeek,
+    };
+  }
 
   async getAll(params: {
     page?: number;
     limit?: number;
     schoolId?: string;
   }): Promise<ResponseDto<any>> {
-    const { page = 1, limit, schoolId } = params;
-    if (!limit) {
-      const data = await this.prismaService.student_profiles.findMany({
-        where: {
-          is_deleted: false,
-          ...(schoolId && {
-            users: {
-              school_id: schoolId,
-              is_deleted: false,
-            },
-          }),
-        },
-        orderBy: { created_at: 'desc' },
-        include: { users: true },
-      });
+    try {
+      const { page = 1, limit, schoolId } = params;
+      if (!limit) {
+        const data = await this.prismaService.student_profiles.findMany({
+          where: {
+            is_deleted: false,
+            ...(schoolId && {
+              users: {
+                school_id: schoolId,
+                is_deleted: false,
+              },
+            }),
+          },
+          orderBy: { created_at: 'desc' },
+          include: { users: true },
+        });
+
+        return {
+          success: true,
+          message: 'All students fetched',
+          data: {
+            records: data,
+            total: data.length,
+          },
+        };
+      }
+
+      const skip = (page - 1) * limit;
+      const [data, total] = await Promise.all([
+        this.prismaService.student_profiles.findMany({
+          where: {
+            is_deleted: false,
+            ...(schoolId && {
+              users: {
+                school_id: schoolId,
+                is_deleted: false,
+              },
+            }),
+          },
+          skip,
+          take: limit,
+          orderBy: { created_at: 'desc' },
+        }),
+        this.prismaService.student_profiles.count({
+          where: { is_deleted: false },
+        }),
+      ]);
 
       return {
         success: true,
-        message: 'All students fetched',
+        message: 'Students fetched successfully',
         data: {
-          records: data,
-          total: data.length,
+          data,
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
         },
       };
+    } catch (error) {
+      writeToConsole.error(`Error fetching students: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to fetch students',
+        data: null,
+      };
     }
-
-    const skip = (page - 1) * limit;
-    const [data, total] = await Promise.all([
-      this.prismaService.student_profiles.findMany({
-        where: {
-          is_deleted: false,
-          ...(schoolId && {
-            users: {
-              school_id: schoolId,
-              is_deleted: false,
-            },
-          }),
-        },
-        skip,
-        take: limit,
-        orderBy: { created_at: 'desc' },
-      }),
-      this.prismaService.student_profiles.count({
-        where: { is_deleted: false },
-      }),
-    ]);
-
-    return {
-      success: true,
-      message: 'Students fetched successfully',
-      data: {
-        data,
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
   }
   async getById(id: string): Promise<ResponseDto<any>> {
     const student = await this.prismaService.student_profiles.findFirst({
@@ -304,7 +357,7 @@ export class StudentService {
             student_profiles: {
               is_deleted: false,
             },
-          }, 
+          },
           select: { student_parent_map_id: true },
         });
         await prisma.student_parent_map.update({

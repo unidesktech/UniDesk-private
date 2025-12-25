@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ParentService } from './parent.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
 
@@ -30,6 +39,12 @@ export class ParentController {
       limit: limit ? Number(limit) : undefined,
       schoolId,
     });
+  }
+  @Get('stats')
+  async getStats(@Req() req: AuthenticatedRequest) {
+    const schoolId = req?.user?.school_id;
+    if (!schoolId) throw new UnauthorizedException('School ID missing');
+    return this.parentService.getStats(schoolId);
   }
 
   @Get(':id')

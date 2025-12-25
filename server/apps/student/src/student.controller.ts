@@ -6,6 +6,7 @@ import {
   Post,
   Query,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
@@ -26,6 +27,14 @@ export class StudentController {
     const creator = req.user?.user_id;
     return this.studentService.save(body, schoolId, creator);
   }
+
+  @Get('stats')
+  async getStats(@Req() req: AuthenticatedRequest) {
+    const schoolId = req?.user?.school_id;
+    if (!schoolId) throw new UnauthorizedException('School ID missing');
+    return this.studentService.getStats(schoolId);
+  }
+
   @Get('getAll')
   async getAll(
     @Query('page') page?: number,

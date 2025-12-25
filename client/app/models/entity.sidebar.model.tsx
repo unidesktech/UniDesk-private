@@ -8,7 +8,7 @@ export interface SidebarAction {
   className?: string;
   action?: ActionType;
   actionValue?: string;
-  actionUse?: ActionUse;
+  actionUse: ActionUse;
 }
 
 export interface SidebarField {
@@ -34,16 +34,13 @@ export interface SidebarDocument {
   date: string;
 }
 
-export type SidebarTabType =
-  | "fields"
-  | "details"
-  | "activity"
-  | "documents";
+export type SidebarTabType = "fields" | "details" | "activity" | "documents";
 
 export interface SidebarTab {
   value: string;
   label: string;
   type: SidebarTabType;
+  api: any;
 
   fields?: SidebarField[];
   stats?: SidebarStat[];

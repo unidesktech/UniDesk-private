@@ -84,6 +84,63 @@ export class TeacherService {
     }
   }
 
+  async getStats(schoolId: string) {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const [total, active, onLeave, newThisMonth] =
+      await this.prismaService.$transaction([
+        this.prismaService.teacher_profiles.count({
+          where: {
+            is_deleted: false,
+            users: {
+              school_id: schoolId,
+              is_deleted: false,
+            },
+          },
+        }),
+
+        this.prismaService.teacher_profiles.count({
+          where: {
+            is_deleted: false,
+            users: {
+              school_id: schoolId,
+              status: 'active',
+              is_deleted: false,
+            },
+          },
+        }),
+        this.prismaService.teacher_profiles.count({
+          where: {
+            is_deleted: false,
+            users: {
+              school_id: schoolId,
+              status: 'on_leave',
+              is_deleted: false,
+            },
+          },
+        }),
+        this.prismaService.teacher_profiles.count({
+          where: {
+            is_deleted: false,
+            created_at: { gte: startOfMonth },
+            users: {
+              school_id: schoolId,
+              is_deleted: false,
+            },
+          },
+        }),
+      ]);
+
+    return {
+      total,
+      active,
+      onLeave,
+      newThisMonth,
+    };
+  }
+
   async getAll(params: {
     page?: number;
     limit?: number;

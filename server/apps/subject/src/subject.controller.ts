@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { SubjectService } from './subject.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
 import { AuthGuard } from '@app/common/guards/authguard';
@@ -16,8 +26,17 @@ export class SubjectController {
   async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
     const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
+    if (!schoolId) throw new UnauthorizedException('School ID missing');
     return this.subjectService.save(body, schoolId, creator);
   }
+
+  @Get('stats')
+  async getStats(@Req() req: AuthenticatedRequest) {
+    const schoolId = req?.user?.school_id;
+    if (!schoolId) throw new UnauthorizedException('School ID missing');
+    return this.subjectService.getStats(schoolId);
+  }
+
   @Get('getAll')
   async getAll(
     @Query('page') page?: number,
@@ -25,6 +44,7 @@ export class SubjectController {
     @Req() req?: AuthenticatedRequest,
   ) {
     const schoolId = req?.user?.school_id;
+    if (!schoolId) throw new UnauthorizedException('School ID missing');
     return this.subjectService.getAll({
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,

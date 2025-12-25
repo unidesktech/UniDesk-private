@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { FieldProps } from "@/app/models/form.model";
-import { fetchDistinctValues } from "../services/utility.service";
 import { DropDownOption } from "../models/dropdown.modal";
+import { getDistinctValues } from "../services/common.service";
+import { FieldProps } from "../models/form.model";
 
 export const useDropdownOptions = (
   field: FieldProps,
@@ -9,7 +9,15 @@ export const useDropdownOptions = (
   page = 1,
   mode = "default"
 ) => {
-  const { options: staticOptions, isDistinct, dependancy, type } = field;
+  const {
+    options: staticOptions,
+    isDistinct,
+    dependancy,
+    type,
+    tableName,
+    columnName,
+  } = field;
+
   const [options, setOptions] = useState<DropDownOption[]>(staticOptions || []);
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -17,7 +25,6 @@ export const useDropdownOptions = (
     if (type !== "dropdown") return;
 
     const fetchOptions = async () => {
-      // Check dependencies
       if (dependancy?.length) {
         const hasParentValue = dependancy.every((dep) => formData[dep]);
         if (!hasParentValue && !isDistinct) {
@@ -26,8 +33,26 @@ export const useDropdownOptions = (
           return;
         }
       }
-      if (isDistinct || (dependancy?.length && dependancy.every((dep) => formData[dep]))) {
-        const data = await fetchDistinctValues(field, formData, page, mode);
+      if (isDistinct) {
+        if (!tableName || !columnName) {
+          console.warn("Missing tableName or columnName for distinct dropdown");
+          setOptions([]);
+          setIsDisabled(true);
+          return;
+        }
+
+        const filters =
+          dependancy?.reduce((acc, dep) => {
+            if (formData[dep]) acc[dep] = formData[dep];
+            return acc;
+          }, {} as Record<string, any>) ?? {};
+
+        const data = await getDistinctValues({
+          tableName,
+          columnName,
+          filters,
+        });
+
         setOptions(data || []);
         setIsDisabled(!data || data.length === 0);
         return;

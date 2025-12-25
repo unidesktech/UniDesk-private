@@ -190,6 +190,30 @@ export const getManagementStats = async (entity: string) => {
   };
 };
 
+// export const getManagementStats = async (entity: string) => {
+//   return await axios.get( `${process.env.NEXT_PUBLIC_APIENDPOINT}/${entity.toLowerCase()}/stats`)
+// }
+
+// export const getManagementList = async (
+//   entity: string,
+//   page = 1,
+//   limit = 10,
+//   filters: Record<string, any> = {},
+// ) => {
+//   const res = await axios.get(
+//     `${process.env.NEXT_PUBLIC_APIENDPOINT}/${entity.toLowerCase()}/getAll`,
+//     {
+//       params: {
+//         page,
+//         limit,
+//         ...filters,
+//       },
+//     },
+//   );
+
+//   return res;
+// };
+
 export const getManagementList = async (
   entity: string,
   page = 1,

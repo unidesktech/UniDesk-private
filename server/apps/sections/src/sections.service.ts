@@ -13,44 +13,46 @@ export class SectionsService {
   async save(
     body: any,
     creator?: string,
-    schoolId?: string,
+    // schoolId?: string,
   ): Promise<ResponseDto<{ section_id: string } | null>> {
     try {
-      const sectionId = await this.prismaService.$transaction(async (prisma) => {
-        // validate class
-        const cls = await prisma.classes.findFirst({
-          where: {
-            class_id: body.section.class_id,
-            is_deleted: false,
-          },
-        });
+      const sectionId = await this.prismaService.$transaction(
+        async (prisma) => {
+          // validate class
+          const cls = await prisma.classes.findFirst({
+            where: {
+              class_id: body.section.class_id,
+              is_deleted: false,
+            },
+          });
 
-        if (!cls) {
-          throw new NotFoundException('Class not found');
-        }
+          if (!cls) {
+            throw new NotFoundException('Class not found');
+          }
 
-        const section = await prisma.sections.upsert({
-          where: {
-            section_id: body.section?.section_id ?? '',
-          },
-          update: {
-            name: body.section.name,
-            class_id: body.section.class_id, 
-            is_active: body.section.is_active,
-            updated_by: creator,
-          },
-          create: {
-            section_id: randomUUID(),
-            name: body.section.name,
-            class_id: body.section.class_id,
-            is_active: body.section.is_active ?? true,
-            created_by: creator,
-            updated_by: creator,
-          },
-        });
+          const section = await prisma.sections.upsert({
+            where: {
+              section_id: body.section?.section_id ?? '',
+            },
+            update: {
+              name: body.section.name,
+              class_id: body.section.class_id,
+              is_active: body.section.is_active,
+              updated_by: creator,
+            },
+            create: {
+              section_id: randomUUID(),
+              name: body.section.name,
+              class_id: body.section.class_id,
+              is_active: body.section.is_active ?? true,
+              created_by: creator,
+              updated_by: creator,
+            },
+          });
 
-        return section.section_id;
-      });
+          return section.section_id;
+        },
+      );
 
       return {
         success: true,
@@ -107,10 +109,10 @@ export class SectionsService {
     };
   }
 
- 
   async softDelete(
     id: string,
     body: { reason: string },
+    updatedBy?: string,
   ): Promise<ResponseDto<null>> {
     const exists = await this.prismaService.sections.findFirst({
       where: { section_id: id, is_deleted: false },
@@ -126,6 +128,7 @@ export class SectionsService {
         is_deleted: true,
         comments: body.reason,
         updated_at: new Date(),
+        updated_by: updatedBy,
       },
     });
 

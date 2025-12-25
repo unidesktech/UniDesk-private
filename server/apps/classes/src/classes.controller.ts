@@ -1,4 +1,13 @@
-import { Body,Controller,Get,Param,Post,Query,Req,} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ClassesService } from './classes.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
 
@@ -26,6 +35,12 @@ export class ClassesController {
       schoolId,
     });
   }
+  @Get('stats')
+  async getStats(@Req() req: AuthenticatedRequest) {
+    const schoolId = req?.user?.school_id;
+    if (!schoolId) throw new UnauthorizedException('School ID missing');
+    return this.classService.getStats(schoolId);
+  }
 
   @Get(':id')
   async getById(@Param('id') id: string) {
@@ -36,7 +51,9 @@ export class ClassesController {
   async softDelete(
     @Param('id') id: string,
     @Body() body: { reason: string },
+    @Req() req: AuthenticatedRequest,
   ) {
-    return this.classService.softDelete(id, body);
+    const updatedBy = req.user?.user_id;
+    return this.classService.softDelete(id, body, updatedBy);
   }
 }

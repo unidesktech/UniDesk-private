@@ -39,7 +39,6 @@ export class ClassesService {
           },
         });
 
-       
         if (Array.isArray(body.sections)) {
           await prisma.sections.updateMany({
             where: {
@@ -52,7 +51,6 @@ export class ClassesService {
             },
           });
 
-        
           await prisma.sections.updateMany({
             where: {
               section_id: { in: body.sections },
@@ -87,23 +85,105 @@ export class ClassesService {
     limit?: number;
     schoolId?: string;
   }): Promise<ResponseDto<any>> {
-    const { page = 1, limit, schoolId } = params;
+    try {
+      const { page = 1, limit, schoolId } = params;
 
-    const where = {
-      is_deleted: false,
-      ...(schoolId && { school_id: schoolId }),
-    };
+      if (!limit) {
+        const data = await this.prismaService.classes.findMany({
+          where: {
+            is_deleted: false,
+            ...(schoolId && { school_id: schoolId }),
+          },
+          include: { sections: true },
+          orderBy: { created_at: 'desc' },
+        });
 
-    const data = await this.prismaService.classes.findMany({
-      where,
-      include: { sections: true },
-      orderBy: { created_at: 'desc' },
+        return {
+          success: true,
+          message: 'Classes fetched successfully',
+          data: {
+            records: data,
+            total: data.length,
+          },
+        };
+      }
+
+      const skip = (page - 1) * limit;
+      const [data, total] = await Promise.all([
+        this.prismaService.classes.findMany({
+          where: {
+            is_deleted: false,
+            ...(schoolId && { school_id: schoolId }),
+          },
+          skip,
+          take: limit,
+          include: { sections: true },
+          orderBy: { created_at: 'desc' },
+        }),
+        this.prismaService.classes.count({
+          where: {
+            is_deleted: false,
+            ...(schoolId && { school_id: schoolId }),
+          },
+        }),
+      ]);
+
+      return {
+        success: true,
+        message: 'Classes fetched successfully',
+        data: {
+          records: data,
+          total,
+          page,
+          limit,
+        },
+      };
+    } catch (error) {
+      writeToConsole.error(`Error fetching classes: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to fetch classes',
+        data: null,
+      };
+    }
+  }
+
+  async getStats(schoolId: string) {
+    const [totalClasses, activeClasses, inactiveClasses, classesWithSections] =
+      await this.prismaService.$transaction([
+        this.prismaService.classes.count({
+          where: { is_deleted: false, school_id: schoolId },
+        }),
+        this.prismaService.classes.count({
+          where: { is_deleted: false, is_active: true, school_id: schoolId },
+        }),
+        this.prismaService.classes.count({
+          where: { is_deleted: false, is_active: false, school_id: schoolId },
+        }),
+        this.prismaService.classes.findMany({
+          where: { is_deleted: false, school_id: schoolId },
+          include: {
+            sections: {
+              where: { is_deleted: false },
+              select: { section_id: true },
+            },
+          },
+        }),
+      ]);
+    let totalSections = 0;
+    classesWithSections.forEach((cls) => {
+      totalSections += cls.sections.length;
     });
+    const avgSectionsPerClass = classesWithSections.length
+      ? totalSections / classesWithSections.length
+      : 0;
 
     return {
-      success: true,
-      message: 'Classes fetched successfully',
-      data: { records: data, total: data.length },
+      totalClasses,
+      activeClasses,
+      inactiveClasses,
+      totalSections,
+      avgSectionsPerClass: parseFloat(avgSectionsPerClass.toFixed(2)),
     };
   }
 
@@ -120,10 +200,10 @@ export class ClassesService {
     return { success: true, message: 'Class fetched successfully', data: cls };
   }
 
-  
   async softDelete(
     id: string,
     body: { reason: string },
+    updatedBy?: string,
   ): Promise<ResponseDto<null>> {
     const exists = await this.prismaService.classes.findFirst({
       where: { class_id: id, is_deleted: false },
@@ -134,23 +214,23 @@ export class ClassesService {
     }
 
     await this.prismaService.$transaction(async (prisma) => {
-  
       await prisma.sections.updateMany({
         where: { class_id: id, is_deleted: false },
         data: {
           is_deleted: true,
           comments: `Deleted due to class deletion: ${body.reason}`,
           updated_at: new Date(),
+          updated_by: updatedBy,
         },
       });
 
-      
       await prisma.classes.update({
         where: { class_id: id },
         data: {
           is_deleted: true,
           comments: body.reason,
           updated_at: new Date(),
+          updated_by: updatedBy,
         },
       });
     });

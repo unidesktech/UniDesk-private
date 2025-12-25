@@ -8,9 +8,9 @@ export class SectionsController {
 
   @Post('save')
   async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
-    const schoolId = req.user?.school_id;
+    // const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
-    return this.sectionService.save(body, creator, schoolId);
+    return this.sectionService.save(body, creator);
   }
 
   @Get('getAll')
@@ -36,7 +36,9 @@ export class SectionsController {
   async softDelete(
     @Param('id') id: string,
     @Body() body: { reason: string },
+     @Req() req: AuthenticatedRequest
   ) {
-    return this.sectionService.softDelete(id, body);
+    const updatedBy = req.user?.user_id;
+    return this.sectionService.softDelete(id, body, updatedBy);
   }
 }

@@ -36,7 +36,7 @@ model schools {
   config                     Json?
   created_at                 DateTime                     @default(now())
   created_by                 String?
-  updated_at                 DateTime
+  updated_at                 DateTime  @updatedAt
   updated_by                 String?
   is_active                  Boolean                      @default(true)
   is_deleted                 Boolean                      @default(false)
@@ -52,6 +52,8 @@ model schools {
   school_settings            school_settings[]
   school_subscription_status school_subscription_status[]
   users                      users[]
+  subjects                   subjects[]
+  academic_years             academic_years[]
 
   @@schema("unidesk")
 }
@@ -461,6 +463,7 @@ model teacher_profiles {
 
   is_deleted Boolean @default(false)
   comments   String?
+  teacher_subjects   teacher_subjects []
 
   users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
@@ -484,6 +487,7 @@ model classes {
   updated_by String?  @db.Uuid
 
   sections sections[]
+  class_subjects class_subjects []
 
   @@schema("unidesk")
 }
@@ -507,7 +511,6 @@ model sections {
 
   @@schema("unidesk")
 }
-
 
 model subjects {
   subject_id String @id @default(uuid()) @db.Uuid
@@ -577,5 +580,29 @@ model teacher_subjects {
   class_subjects   class_subjects   @relation(fields: [class_subject_id], references: [class_subject_id], onDelete: Cascade)
 
   @@unique([teacher_id, class_subject_id])
+  @@schema("unidesk")
+}
+
+model academic_years {
+  year_id   String @id @db.Uuid
+  school_id String @db.Uuid
+
+  name       String
+  start_date DateTime @db.Date
+  end_date   DateTime @db.Date
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  created_by String?  @db.Uuid
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.Uuid
+  school   schools   @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  subjects subjects[]
+
+  @@unique([school_id, name])
+  @@map("academic_years")
   @@schema("unidesk")
 }

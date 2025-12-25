@@ -17,9 +17,11 @@ import {
 } from "@/app/services/management.service";
 import dynamic from "next/dynamic";
 import TableComponent from "@/app/components/Table/table-component";
-import { Skeleton } from "@/app/components/ui/skeleton";
 import StatCardSkeleton from "@/app/components/SkeletonLoader/stat-card-skeleton";
-const EntitySidebar = dynamic(() => import("./entity-side"), { ssr: false });
+const EntitySidebar = dynamic(
+  () => import("@/app/components/EntitySidebar/entity-side"),
+  { ssr: false }
+);
 
 const page = () => {
   const params = useParams();
@@ -34,11 +36,7 @@ const page = () => {
   const { header, cards, filters, table, sidebar } = entityConfig;
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [selected, setSelected] = useState<Record<string, any> | null>(null);
-  const [filter, setFilter] = useState<Record<string, string>>({
-    status: "all",
-    class: "all",
-    sortBy: "name",
-  });
+  const [filter, setFilter] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [limit, setLimit] = useState<number>(5);
   const [page, setPage] = useState<number>(1);
@@ -78,8 +76,8 @@ const page = () => {
 
     const fetchTable = async () => {
       const res = await getManagementList(entityType, page, limit, {
-        // status: status !== "all" ? status : undefined,
-        // class: classFilter !== "all" ? classFilter : undefined,
+        searchQuery,
+        ...filter,
       });
       setTableData(res);
     };
@@ -176,9 +174,9 @@ const page = () => {
                       containerStyle: {
                         className: "flex-col items-start justify-start gap-2",
                       },
-                      cardStyle:{
-                        className: "min-h-[163px]"
-                      }
+                      cardStyle: {
+                        className: "min-h-[163px]",
+                      },
                     }}
                   />
                 )}
