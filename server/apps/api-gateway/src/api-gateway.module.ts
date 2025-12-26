@@ -9,10 +9,19 @@ import { SchoolGatewayController } from './school/school.gateway.controller';
 import { SchoolGatewayService } from './school/school.gateway.service';
 import { commonGateWayService } from './common/common.gateway.service';
 import { CommonGatewayController } from './common/common.gateway.controller';
+import { RedisModule } from './redis/redis.module';
+import { MeGatewayController } from './me/me.gateway.controller';
+import { MeService } from './me/me.gateway.service';
+import { PrismaModule } from '@app/prisma';
+import { SidebarService } from './me/sidebar.service';
+import { PermissionResolverService } from '@app/common/permissions/permission-resolver.service';
+import { RedisCacheService } from './redis/redis-cache.service';
 
 @Module({
   imports: [
     CommonModule,
+    PrismaModule,
+    RedisModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -23,12 +32,17 @@ import { CommonGatewayController } from './common/common.gateway.controller';
     RequestDemoGatewayController,
     SchoolGatewayController,
     CommonGatewayController,
+    MeGatewayController,
   ],
   providers: [
     AuthGatewayService,
     RequestDemoGateWayService,
     SchoolGatewayService,
     commonGateWayService,
+    MeService,
+    SidebarService,
+    PermissionResolverService,
+    RedisCacheService,
   ],
 })
 export class ApiGatewayModule implements NestModule {
