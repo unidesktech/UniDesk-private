@@ -30,25 +30,22 @@ model unidesk_users {
 }
 
 model schools {
-  school_id   String    @id @db.Uuid
-  school_code String    @unique
-  name        String
-  address     String?
-  phone       String?
-  email       String
-  website     String?
-  established DateTime?
-  config      Json?
-  created_at  DateTime  @default(now())
-  created_by  String?
-  updated_at  DateTime
-  updated_by  String?
-  is_active   Boolean   @default(true)
-  is_deleted  Boolean   @default(false)
-  comments    String?
-
-  // Relations
-
+  school_id                  String                       @id @db.Uuid
+  name                       String
+  address                    String?
+  phone                      String?
+  email                      String
+  config                     Json?
+  created_at                 DateTime                     @default(now())
+  created_by                 String?
+  updated_at                 DateTime                     @updatedAt
+  updated_by                 String?
+  is_active                  Boolean                      @default(true)
+  is_deleted                 Boolean                      @default(false)
+  comments                   String?
+  established                DateTime?
+  school_code                String                       @unique
+  website                    String?
   demo_requests              demo_requests[]
   school_pricing_plans       school_pricing_plans[]
   school_subscription_status school_subscription_status[]
@@ -57,6 +54,7 @@ model schools {
   school_settings            school_settings[]
   school_initial_setup       school_initial_setup?
   roles                      roles[]
+  school_modules             school_modules[]
   // activity_logs          activity_logs[]
   // academic_years         academic_years[]
   // period_templates       period_templates[]
@@ -278,28 +276,27 @@ model demo_requests {
 }
 
 model users {
-  user_id           String    @id @db.Uuid
-  school_id         String?   @db.Uuid
-  user_code         String    @unique
-  name              String?
-  email             String?
-  phone             String?
-  password_hash     String?
-  status            String?
-  last_login_at     DateTime?
-  profile_photo_url String?
-  config            Json?
-  created_by        String?
-  updated_by        String?
-  is_active         Boolean   @default(true)
-  is_deleted        Boolean   @default(false)
-  comments          String?
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @default(now())
-
-  // Relations
-  school                 schools?                @relation(fields: [school_id], references: [school_id])
+  user_id                String                  @id @db.Uuid
+  school_id              String?                 @db.Uuid
+  user_code              String                  @unique
+  name                   String?
+  email                  String?                 @unique
+  phone                  String?
+  password_hash          String?
+  status                 String?
+  last_login_at          DateTime?
+  profile_photo_url      String?
+  config                 Json?
+  created_by             String?
+  updated_by             String?
+  is_active              Boolean                 @default(true)
+  is_deleted             Boolean                 @default(false)
+  comments               String?
+  created_at             DateTime                @default(now())
+  updated_at             DateTime                @default(now())
   user_roles             user_roles[]
+  user_permissions       user_permissions[]
+  school                 schools?                @relation(fields: [school_id], references: [school_id])
   user_preferences       user_preferences?
   user_onboarding_status user_onboarding_status?
   // auth_tokens  auth_tokens[]
@@ -359,27 +356,61 @@ model user_preferences {
   is_active             Boolean  @default(true)
   is_deleted            Boolean  @default(false)
   comments              String?
-
-  user users? @relation(fields: [user_id], references: [user_id])
+  user                  users    @relation(fields: [user_id], references: [user_id])
 
   @@schema("unidesk")
 }
 
-model roles {
-  role_id     String   @id @db.Uuid
-  school_id   String?  @db.Uuid
-  name        String
-  description String?
-  created_at  DateTime
-  created_by  String?
-  updated_at  DateTime
-  updated_by  String?
-  is_active   Boolean  @default(true)
-  is_deleted  Boolean  @default(false)
-  comments    String?
+model modules {
+  module_id   String  @id @db.Uuid
+  module_key  String  @unique
+  module_name String
+  icon        String?
+  route       String?
+  order_no    Int?
 
-  school     schools?     @relation(fields: [school_id], references: [school_id])
-  user_roles user_roles[]
+  is_active Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  permissions    permissions[]
+  school_modules school_modules[]
+
+  @@schema("unidesk")
+}
+
+model school_modules {
+  school_module_id String  @id @db.Uuid
+  school_id        String  @db.Uuid
+  module_id        String  @db.Uuid
+  is_enabled       Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  school schools @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  module modules @relation(fields: [module_id], references: [module_id], onDelete: Cascade)
+
+  @@unique([school_id, module_id])
+  @@schema("unidesk")
+}
+
+model roles {
+  role_id          String             @id @db.Uuid
+  school_id        String?            @db.Uuid
+  name             String
+  description      String?
+  created_at       DateTime
+  created_by       String?
+  updated_at       DateTime
+  updated_by       String?
+  is_active        Boolean            @default(true)
+  is_deleted       Boolean            @default(false)
+  comments         String?
+  school           schools?           @relation(fields: [school_id], references: [school_id])
+  user_roles       user_roles[]
+  role_permissions role_permissions[]
 
   @@schema("unidesk")
 }
@@ -403,6 +434,68 @@ model user_roles {
   @@unique([user_id, role_id], name: "ux_user_role_per_school")
   @@index([user_id])
   @@index([role_id])
+  @@schema("unidesk")
+}
+
+model permissions {
+  permission_id  String  @id @db.Uuid
+  permission_key String
+  module_id      String  @db.Uuid
+  description    String?
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  module modules @relation(fields: [module_id], references: [module_id], onDelete: Cascade)
+
+  role_permissions role_permissions[]
+  user_permissions user_permissions[]
+
+  @@unique([permission_key, module_id])
+  @@schema("unidesk")
+}
+
+model role_permissions {
+  role_permission_id String  @id @db.Uuid
+  role_id            String  @db.Uuid
+  permission_id      String  @db.Uuid
+  is_allowed         Boolean @default(true)
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  role       roles       @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
+  permission permissions @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@schema("unidesk")
+}
+
+model user_permissions {
+  user_permission_id String  @id @db.Uuid
+  user_id            String  @db.Uuid
+  permission_id      String  @db.Uuid
+  is_allowed         Boolean @default(true)
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user       users       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  permission permissions @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+
+  @@unique([user_id, permission_id])
   @@schema("unidesk")
 }
 

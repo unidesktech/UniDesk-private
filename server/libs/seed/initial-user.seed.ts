@@ -1,15 +1,16 @@
+import {
+  ONBOARDING_ID,
+  PREF_ID,
+  ROLE_ID,
+  SCHOOL_ID,
+  USER_ID,
+  USER_ROLE_ID,
+} from './constants';
 import { prisma } from './prisma.client';
 import bcrypt from 'bcryptjs';
 
 export async function seedInitialSchoolUser() {
   console.log('🌱 Seeding initial school user (Super Admin)...');
-
-  const SCHOOL_ID = '00000000-0000-0000-0000-000000000001';
-  const USER_ID = '00000000-0000-0000-0000-000000000010';
-  const ROLE_ID = '00000000-0000-0000-0000-000000000020';
-  const USER_ROLE_ID = '00000000-0000-0000-0000-000000000030';
-  const ONBOARDING_ID = '00000000-0000-0000-0000-000000000040';
-  const PREF_ID = '00000000-0000-0000-0000-000000000050';
 
   const PASSWORD = 'Admin@123';
   const SALT_ROUNDS = 10;

@@ -1,14 +1,15 @@
+import {
+  PLAN_ID,
+  SCHOOL_CODE,
+  SCHOOL_ID,
+  SETTINGS_ID,
+  STATUS_ID,
+} from './constants';
 import { prisma } from './prisma.client';
 import { randomUUID } from 'crypto';
 
 export async function seedSchools() {
   console.log('🌱 Seeding schools...');
-
-  const SCHOOL_ID = '00000000-0000-0000-0000-000000000001';
-  const SCHOOL_CODE = 'UNIDESK_DEMO';
-  const PLAN_ID = '00000000-0000-0000-0000-000000000101';
-  const STATUS_ID = '00000000-0000-0000-0000-000000000102';
-  const SETTINGS_ID = '00000000-0000-0000-0000-000000000103';
 
   await prisma.$transaction(async (tx) => {
     const school = await tx.schools.upsert({
