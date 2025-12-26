@@ -16,6 +16,6 @@ async function bootstrap() {
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  await app.listen(process.env.APIGATEWAYPORT ?? 3001);
+  await app.listen(process.env.APIGATEWAY_PORT ?? 3001);
 }
 bootstrap();
