@@ -2,13 +2,17 @@ import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { ResponseDto } from '@app/dto/response.dto';
 import { SchoolBasicInfoDTO } from '@app/dto/school.dto';
 import { PrismaService } from '@app/prisma';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { randomUUID, randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '@app/common/utils/Email';
 import { getSuperAdminUserCreationEmail } from '@app/common/utils/templates/emails/User';
 import { LoginDto, RequestOTPDto } from '@app/dto';
-import { signAccessToken, signRefreshToken } from '@app/common/utils/Token';
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from '@app/common/utils/Token';
 import {
   genCsrf,
   generateOtp,
@@ -18,6 +22,7 @@ import {
 import { AuthenticatedRequest } from '@app/dto/types/request';
 import { getPasswordResetOtpEmailTemplate } from '@app/common/utils/templates/emails/Otp';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -256,6 +261,42 @@ export class AuthService {
       return {
         success: false,
         message: 'Something went wrong during login',
+        data: null,
+      };
+    }
+  }
+
+  async refresh(
+    res: Response,
+    refreshToken: string,
+  ): Promise<ResponseDto<any>> {
+    try {
+      const decoded = verifyRefreshToken(refreshToken);
+
+      const user = await this.prismaService.users.findFirst({
+        where: { user_id: decoded?.userId, is_deleted: false },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+
+      const newAccessToken = signAccessToken({
+        userId: user.user_id,
+        email: user.email,
+      });
+
+      res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+
+      return { success: true, message: 'Token refreshed', data: null };
+    } catch (error) {
+      writeToConsole.error(`Refresh Token Error: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to refresh token',
         data: null,
       };
     }

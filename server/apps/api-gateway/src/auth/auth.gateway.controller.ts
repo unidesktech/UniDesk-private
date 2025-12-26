@@ -36,6 +36,23 @@ export class AuthGatewayController {
     });
   }
 
+  @Post('refresh')
+  @Track()
+  async refresh(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+    const result = await this.authGateWayService.refresh(req);
+    if (Array.isArray(result.cookies)) {
+      for (const cookie of result.cookies) {
+        res.append('Set-Cookie', cookie);
+      }
+    }
+
+    res.json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  }
+
   @Post('otp/request')
   @Track()
   requestOtp(@Body() body: any) {

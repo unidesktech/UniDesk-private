@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Track } from '@app/common/logger/track.decorator';
 import { ResponseDto } from '@app/dto/response.dto';
@@ -22,6 +29,20 @@ export class AuthController {
     @Req() req: AuthenticatedRequest,
   ): Promise<ResponseDto<string | null> | null> {
     return await this.authService.login(body, req);
+  }
+
+  @Post('refresh')
+  @Track()
+  async refresh(
+    @Req() req: AuthenticatedRequest,
+    @Res() res: Response,
+  ): Promise<ResponseDto<string | null> | null> {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+    return await this.authService.refresh(res, refreshToken as string);
   }
 
   @Post('otp/request')
