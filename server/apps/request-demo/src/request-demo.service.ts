@@ -39,9 +39,7 @@ export class RequestDemoService {
         is_deleted: body.is_deleted ?? false,
       };
 
-      console.log(id, typeof id, 'id');
       if (!id) {
-        console.log(randomUUID(), 'randomUUID');
         await this.prisma.demo_requests.create({
           data: {
             ...data,
