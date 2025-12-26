@@ -17,10 +17,7 @@ export const PolicySectionRenderer = ({
 }: Props) => {
   const Heading = `h${Math.min(level, 6)}` as JSX.ElementType;
 
-  // 🔢 Build section number like "1.2.3"
   const sectionNumber = path.length > 0 ? path.map((p) => p + 1).join(".") : "";
-
-  console.log(path)
 
   return (
     <section id={section.id} className="mb-10 text-gray-900 scroll-mt-28">

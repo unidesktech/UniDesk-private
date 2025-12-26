@@ -98,7 +98,6 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
     showToast("Signing in...", { isLoading: true, id: "login-toast" });
 
     const res = await login(formData);
-    console.log(res);
 
     if (res.success) {
       showToast("Login successful!", "success", { id: "login-toast" });

@@ -9,7 +9,6 @@ export const login = async(data: Record<string,string>) => {
 
 export const sendResetLink = async(email: string, schoolCode: string) => {
     const res = await axios.post(`${process.env.NEXT_PUBLIC_APIENDPOINT}/auth/otp/request`, { email, schoolCode });
-    console.log(res.data)
     return res.data;
 }
 

@@ -24,8 +24,6 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({
   color,
   onClick,
   styles = {}
-}) => {
-  console.log("ContactUsCard color:", color);
   return (
     <Card
       className={`p-6 border gap-2 border-gray-200 hover:border-blue-300 hover:shadow-lg 
