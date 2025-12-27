@@ -8,6 +8,8 @@ import { login } from "@/app/services/auth.service";
 import { getFormSchema } from "@/app/utils/zod";
 import { useRouter } from "next/navigation";
 import { showToast } from "@/app/utils/toast";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/app/store/app.slice";
 
 type FieldConfig = {
   name: string;
@@ -26,6 +28,7 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
   const config = authPage();
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<FormDataType>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -101,6 +104,13 @@ const Login = ({ schoolData }: { schoolData: SchoolPreview | null }) => {
 
     if (res.success) {
       showToast("Login successful!", "success", { id: "login-toast" });
+      const userBasicInfo = {
+        user_id: res.data.user_id,
+        user_code: res.data.user_code,
+        name: res.data.name,
+        email: res.data.email,
+      }
+      dispatch(setUser(userBasicInfo))
       router.push("/");
     } else {
       showToast(

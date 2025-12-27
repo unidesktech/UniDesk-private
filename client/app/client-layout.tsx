@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { OfferFooter } from './components/Footer/Offer-footer';
+import Sidebar from './components/Sidebar/sidebar';
 
 const ClientLayout = ({children}: Readonly<{
   children: React.ReactNode;
@@ -18,6 +19,7 @@ const ClientLayout = ({children}: Readonly<{
     {(generalRoutes.includes(pathName) || offerRoutes.includes(pathName)) && (
         <Header />
       )}
+      {!(generalRoutes.includes(pathName) || offerRoutes.includes(pathName)) && <Sidebar />}
       {children}
       {generalRoutes.includes(pathName) && <Footer />}
       {offerRoutes.includes(pathName) && <OfferFooter />}
