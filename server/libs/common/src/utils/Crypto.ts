@@ -13,3 +13,7 @@ export const generateOtp = () =>
 
 export const hashOtp = (otp: string) =>
   crypto.createHash('sha256').update(otp).digest('hex');
+
+export function hashToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}

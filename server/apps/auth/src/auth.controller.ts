@@ -45,6 +45,12 @@ export class AuthController {
     return await this.authService.refresh(res, refreshToken as string);
   }
 
+  @Post('logout')
+  @Track()
+  async logout(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+    return await this.authService.logOut(req, res);
+  }
+
   @Post('otp/request')
   @Track()
   async requestOtp(

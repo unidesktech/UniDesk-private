@@ -3,10 +3,12 @@ import { ApiGatewayModule } from './api-gateway.module';
 import { AppLogger } from '@app/common';
 import { TrackInterceptor } from '@app/common/logger/track.interceptor';
 import { LoggingInterceptor } from '@app/common/logger/logging.interceptor';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
 
+  app.use(cookieParser());
   app.enableCors({
     origin: process.env.FRONTEND_URL,
     methods: 'GET,HEAD,POST,PUT,DELETE,PATCH',

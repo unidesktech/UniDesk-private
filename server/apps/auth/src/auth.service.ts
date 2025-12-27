@@ -18,6 +18,7 @@ import {
   generateOtp,
   genJti,
   hashOtp,
+  hashToken,
 } from '@app/common/utils/Crypto';
 import { AuthenticatedRequest } from '@app/dto/types/request';
 import { getPasswordResetOtpEmailTemplate } from '@app/common/utils/templates/emails/Otp';
@@ -210,6 +211,30 @@ export class AuthService {
         };
       }
 
+      const user_role = await this.prismaService.user_roles.findFirst({
+        where: { user_id: user.user_id },
+      });
+
+      if (!user_role) {
+        return {
+          success: false,
+          message: 'User has no role assigned',
+          data: null,
+        };
+      }
+
+      const role = await this.prismaService.roles.findFirst({
+        where: { role_id: user_role.role_id },
+      });
+
+      if (!role) {
+        return {
+          success: false,
+          message: "Assigned role doesn't exist",
+          data: null,
+        };
+      }
+
       const ip = req.ip;
       const ua = req.headers['user-agent'] || '';
 
@@ -226,12 +251,19 @@ export class AuthService {
           data: {
             token_id: randomUUID(),
             user_id: user.user_id,
-            refresh_token: refreshToken,
+            refresh_token: hashToken(refreshToken),
             user_agent: ua,
             ip_address: ip,
             revoked: false,
             expires_at: new Date(Date.now() + 30 * 86400000),
             created_at: new Date(),
+          },
+        });
+        await this.prismaService.refresh_tokens.create({
+          data: {
+            user_id: user.user_id,
+            token_hash: hashToken(refreshToken),
+            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
           },
         });
       } catch (e) {
@@ -246,7 +278,8 @@ export class AuthService {
           name: user.name,
           email: user.email,
           user_code: user.user_code,
-          accessToken,
+          profile_photo_url: user.profile_photo_url,
+          role: role?.name || 'User',
           csrf,
         },
         cookies: [
@@ -281,12 +314,55 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
+      const tokenHash = hashToken(refreshToken);
+
+      const storedToken = await this.prismaService.refresh_tokens.findFirst({
+        where: {
+          user_id: user.user_id,
+          token_hash: tokenHash,
+          revoked: false,
+          expires_at: { gt: new Date() },
+        },
+      });
+
+      if (!storedToken) {
+        await this.prismaService.refresh_tokens.updateMany({
+          where: { user_id: user.user_id },
+          data: { revoked: true },
+        });
+
+        throw new UnauthorizedException('Session compromised');
+      }
+
+      await this.prismaService.refresh_tokens.update({
+        where: { id: storedToken.id },
+        data: { revoked: true },
+      });
+
       const newAccessToken = signAccessToken({
         userId: user.user_id,
         email: user.email,
       });
 
+      const newRefreshToken = signRefreshToken({
+        userId: user.user_id,
+        jti: genJti(),
+      });
+
+      await this.prismaService.refresh_tokens.create({
+        data: {
+          user_id: user.user_id,
+          token_hash: hashToken(newRefreshToken),
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      });
+
       res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+
+      res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
         sameSite: 'lax',
       });
@@ -297,6 +373,37 @@ export class AuthService {
       return {
         success: false,
         message: 'Failed to refresh token',
+        data: null,
+      };
+    }
+  }
+
+  async logOut(req: AuthenticatedRequest, res: Response) {
+    try {
+      const refreshToken = req.cookies?.refreshToken;
+
+      if (refreshToken) {
+        await this.prismaService.refresh_tokens.updateMany({
+          where: {
+            token_hash: hashToken(refreshToken as string),
+          },
+          data: { revoked: true },
+        });
+      }
+
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken', { path: '/auth/refresh' });
+
+      return res.json({
+        success: true,
+        message: 'Logged out successfully',
+        data: null,
+      });
+    } catch (error) {
+      writeToConsole.error(`Logout Error: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to logout',
         data: null,
       };
     }

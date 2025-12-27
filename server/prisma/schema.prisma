@@ -314,6 +314,7 @@ model users {
   // teacher_profiles teacher_profiles?
   // parent_profiles parent_profiles?
   authTokens             auth_tokens[]
+  refreshTokens          refresh_tokens[]
 
   @@schema("unidesk")
 }
@@ -515,6 +516,20 @@ model auth_tokens {
   @@schema("unidesk")
 }
 
+model refresh_tokens {
+  id         String   @id @default(uuid())
+  user_id    String   @db.Uuid
+  token_hash String
+  expires_at DateTime
+  revoked    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@schema("unidesk")
+}
+
 model otp {
   otp_id     String   @id @db.Uuid
   otp        String
@@ -528,29 +543,29 @@ model otp {
   @@schema("unidesk")
 }
 
-model FaqCategory {
-  faq_id     String    @id @unique @default(uuid())
+model faq_categories {
+  faq_id     String     @id @unique @default(uuid())
   name       String
   desc       String
   icon       String
   color      String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  articles   Article[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  articles   articles[]
 
   @@schema("unidesk")
 }
 
-model FaqTopic {
-  topic_id String    @id @unique @default(uuid())
+model faq_topics {
+  topic_id String     @id @unique @default(uuid())
   name     String
   icon     String
-  articles Article[]
+  articles articles[]
 
   @@schema("unidesk")
 }
 
-model Article {
+model articles {
   article_id String   @id @default(uuid())
   question   String
   answer     String
@@ -559,10 +574,10 @@ model Article {
   updated_at DateTime @updatedAt
 
   category_id String
-  category    FaqCategory @relation(fields: [category_id], references: [faq_id])
+  category    faq_categories @relation(fields: [category_id], references: [faq_id])
 
   topic_id String
-  topic    FaqTopic @relation(fields: [topic_id], references: [topic_id])
+  topic    faq_topics @relation(fields: [topic_id], references: [topic_id])
 
   @@schema("unidesk")
 }

@@ -53,6 +53,12 @@ export class AuthGatewayController {
     });
   }
 
+  @Post('logout')
+  @Track()
+  async logOut(@Req() req: AuthenticatedRequest) {
+    return this.authGateWayService.logOut(req);
+  }
+
   @Post('otp/request')
   @Track()
   requestOtp(@Body() body: any) {

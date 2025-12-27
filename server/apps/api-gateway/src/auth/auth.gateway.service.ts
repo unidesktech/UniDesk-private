@@ -60,6 +60,24 @@ export class AuthGatewayService {
   }
 
   @Track()
+  async logOut(req: AuthenticatedRequest): Promise<ResponseDto<any>> {
+    const url = `${process.env.ENDPOINT_URL}:${process.env.AUTH_PORT}/auth/logout`;
+    const cookieHeader =
+      typeof req.headers.cookie === 'string' ? req.headers.cookie : '';
+    const response: AxiosResponse<ResponseDto<any>> = await axios.post(
+      url,
+      {},
+      {
+        headers: {
+          cookie: cookieHeader,
+        },
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  }
+
+  @Track()
   async requestOtp(body: any): Promise<any> {
     const url = `${process.env.ENDPOINT_URL}:${process.env.AUTH_PORT}/auth/otp/request`;
     const response = await axios.post(url, body);
