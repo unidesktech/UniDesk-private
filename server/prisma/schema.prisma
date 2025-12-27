@@ -120,6 +120,7 @@ model schools {
   // feature_flags          feature_flags[]
   // communication_templates communication_templates[]
   // ai_template_jobs       ai_template_jobs[]
+  activityLogs               activity_logs[]
 
   @@schema("unidesk")
 }
@@ -315,6 +316,7 @@ model users {
   // parent_profiles parent_profiles?
   authTokens             auth_tokens[]
   refreshTokens          refresh_tokens[]
+  activityLogs           activity_logs[]
 
   @@schema("unidesk")
 }
@@ -578,6 +580,34 @@ model articles {
 
   topic_id String
   topic    faq_topics @relation(fields: [topic_id], references: [topic_id])
+
+  @@schema("unidesk")
+}
+
+model activity_logs {
+  activity_id String @id @default(uuid())
+
+  school_id String?
+  user_id   String?
+
+  action_type String
+  description String
+
+  ip_address String?
+  config     Json?
+
+  created_at DateTime @default(now())
+  created_by String?
+
+  updated_at DateTime @updatedAt
+  updated_by String?
+
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  // relations
+  schools schools? @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  users   users?   @relation(fields: [user_id], references: [user_id], onDelete: SetNull)
 
   @@schema("unidesk")
 }
