@@ -7,23 +7,18 @@ import {
   Query,
   Req,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { SubjectService } from './subject.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
-import { AuthGuard } from '@app/common/guards/authguard';
+import { saveSubjectDto } from '@app/dto/subject.dto';
 
 @Controller('subject')
 // @UseGuards(AuthGuard)
 export class SubjectController {
   constructor(private readonly subjectService: SubjectService) {}
 
-  // @Get()
-  // getHello(): string {
-  //   return this.subjectService.getHello();
-  // }
   @Post('save')
-  async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
+  async save(@Body() body: saveSubjectDto, @Req() req: AuthenticatedRequest) {
     const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
     if (!schoolId) throw new UnauthorizedException('School ID missing');

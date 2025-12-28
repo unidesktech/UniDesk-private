@@ -107,6 +107,42 @@
       "compilerOptions": {
         "tsConfigPath": "apps/subject/tsconfig.app.json"
       }
+    },
+    "classes": {
+      "type": "application",
+      "root": "apps/classes",
+      "entryFile": "main",
+      "sourceRoot": "apps/classes/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/classes/tsconfig.app.json"
+      }
+    },
+    "sections": {
+      "type": "application",
+      "root": "apps/sections",
+      "entryFile": "main",
+      "sourceRoot": "apps/sections/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/sections/tsconfig.app.json"
+      }
+    },
+    "faq": {
+      "type": "application",
+      "root": "apps/faq",
+      "entryFile": "main",
+      "sourceRoot": "apps/faq/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/faq/tsconfig.app.json"
+      }
+    },
+    "teacher": {
+      "type": "application",
+      "root": "apps/teacher",
+      "entryFile": "main",
+      "sourceRoot": "apps/teacher/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/teacher/tsconfig.app.json"
+      }
     }
   }
 }

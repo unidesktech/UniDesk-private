@@ -7,22 +7,17 @@ import {
   Query,
   Req,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
-import { AuthGuard } from '@app/common/guards/authguard';
 import { AuthenticatedRequest } from '@app/dto/types/request';
+import { SaveStudentDto } from '@app/dto/student.dto';
 
 @Controller('student')
-// @UseGuards(AuthGuard)
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
-  // @Get()
-  // getHello(): string {
-  //   return this.studentService.getHello();
-  // }
+
   @Post('save')
-  async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
+  async save(@Body() body: SaveStudentDto, @Req() req: AuthenticatedRequest) {
     const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
     return this.studentService.save(body, schoolId, creator);

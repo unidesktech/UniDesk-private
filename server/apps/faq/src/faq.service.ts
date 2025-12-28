@@ -5,7 +5,6 @@ import { FaqCategoryDTO, ArticleDTO, FaqTopicDTO } from '@app/dto/faq.dto';
 import { ResponseDto } from '@app/dto/response.dto';
 import { randomUUID } from 'crypto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
-import { equal } from 'assert';
 
 @Injectable()
 export class FaqService {
@@ -24,7 +23,7 @@ export class FaqService {
     } | null>
   > {
     try {
-      const exists = await this.prismaService.faqCategory.findFirst({
+      const exists = await this.prismaService.faq_categories.findFirst({
         where: {
           ...(body.faq_id && { faq_id: body.faq_id }),
           ...(body.name && {
@@ -33,7 +32,7 @@ export class FaqService {
         },
       });
       if (exists) {
-        const update = await this.prismaService.faqCategory.update({
+        const update = await this.prismaService.faq_categories.update({
           where: { faq_id: body.faq_id },
           data: { name: body.name },
         });
@@ -44,7 +43,7 @@ export class FaqService {
         };
       }
 
-      const category = await this.prismaService.faqCategory.create({
+      const category = await this.prismaService.faq_categories.create({
         data: {
           name: body.name || '',
           desc: body.desc || '',
@@ -71,7 +70,7 @@ export class FaqService {
 
   async getAllCategories(): Promise<ResponseDto<any>> {
     try {
-      const categories = await this.prismaService.faqCategory.findMany({
+      const categories = await this.prismaService.faq_categories.findMany({
         include: {
           _count: {
             select: { articles: true },
@@ -107,9 +106,9 @@ export class FaqService {
   }
 
   @Track()
-  async saveTopic(body: FaqTopicDTO): Promise<ResponseDto<any | null>> {
+  async saveTopic(body: FaqTopicDTO): Promise<ResponseDto<any>> {
     try {
-      const exists = await this.prismaService.faqTopic.findFirst({
+      const exists = await this.prismaService.faq_topics.findFirst({
         where: {
           ...(body.topic_id && { topic_id: body.topic_id }),
           ...(body.name && {
@@ -118,7 +117,7 @@ export class FaqService {
         },
       });
       if (exists) {
-        const updated = await this.prismaService.faqTopic.update({
+        const updated = await this.prismaService.faq_topics.update({
           where: { topic_id: exists.topic_id },
           data: { name: body.name },
         });
@@ -129,10 +128,10 @@ export class FaqService {
           data: updated,
         };
       }
-      const created = await this.prismaService.faqTopic.create({
+      const created = await this.prismaService.faq_topics.create({
         data: {
-          name: body.name || "",
-          icon: body.icon || "",
+          name: body.name || '',
+          icon: body.icon || '',
         },
       });
 
@@ -153,7 +152,7 @@ export class FaqService {
 
   async getAllTopics(): Promise<ResponseDto<any>> {
     try {
-      const topics = await this.prismaService.faqTopic.findMany({
+      const topics = await this.prismaService.faq_topics.findMany({
         orderBy: { name: 'asc' },
         include: {
           _count: { select: { articles: true } },
@@ -185,14 +184,14 @@ export class FaqService {
   @Track()
   async saveArticle(body: ArticleDTO): Promise<ResponseDto<any>> {
     try {
-      const exists = await this.prismaService.article.findFirst({
+      const exists = await this.prismaService.articles.findFirst({
         where: {
           OR: [{ article_id: body.article_id }, { question: body.question }],
         },
       });
 
       if (exists) {
-        const updated = await this.prismaService.article.update({
+        const updated = await this.prismaService.articles.update({
           where: { article_id: exists.article_id },
           data: {
             question: body.question,
@@ -210,7 +209,7 @@ export class FaqService {
         };
       }
 
-      const article = await this.prismaService.article.create({
+      const article = await this.prismaService.articles.create({
         data: {
           article_id: randomUUID(),
           question: body.question,
@@ -240,9 +239,9 @@ export class FaqService {
     category_id?: string;
     topic_id?: string;
     search?: string;
-  }): Promise<ResponseDto<any | null>> {
+  }): Promise<ResponseDto<any>> {
     try {
-      const articles = await this.prismaService.article.findMany({
+      const articles = await this.prismaService.articles.findMany({
         where: {
           ...(params.category_id && { category_id: params.category_id }),
           ...(params.topic_id && { topic_id: params.topic_id }),
@@ -264,7 +263,9 @@ export class FaqService {
         data: articles,
       };
     } catch (error) {
-      writeToConsole.error(`Error in FaqService.getArticlesByBody: ${error}`);
+      writeToConsole.error(
+        `Error in FaqService.getArticlesByBody: ${String(error)}`,
+      );
       return {
         success: false,
         message: 'Failed to fetch articles',

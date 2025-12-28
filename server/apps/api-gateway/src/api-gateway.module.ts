@@ -21,6 +21,7 @@ import { StudentGatewayController } from './student/student.gateway.controller';
 import { ParentGatewayController } from './parent/parent.gateway.controller';
 import { ParentGatewayService } from './parent/parent.gateway.service';
 import { SubjectGatewayController } from './subject/subject.gateway.controller';
+import { SubjectGatewayService } from './subject/subject.gateway.service';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { SubjectGatewayController } from './subject/subject.gateway.controller';
     RedisCacheService,
     StudentGatewayService,
     ParentGatewayService,
+    SubjectGatewayService,
   ],
 })
 export class ApiGatewayModule implements NestModule {
