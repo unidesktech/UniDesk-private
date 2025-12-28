@@ -4,7 +4,7 @@ import axios from 'axios';
 
 @Injectable()
 export class SubjectGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.SUBJPORT}/subject`;
+  private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_SUBJECT_PORT}/subject`;
   async saveSubject(body: any): Promise<ResponseDto<string>> {
     const response = await axios.post<ResponseDto<string>>(
       `${this.baseUrl}/subject`,

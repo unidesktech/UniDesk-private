@@ -4,7 +4,7 @@ import axios from 'axios';
 
 @Injectable()
 export class StudentGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.STUDENTPORT}/student`;
+  private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_STUDENT_PORT}/student`;
   async saveStudent(body: any): Promise<ResponseDto<string>> {
     const response = await axios.post<ResponseDto<string>>(
       `${this.baseUrl}/student`,

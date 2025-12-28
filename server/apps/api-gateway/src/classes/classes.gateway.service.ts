@@ -4,7 +4,7 @@ import axios from 'axios';
 
 @Injectable()
 export class ClassGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.CLASSPORT}/class`;
+  private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_CLASSES_PORT}/class`;
 
   async saveClass(body: any): Promise<ResponseDto<any>> {
     const response = await axios.post<ResponseDto<any>>(

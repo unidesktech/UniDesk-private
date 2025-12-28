@@ -18,6 +18,8 @@ async function bootstrap() {
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  await app.listen(process.env.APIGATEWAY_PORT ?? 3001);
+  await app.listen(process.env.APIGATEWAY_PORT ?? 5000, () => {
+    console.log('Server running in port', process.env.APIGATEWAY_PORT);
+  });
 }
 bootstrap();

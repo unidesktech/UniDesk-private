@@ -4,7 +4,7 @@ import axios from 'axios';
 
 @Injectable()
 export class SectionGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.SECTIONPORT}/section`;
+  private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_SECTIONS_PORT}/section`;
 
   async saveSection(body: any): Promise<ResponseDto<any>> {
     const response = await axios.post<ResponseDto<any>>(
@@ -26,9 +26,7 @@ export class SectionGatewayService {
   }
 
   async getSectionById(id: string): Promise<ResponseDto<any>> {
-    const response = await axios.get<ResponseDto<any>>(
-      `${this.baseUrl}/${id}`,
-    );
+    const response = await axios.get<ResponseDto<any>>(`${this.baseUrl}/${id}`);
     return response.data;
   }
 

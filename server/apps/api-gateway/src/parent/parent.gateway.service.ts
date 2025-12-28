@@ -4,7 +4,7 @@ import axios from 'axios';
 
 @Injectable()
 export class ParentGatewayService {
-  private baseUrl = `${process.env.ENDPOINTURL}:${process.env.PARENTPORT}/parent`;
+  private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_PARENT_PORT}/parent`;
 
   async saveParent(body: any): Promise<ResponseDto<string>> {
     const response = await axios.post<ResponseDto<string>>(
