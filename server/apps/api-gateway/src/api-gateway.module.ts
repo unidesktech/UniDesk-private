@@ -20,6 +20,7 @@ import { StudentGatewayService } from './student/student.gateway.service';
 import { StudentGatewayController } from './student/student.gateway.controller';
 import { ParentGatewayController } from './parent/parent.gateway.controller';
 import { ParentGatewayService } from './parent/parent.gateway.service';
+import { SubjectGatewayController } from './subject/subject.gateway.controller';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { ParentGatewayService } from './parent/parent.gateway.service';
     MeGatewayController,
     StudentGatewayController,
     ParentGatewayController,
-    SubjectGat
+    SubjectGatewayController,
   ],
   providers: [
     AuthGatewayService,
