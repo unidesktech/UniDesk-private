@@ -11,9 +11,9 @@ async function bootstrap() {
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  await app.listen(process.env.REQUESTDEMOPORT ?? 3003, () => {
+  await app.listen(process.env.REQUESTDEMO_PORT ?? 3003, () => {
     writeToConsole.log(
-      `Request Demo Service is running on port ${process.env.REQUESTDEMOPORT ?? 3003}`,
+      `Request Demo Service is running on port ${process.env.REQUESTDEMO_PORT ?? 3003}`,
     );
   });
 }

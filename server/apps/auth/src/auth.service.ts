@@ -2,20 +2,35 @@ import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { ResponseDto } from '@app/dto/response.dto';
 import { SchoolBasicInfoDTO } from '@app/dto/school.dto';
 import { PrismaService } from '@app/prisma';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { randomUUID, randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '@app/common/utils/Email';
 import { getSuperAdminUserCreationEmail } from '@app/common/utils/templates/emails/User';
 import { LoginDto, RequestOTPDto } from '@app/dto';
-import { signAccessToken, signRefreshToken } from '@app/common/utils/Token';
-import { genCsrf, genJti } from '@app/common/utils/Crypto';
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from '@app/common/utils/Token';
+import {
+  genCsrf,
+  generateOtp,
+  genJti,
+  hashOtp,
+  hashToken,
+} from '@app/common/utils/Crypto';
 import { AuthenticatedRequest } from '@app/dto/types/request';
 import { getPasswordResetOtpEmailTemplate } from '@app/common/utils/templates/emails/Otp';
+import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   cookieOptions = {
     httpOnly: true,
@@ -196,6 +211,30 @@ export class AuthService {
         };
       }
 
+      const user_role = await this.prismaService.user_roles.findFirst({
+        where: { user_id: user.user_id },
+      });
+
+      if (!user_role) {
+        return {
+          success: false,
+          message: 'User has no role assigned',
+          data: null,
+        };
+      }
+
+      const role = await this.prismaService.roles.findFirst({
+        where: { role_id: user_role.role_id },
+      });
+
+      if (!role) {
+        return {
+          success: false,
+          message: "Assigned role doesn't exist",
+          data: null,
+        };
+      }
+
       const ip = req.ip;
       const ua = req.headers['user-agent'] || '';
 
@@ -212,12 +251,19 @@ export class AuthService {
           data: {
             token_id: randomUUID(),
             user_id: user.user_id,
-            refresh_token: refreshToken,
+            refresh_token: hashToken(refreshToken),
             user_agent: ua,
             ip_address: ip,
             revoked: false,
             expires_at: new Date(Date.now() + 30 * 86400000),
             created_at: new Date(),
+          },
+        });
+        await this.prismaService.refresh_tokens.create({
+          data: {
+            user_id: user.user_id,
+            token_hash: hashToken(refreshToken),
+            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
           },
         });
       } catch (e) {
@@ -232,7 +278,8 @@ export class AuthService {
           name: user.name,
           email: user.email,
           user_code: user.user_code,
-          accessToken,
+          profile_photo_url: user.profile_photo_url,
+          role: role?.name || 'User',
           csrf,
         },
         cookies: [
@@ -252,7 +299,121 @@ export class AuthService {
     }
   }
 
-  async requestOtp(body: RequestOTPDto): Promise<ResponseDto<null>> {
+  async refresh(
+    res: Response,
+    refreshToken: string,
+  ): Promise<ResponseDto<any>> {
+    try {
+      const decoded = verifyRefreshToken(refreshToken);
+
+      const user = await this.prismaService.users.findFirst({
+        where: { user_id: decoded?.userId, is_deleted: false },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+
+      const tokenHash = hashToken(refreshToken);
+
+      const storedToken = await this.prismaService.refresh_tokens.findFirst({
+        where: {
+          user_id: user.user_id,
+          token_hash: tokenHash,
+          revoked: false,
+          expires_at: { gt: new Date() },
+        },
+      });
+
+      if (!storedToken) {
+        await this.prismaService.refresh_tokens.updateMany({
+          where: { user_id: user.user_id },
+          data: { revoked: true },
+        });
+
+        throw new UnauthorizedException('Session compromised');
+      }
+
+      await this.prismaService.refresh_tokens.update({
+        where: { id: storedToken.id },
+        data: { revoked: true },
+      });
+
+      const newAccessToken = signAccessToken({
+        userId: user.user_id,
+        email: user.email,
+      });
+
+      const newRefreshToken = signRefreshToken({
+        userId: user.user_id,
+        jti: genJti(),
+      });
+
+      await this.prismaService.refresh_tokens.create({
+        data: {
+          user_id: user.user_id,
+          token_hash: hashToken(newRefreshToken),
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+
+      return { success: true, message: 'Token refreshed', data: null };
+    } catch (error) {
+      writeToConsole.error(`Refresh Token Error: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to refresh token',
+        data: null,
+      };
+    }
+  }
+
+  async logOut(req: AuthenticatedRequest, res: Response) {
+    try {
+      const refreshToken = req.cookies?.refreshToken;
+
+      if (refreshToken) {
+        await this.prismaService.refresh_tokens.updateMany({
+          where: {
+            token_hash: hashToken(refreshToken as string),
+          },
+          data: { revoked: true },
+        });
+      }
+
+      res.clearCookie('accessToken');
+      res.clearCookie('refreshToken', { path: '/auth/refresh' });
+
+      return res.json({
+        success: true,
+        message: 'Logged out successfully',
+        data: null,
+      });
+    } catch (error) {
+      writeToConsole.error(`Logout Error: ${String(error)}`);
+      return {
+        success: false,
+        message: 'Failed to logout',
+        data: null,
+      };
+    }
+  }
+
+  async requestOtp(
+    body: RequestOTPDto,
+  ): Promise<
+    ResponseDto<{ otpId: string; email: string; schoolCode: string } | null>
+  > {
     try {
       const { schoolCode, email } = body;
 
@@ -299,50 +460,50 @@ export class AuthService {
         where: {
           user_email: email,
           is_used: false,
-          is_expired: false,
+          expires_at: {
+            gt: new Date(),
+          },
         },
-        data: { is_expired: true },
+        data: {
+          is_used: true,
+        },
       });
 
-      let otpValue = '';
-      let attempts = 0;
-      while (attempts < 5) {
-        otpValue = Math.floor(100000 + Math.random() * 900000).toString();
-        const existing = await this.prismaService.otp.findFirst({
-          where: {
-            otp: otpValue,
-            is_used: false,
-            is_expired: false,
-          },
-        });
-        if (!existing) break;
-        attempts++;
-      }
+      const otpValue = generateOtp();
+      const hashedOtp = hashOtp(otpValue);
 
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-      await this.prismaService.otp.create({
+      const otpRow = await this.prismaService.otp.create({
         data: {
           otp_id: randomUUID(),
-          otp: otpValue,
+          otp: hashedOtp,
           user_email: email,
           expires_at: expiresAt,
-          is_expired: false,
           is_used: false,
-          created_at: new Date(),
         },
       });
 
       await sendEmail(
-        user.email ?? '',
-        'UniDesk password reset request.',
-        getPasswordResetOtpEmailTemplate(otpValue),
+        user.email!,
+        'UniDesk password reset request',
+        getPasswordResetOtpEmailTemplate(
+          otpValue,
+          `${process.env.FRONTEND_URL}/auth/verify-otp?id=${otpRow.otp_id}&schoolCode=${schoolCode}&email=${encodeURIComponent(
+            email,
+          )}`,
+          5,
+        ),
       );
 
       return {
         success: true,
         message: 'OTP sent successfully',
-        data: null,
+        data: {
+          otpId: otpRow.otp_id,
+          email,
+          schoolCode,
+        },
       };
     } catch (error) {
       writeToConsole.error(`Error in requestOtp: ${String(error)}`);
@@ -365,7 +526,7 @@ export class AuthService {
       if (!schoolCode || !email || !otp) {
         return {
           success: false,
-          message: 'School code, email and otp are required',
+          message: 'School code, email and OTP are required',
           data: null,
         };
       }
@@ -398,12 +559,16 @@ export class AuthService {
         };
       }
 
+      const hashedOtp = hashOtp(otp);
+
       const otpRow = await this.prismaService.otp.findFirst({
         where: {
           user_email: email,
-          otp,
+          otp: hashedOtp,
           is_used: false,
-          is_expired: false,
+          expires_at: {
+            gt: new Date(),
+          },
         },
         orderBy: { created_at: 'desc' },
       });
@@ -411,20 +576,7 @@ export class AuthService {
       if (!otpRow) {
         return {
           success: false,
-          message: 'Invalid OTP',
-          data: null,
-        };
-      }
-
-      if (otpRow.expires_at < new Date()) {
-        await this.prismaService.otp.update({
-          where: { otp_id: otpRow.otp_id },
-          data: { is_expired: true },
-        });
-
-        return {
-          success: false,
-          message: 'OTP expired',
+          message: 'Invalid or expired OTP',
           data: null,
         };
       }
@@ -434,7 +586,14 @@ export class AuthService {
         data: { is_used: true },
       });
 
-      const token = otpRow.otp_id;
+      const token = this.jwtService.sign(
+        {
+          sub: user.user_id,
+          email: user.email,
+          purpose: 'PASSWORD_RESET',
+        },
+        { expiresIn: '5m' },
+      );
 
       return {
         success: true,
@@ -466,11 +625,11 @@ export class AuthService {
         };
       }
 
-      const otpRow = await this.prismaService.otp.findUnique({
-        where: { otp_id: token },
-      });
+      let payload: { sub: string; email: string; purpose: string };
 
-      if (!otpRow || otpRow.is_expired || !otpRow.is_used) {
+      try {
+        payload = this.jwtService.verify(token);
+      } catch {
         return {
           success: false,
           message: 'Invalid or expired token',
@@ -478,9 +637,18 @@ export class AuthService {
         };
       }
 
+      if (payload.purpose !== 'PASSWORD_RESET') {
+        return {
+          success: false,
+          message: 'Invalid token purpose',
+          data: null,
+        };
+      }
+
       const user = await this.prismaService.users.findFirst({
         where: {
-          email: otpRow.user_email,
+          user_id: payload.sub,
+          email: payload.email,
           is_deleted: false,
         },
       });
@@ -493,9 +661,9 @@ export class AuthService {
         };
       }
 
-      const samePassword = await bcrypt.compare(password, user.password_hash);
+      const isSamePassword = await bcrypt.compare(password, user.password_hash);
 
-      if (samePassword) {
+      if (isSamePassword) {
         return {
           success: false,
           message: 'New password cannot be same as old password',
@@ -512,11 +680,6 @@ export class AuthService {
           password_hash: newHash,
           updated_at: new Date(),
         },
-      });
-
-      await this.prismaService.otp.update({
-        where: { otp_id: otpRow.otp_id },
-        data: { is_expired: true },
       });
 
       return {

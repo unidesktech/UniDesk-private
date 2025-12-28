@@ -36,6 +36,29 @@ export class AuthGatewayController {
     });
   }
 
+  @Post('refresh')
+  @Track()
+  async refresh(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+    const result = await this.authGateWayService.refresh(req);
+    if (Array.isArray(result.cookies)) {
+      for (const cookie of result.cookies) {
+        res.append('Set-Cookie', cookie);
+      }
+    }
+
+    res.json({
+      success: result.success,
+      message: result.message,
+      data: result.data,
+    });
+  }
+
+  @Post('logout')
+  @Track()
+  async logOut(@Req() req: AuthenticatedRequest) {
+    return this.authGateWayService.logOut(req);
+  }
+
   @Post('otp/request')
   @Track()
   requestOtp(@Body() body: any) {
@@ -48,7 +71,7 @@ export class AuthGatewayController {
     return this.authGateWayService.verifyOtp(body);
   }
 
-  @Post('otp/reset-password')
+  @Post('reset-password')
   @Track()
   resetPassword(@Body() body: any) {
     return this.authGateWayService.resetPassword(body);

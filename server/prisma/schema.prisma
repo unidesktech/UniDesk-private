@@ -36,7 +36,7 @@ model schools {
   config                     Json?
   created_at                 DateTime                     @default(now())
   created_by                 String?
-  updated_at                 DateTime  @updatedAt
+  updated_at                 DateTime                     @updatedAt
   updated_by                 String?
   is_active                  Boolean                      @default(true)
   is_deleted                 Boolean                      @default(false)
@@ -54,6 +54,7 @@ model schools {
   users                      users[]
   subjects                   subjects[]
   academic_years             academic_years[]
+  school_modules             school_modules[]
 
   @@schema("unidesk")
 }
@@ -194,7 +195,7 @@ model users {
   school_id              String?                 @db.Uuid
   user_code              String                  @unique
   name                   String?
-  email                  String?                @unique
+  email                  String?                 @unique
   phone                  String?
   password_hash          String?
   status                 String?
@@ -209,6 +210,7 @@ model users {
   created_at             DateTime                @default(now())
   updated_at             DateTime                @default(now())
   user_roles             user_roles[]
+  user_permissions       user_permissions[]
   school                 schools?                @relation(fields: [school_id], references: [school_id])
   user_preferences       user_preferences?
   user_onboarding_status user_onboarding_status?
@@ -223,10 +225,11 @@ model users {
   // messages_sent messages[] @relation("MessageSender")
   // ptm_notes_teacher ptm_notes[] @relation("PTMNotesTeacher")
   // ptm_bookings_parent ptm_bookings[] @relation("PTMParent")
-   student_profiles student_profiles?
-  teacher_profiles teacher_profiles?
-   parent_profiles parent_profiles?
+  student_profiles       student_profiles?
+  teacher_profiles       teacher_profiles?
+  parent_profiles        parent_profiles?
   authTokens             auth_tokens[]
+  refreshTokens          refresh_tokens[]
 
   @@unique([email, school_id])
   @@schema("unidesk")
@@ -274,20 +277,56 @@ model user_preferences {
   @@schema("unidesk")
 }
 
+model modules {
+  module_id   String  @id @db.Uuid
+  module_key  String  @unique
+  module_name String
+  icon        String?
+  route       String?
+  order_no    Int?
+
+  is_active Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  permissions    permissions[]
+  school_modules school_modules[]
+
+  @@schema("unidesk")
+}
+
+model school_modules {
+  school_module_id String  @id @db.Uuid
+  school_id        String  @db.Uuid
+  module_id        String  @db.Uuid
+  is_enabled       Boolean @default(true)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  school schools @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  module modules @relation(fields: [module_id], references: [module_id], onDelete: Cascade)
+
+  @@unique([school_id, module_id])
+  @@schema("unidesk")
+}
+
 model roles {
-  role_id     String       @id @db.Uuid
-  school_id   String?      @db.Uuid
-  name        String
-  description String?
-  created_at  DateTime
-  created_by  String?
-  updated_at  DateTime
-  updated_by  String?
-  is_active   Boolean      @default(true)
-  is_deleted  Boolean      @default(false)
-  comments    String?
-  school      schools?     @relation(fields: [school_id], references: [school_id])
-  user_roles  user_roles[]
+  role_id          String             @id @db.Uuid
+  school_id        String?            @db.Uuid
+  name             String
+  description      String?
+  created_at       DateTime
+  created_by       String?
+  updated_at       DateTime
+  updated_by       String?
+  is_active        Boolean            @default(true)
+  is_deleted       Boolean            @default(false)
+  comments         String?
+  school           schools?           @relation(fields: [school_id], references: [school_id])
+  user_roles       user_roles[]
+  role_permissions role_permissions[]
 
   @@schema("unidesk")
 }
@@ -312,6 +351,68 @@ model user_roles {
   @@schema("unidesk")
 }
 
+model permissions {
+  permission_id  String  @id @db.Uuid
+  permission_key String
+  module_id      String  @db.Uuid
+  description    String?
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  module modules @relation(fields: [module_id], references: [module_id], onDelete: Cascade)
+
+  role_permissions role_permissions[]
+  user_permissions user_permissions[]
+
+  @@unique([permission_key, module_id])
+  @@schema("unidesk")
+}
+
+model role_permissions {
+  role_permission_id String  @id @db.Uuid
+  role_id            String  @db.Uuid
+  permission_id      String  @db.Uuid
+  is_allowed         Boolean @default(true)
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  role       roles       @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
+  permission permissions @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@schema("unidesk")
+}
+
+model user_permissions {
+  user_permission_id String  @id @db.Uuid
+  user_id            String  @db.Uuid
+  permission_id      String  @db.Uuid
+  is_allowed         Boolean @default(true)
+
+  is_active  Boolean @default(true)
+  is_deleted Boolean @default(false)
+  comments   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user       users       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  permission permissions @relation(fields: [permission_id], references: [permission_id], onDelete: Cascade)
+
+  @@unique([user_id, permission_id])
+  @@schema("unidesk")
+}
+
 model auth_tokens {
   token_id String @id @default(uuid()) @db.Uuid
   user_id  String @db.Uuid
@@ -328,6 +429,20 @@ model auth_tokens {
   @@schema("unidesk")
 }
 
+model refresh_tokens {
+  id         String   @id @default(uuid())
+  user_id    String   @db.Uuid
+  token_hash String
+  expires_at DateTime
+  revoked    Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@schema("unidesk")
+}
+
 model otp {
   otp_id     String   @id @db.Uuid
   otp        String
@@ -341,39 +456,41 @@ model otp {
   @@schema("unidesk")
 }
 
-model Article {
-  article_id  String      @id
-  question    String
-  answer      String
-  points      String[]
-  created_at  DateTime    @default(now())
-  updated_at  DateTime
-  category_id String
-  topic_id    String
-  FaqCategory FaqCategory @relation(fields: [category_id], references: [faq_id])
-  FaqTopic    FaqTopic    @relation(fields: [topic_id], references: [topic_id])
-
-  @@schema("unidesk")
-}
-
-model FaqCategory {
-  faq_id     String    @id @unique
+model faq_categories {
+  faq_id     String     @id @unique @default(uuid())
   name       String
-  created_at DateTime  @default(now())
-  updated_at DateTime
   desc       String
   icon       String
   color      String
-  Article    Article[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  articles   articles[]
 
   @@schema("unidesk")
 }
 
-model FaqTopic {
-  topic_id String    @id @unique
+model faq_topics {
+  topic_id String     @id @unique @default(uuid())
   name     String
   icon     String
-  Article  Article[]
+  articles articles[]
+
+  @@schema("unidesk")
+}
+
+model articles {
+  article_id String   @id @default(uuid())
+  question   String
+  answer     String
+  points     String[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  category_id String
+  category    faq_categories @relation(fields: [category_id], references: [faq_id])
+
+  topic_id String
+  topic    faq_topics @relation(fields: [topic_id], references: [topic_id])
 
   @@schema("unidesk")
 }
@@ -461,9 +578,9 @@ model teacher_profiles {
   updated_at DateTime @updatedAt
   updated_by String?  @db.Uuid
 
-  is_deleted Boolean @default(false)
-  comments   String?
-  teacher_subjects   teacher_subjects []
+  is_deleted       Boolean            @default(false)
+  comments         String?
+  teacher_subjects teacher_subjects[]
 
   users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
@@ -486,8 +603,8 @@ model classes {
   updated_at DateTime @updatedAt
   updated_by String?  @db.Uuid
 
-  sections sections[]
-  class_subjects class_subjects []
+  sections       sections[]
+  class_subjects class_subjects[]
 
   @@schema("unidesk")
 }
@@ -532,8 +649,8 @@ model subjects {
 
   class_subjects class_subjects[]
 
-  schools         schools         @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
-  academic_years  academic_years  @relation(fields: [year_id], references: [year_id], onDelete: Cascade)
+  schools        schools        @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  academic_years academic_years @relation(fields: [year_id], references: [year_id], onDelete: Cascade)
 
   @@unique([school_id, year_id, name])
   @@schema("unidesk")
@@ -595,12 +712,12 @@ model academic_years {
   is_deleted Boolean @default(false)
   comments   String?
 
-  created_at DateTime @default(now())
-  created_by String?  @db.Uuid
-  updated_at DateTime @updatedAt
-  updated_by String?  @db.Uuid
-  school   schools   @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
-  subjects subjects[]
+  created_at DateTime   @default(now())
+  created_by String?    @db.Uuid
+  updated_at DateTime   @updatedAt
+  updated_by String?    @db.Uuid
+  school     schools    @relation(fields: [school_id], references: [school_id], onDelete: Cascade)
+  subjects   subjects[]
 
   @@unique([school_id, name])
   @@map("academic_years")

@@ -10,6 +10,6 @@ async function bootstrap() {
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  await app.listen(process.env.AUTHPORT ?? 3002);
+  await app.listen(process.env.AUTH_PORT ?? 3002);
 }
 bootstrap();

@@ -10,6 +10,6 @@ async function bootstrap() {
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  await app.listen(process.env.COMMONPORT ?? 3005);
+  await app.listen(process.env.COMMON_PORT ?? 3005);
 }
 bootstrap();

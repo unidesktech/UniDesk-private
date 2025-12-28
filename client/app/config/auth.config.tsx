@@ -15,7 +15,7 @@ export const authPage = () => {
                 minLength: 4,
             },
             {
-                name: "uid",
+                name: "emailOrUid",
                 type: "text",
                 label: "Email Address or UID",
                 icon: Mail,

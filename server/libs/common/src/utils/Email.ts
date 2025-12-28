@@ -16,7 +16,6 @@ export const sendEmail = async (
     }
     const resend = new Resend(apiKey);
 
-    console.log(process.env.RESEND_API_KEY);
     const data = await resend.emails.send({
       from: 'UniDesk Team <onboarding@resend.dev>',
       to: 'eduspherextech@gmail.com', // TBD: verify domain else cant send to others

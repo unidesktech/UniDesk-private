@@ -1,22 +1,33 @@
-"use client"
+"use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { logOut } from "../services/auth.service";
 import { ModalProps } from "../models/action.model";
 
 export const useHandleAction = () => {
-  // const router = useRouter();
-  const [modalProps, setModalProps] = useState<ModalProps | null>(null);
+  const router = useRouter();
+    const [modalProps, setModalProps] = useState<ModalProps | null>(null);
 
-  const handleAction = (
-    action: "navigate" | "modal",
-    actionValue: any,
+  const handleAction = async (
+    action: "navigate" | "modal" | "api",
+    actionValue: string,
     data: any,
-    actionUse?: "edit" | "add" | "delete",
+    actionUse?: "edit" | "add" | "delete"
   ) => {
     switch (action) {
       case "navigate":
-        // if (actionUse === "edit") router.push(`/${actionValue}?id=${data.id}`);
-        // if (actionUse === "add") router.push(`/${actionValue}`);
+        if (actionUse) {
+          // if (actionUse === "edit") router.push(`/${actionValue}?id=${data.id}`);
+          // if (actionUse === "add") router.push(`/${actionValue}`);
+        } else {
+          router.push(actionValue);
+        }
         break;
+
+      case "api":
+        if (actionValue === "logout") {
+          await logOut();
+        }
 
       case "modal":
         if (actionUse === "delete") {
@@ -31,7 +42,10 @@ export const useHandleAction = () => {
     }
   };
 
-  const closeModal = () => setModalProps(null);
+    const closeModal = () => setModalProps(null);
 
-  return { handleAction, modalProps, closeModal };
+  return { handleAction,
+     modalProps,
+      closeModal
+     };
 };

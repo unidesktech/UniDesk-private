@@ -7,3 +7,11 @@ export interface DistinctValuePlayload {
   filters?: Record<string, FilterValue>;
   schoolId?: string;
 }
+
+export interface SidebarItem {
+  key: string;
+  label: string;
+  icon?: string;
+  path?: string;
+  children?: SidebarItem[];
+}
