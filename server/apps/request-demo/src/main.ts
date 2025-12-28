@@ -13,7 +13,7 @@ async function bootstrap() {
   );
   await app.listen(process.env.REQUESTDEMO_PORT ?? 3003, () => {
     writeToConsole.log(
-      `Request Demo Service is running on port ${process.env.REQUESTDEMO_PORT ?? 3003}`,
+      `Request Demo Service is running on port ${process.env.REQUESTDEMO_PORT ?? 3002}`,
     );
   });
 }

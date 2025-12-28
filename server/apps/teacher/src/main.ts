@@ -6,10 +6,10 @@ import { TrackInterceptor } from '@app/common/logger/track.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(TeacherModule);
-    app.useGlobalInterceptors(
+  app.useGlobalInterceptors(
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  await app.listen(process.env.TEACHERPORT ?? 3007);
+  await app.listen(process.env.MANAGEMENT_TEACHER_PORT ?? 6006);
 }
 bootstrap();

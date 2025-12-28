@@ -3,6 +3,6 @@ import { SubjectModule } from './subject.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(SubjectModule);
-  await app.listen(process.env.port ?? 3000);
+  await app.listen(process.env.MANAGEMENT_SUBJECT_PORT ?? 6003);
 }
 bootstrap();

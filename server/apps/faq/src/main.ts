@@ -17,6 +17,6 @@ async function bootstrap() {
     new LoggingInterceptor(new AppLogger()),
     new TrackInterceptor(new AppLogger(), new Reflector()),
   );
-  // await app.listen(process.env.FAQPORT ?? 3005);
+  await app.listen(process.env.FAQ_PORT ?? 3004);
 }
 bootstrap();
