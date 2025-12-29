@@ -2,6 +2,7 @@ import {
   SIDEBAR_DEFINITION,
   SidebarDefinitionItem,
 } from '@app/common/constants/sidebar.defination';
+import { Track } from '@app/common/logger/track.decorator';
 import { PermissionResolverService } from '@app/common/permissions/permission-resolver.service';
 import { SidebarItem } from '@app/dto/common.dto';
 import { Injectable } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { Injectable } from '@nestjs/common';
 export class SidebarService {
   constructor(private readonly permissionResolver: PermissionResolverService) {}
 
+  @Track()
   async getSidebar(userId?: string, schoolId?: string): Promise<SidebarItem[]> {
     const result: SidebarItem[] = [];
 
@@ -28,6 +30,7 @@ export class SidebarService {
     return result;
   }
 
+  @Track()
   private async resolveItem(
     item: SidebarDefinitionItem,
     userId: string,
@@ -70,13 +73,14 @@ export class SidebarService {
     };
   }
 
+  @Track()
   private async hasAnyPermission(
     permissions: string[] | undefined,
     userId: string,
     schoolId: string,
   ): Promise<boolean> {
     if (!permissions || permissions.length === 0) {
-      return false;
+      return true;
     }
 
     for (const permission of permissions) {

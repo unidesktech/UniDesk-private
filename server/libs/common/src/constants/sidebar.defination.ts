@@ -13,7 +13,7 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
   {
     key: 'dashboard',
     label: 'Dashboard',
-    icon: 'LayoutGrid',
+    icon: 'LayoutDashboard',
     path: '/dashboard',
     permissions: ['dashboard.view', 'dashboard.edit', 'dashboard.delete'],
   },
@@ -26,7 +26,7 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
       {
         key: 'students',
         label: 'Students',
-        icon: 'User',
+        icon: 'Users',
         path: '/management/students',
         permissions: [
           'management.students.view',
@@ -48,7 +48,7 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
       {
         key: 'subjects',
         label: 'Subjects',
-        icon: 'Book',
+        icon: 'BookOpen',
         path: '/management/subjects',
         permissions: [
           'management.subjects.view',

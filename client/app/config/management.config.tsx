@@ -15,7 +15,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 
 export const managementConfig = {
-  student: {
+  students: {
     header: {
       title: "Students",
       subtitle: "Manage all student records, enrollments, and information",
