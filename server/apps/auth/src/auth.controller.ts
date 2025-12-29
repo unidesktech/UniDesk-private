@@ -33,16 +33,12 @@ export class AuthController {
 
   @Post('refresh')
   @Track()
-  async refresh(
-    @Req() req: AuthenticatedRequest,
-    @Res() res: Response,
-  ): Promise<ResponseDto<string | null> | null> {
+  async refresh(@Req() req: AuthenticatedRequest): Promise<ResponseDto<any>> {
     const refreshToken = req.cookies?.refreshToken;
-
     if (!refreshToken) {
       throw new UnauthorizedException();
     }
-    return await this.authService.refresh(res, refreshToken as string);
+    return await this.authService.refresh(refreshToken as string);
   }
 
   @Post('logout')

@@ -211,30 +211,6 @@ export class AuthService {
         };
       }
 
-      const user_role = await this.prismaService.user_roles.findFirst({
-        where: { user_id: user.user_id },
-      });
-
-      if (!user_role) {
-        return {
-          success: false,
-          message: 'User has no role assigned',
-          data: null,
-        };
-      }
-
-      const role = await this.prismaService.roles.findFirst({
-        where: { role_id: user_role.role_id },
-      });
-
-      if (!role) {
-        return {
-          success: false,
-          message: "Assigned role doesn't exist",
-          data: null,
-        };
-      }
-
       const ip = req.ip;
       const ua = req.headers['user-agent'] || '';
 
@@ -279,7 +255,6 @@ export class AuthService {
           email: user.email,
           user_code: user.user_code,
           profile_photo_url: user.profile_photo_url,
-          role: role?.name || 'User',
           csrf,
         },
         cookies: [
@@ -299,10 +274,7 @@ export class AuthService {
     }
   }
 
-  async refresh(
-    res: Response,
-    refreshToken: string,
-  ): Promise<ResponseDto<any>> {
+  async refresh(refreshToken: string): Promise<ResponseDto<null>> {
     try {
       const decoded = verifyRefreshToken(refreshToken);
 
@@ -357,17 +329,15 @@ export class AuthService {
         },
       });
 
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-      });
-
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-      });
-
-      return { success: true, message: 'Token refreshed', data: null };
+      return {
+        success: true,
+        message: 'Token refreshed',
+        data: null,
+        cookies: [
+          `accessToken=${newAccessToken}; HttpOnly; Path=/; Max-Age=600`,
+          `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=2592000`,
+        ],
+      };
     } catch (error) {
       writeToConsole.error(`Refresh Token Error: ${String(error)}`);
       return {
