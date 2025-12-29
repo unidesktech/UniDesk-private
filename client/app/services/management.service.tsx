@@ -192,7 +192,7 @@ export const getManagementStats = async (entity: string) => {
 
 // export const getManagementStats = async (entity: string) => {
 //   const data = await axios.get(
-//     `${process.env.NEXT_PUBLIC_APIENDPOINT}/${entity.toLowerCase()}/stats`
+//     `${process.env.NEXT_PUBLIC_API_BASE_URL}/${entity.toLowerCase()}/stats`
 //   );
 //   return data.data;
 // };
@@ -204,7 +204,7 @@ export const getManagementStats = async (entity: string) => {
 //   filters: Record<string, any> = {},
 // ) => {
 //   const res = await axios.get(
-//     `${process.env.NEXT_PUBLIC_APIENDPOINT}/${entity.toLowerCase()}/getAll`,
+//     `${process.env.NEXT_PUBLIC_API_BASE_URL}/${entity.toLowerCase()}/getAll`,
 //     {
 //       params: {
 //         page,

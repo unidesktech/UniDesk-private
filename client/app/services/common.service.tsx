@@ -6,7 +6,7 @@ export async function getDistinctValues(payload: {
   filters?: Record<string, string | number | string[]>;
 }): Promise<{ id: string; value: string }[]> {
   const { data } = await axios.post(
-    `${process.env.NEXT_PUBLIC_APIENDPOINT}/common/distinct-values`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/common/distinct-values`,
     payload
   );
   return data;

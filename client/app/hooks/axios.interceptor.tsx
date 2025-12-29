@@ -11,7 +11,7 @@ declare module "axios" {
 }
 
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000",
   withCredentials: true,
 });
 
@@ -73,6 +73,7 @@ api.interceptors.response.use(
         isRefreshing = false;
 
         if (typeof window !== "undefined") {
+          console.log("inside interceptor")
           window.location.href = "/auth/login";
         }
 

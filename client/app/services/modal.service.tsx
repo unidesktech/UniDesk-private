@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = process.env.NEXT_PUBLIC_APIENDPOINT;
+const API = process.env.NEXT_PUBLIC_API_BASE_URL;
 export interface SavePayload<T = any> {
   entityType: string;
   data: T;

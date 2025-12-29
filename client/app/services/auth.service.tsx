@@ -4,7 +4,7 @@ import { showToast } from "../utils/toast";
 
 export const login = async (data: Record<string, string>) => {
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_APIENDPOINT}/auth/login`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
     data,
     { withCredentials: true }
   );
@@ -14,7 +14,7 @@ export const login = async (data: Record<string, string>) => {
 
 export const sendResetLink = async (email: string, schoolCode: string) => {
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_APIENDPOINT}/auth/otp/request`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/otp/request`,
     { email, schoolCode }
   );
   return res.data;
@@ -26,7 +26,7 @@ export const verifyOtp = async (
   otp: string
 ) => {
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_APIENDPOINT}/auth/otp/verify`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/otp/verify`,
     { email, schoolCode, otp }
   );
   return res.data;
@@ -34,7 +34,7 @@ export const verifyOtp = async (
 
 export const resetPassword = async (token: string, password: string) => {
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_APIENDPOINT}/auth/reset-password`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/reset-password`,
     { token, password }
   );
   return res.data;
