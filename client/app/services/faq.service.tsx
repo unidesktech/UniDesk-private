@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const fetchCategories = async () => {
   const data = await axios.get(
-    `${process.env.NEXT_PUBLIC_FAQENDPOINT}/faq/category/getAll`
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/faq/category/getAll`
   );
 
   return data.data.data;
@@ -10,7 +10,7 @@ export const fetchCategories = async () => {
 
 export const fetchTopics = async () => {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_FAQENDPOINT}/faq/topic/getAll`
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/faq/topic/getAll`
   );
   return res.data.data;
 };
@@ -21,7 +21,7 @@ export const fetchFaqs = async (params?: {
   search?: string;
 }) => {
   const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_FAQENDPOINT}/faq/articles/get`,
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/faq/articles/get`,
     {
       params: {
         ...(params?.category_id && { category_id: params.category_id }),

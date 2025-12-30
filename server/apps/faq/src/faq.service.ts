@@ -5,10 +5,36 @@ import { FaqCategoryDTO, ArticleDTO, FaqTopicDTO } from '@app/dto/faq.dto';
 import { ResponseDto } from '@app/dto/response.dto';
 import { randomUUID } from 'crypto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
-
+import { sanitizeParams } from '@app/common/utils/FormatFunctions';
+import { CACHE_VERSIONS } from 'cache-keys';
+import { RedisCacheService } from 'libs/redis/redis-cache.service';
 @Injectable()
 export class FaqService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private readonly cache: RedisCacheService,
+  ) {}
+
+  private faqCategoriesKey() {
+    return `faq:${CACHE_VERSIONS.FAQ}:categories`;
+  }
+
+  private faqTopicsKey() {
+    return `faq:${CACHE_VERSIONS.FAQ}:topics`;
+  }
+
+  private faqArticlesKey(params: {
+    category_id?: string;
+    topic_id?: string;
+    search?: string;
+  }) {
+    const { category_id = 'all', topic_id = 'all', search = 'none' } = params;
+    return `faq:${CACHE_VERSIONS.FAQ}:articles:${category_id}:${topic_id}:${search}`;
+  }
+
+  private async resetFaqCache() {
+    await this.cache.delByPattern(`faq:${CACHE_VERSIONS.FAQ}:*`);
+  }
 
   @Track()
   async saveCategory(body: FaqCategoryDTO): Promise<
@@ -36,6 +62,7 @@ export class FaqService {
           where: { faq_id: body.faq_id },
           data: { name: body.name },
         });
+        await this.resetFaqCache();
         return {
           success: true,
           message: 'Faq Category updated sucessfully',
@@ -51,6 +78,9 @@ export class FaqService {
           color: body.color || '',
         },
       });
+
+      await this.resetFaqCache();
+
       return {
         success: true,
         message: 'Faq Category created sucessfully',
@@ -69,40 +99,39 @@ export class FaqService {
   }
 
   async getAllCategories(): Promise<ResponseDto<any>> {
-    try {
-      const categories = await this.prismaService.faq_categories.findMany({
-        include: {
-          _count: {
-            select: { articles: true },
-          },
-        },
-      });
-      const formatted = categories.map((cat) => ({
-        faq_id: cat.faq_id,
-        name: cat.name,
-        desc: cat.desc,
-        icon: cat.icon,
-        color: cat.color,
-        created_at: cat.created_at,
-        updated_at: cat.updated_at,
-        articles_count: cat._count.articles,
-      }));
+    const cacheKey = this.faqCategoriesKey();
 
+    const cached = await this.cache.get(cacheKey);
+    if (cached) {
       return {
         success: true,
         message: 'Categories fetched successfully',
-        data: formatted,
-      };
-    } catch (error) {
-      writeToConsole.error(
-        `Error in FaqService.getAllCategories: ${String(error)}`,
-      );
-      return {
-        success: false,
-        message: 'Failed to fetch categories',
-        data: null,
+        data: cached,
       };
     }
+
+    const categories = await this.prismaService.faq_categories.findMany({
+      include: { _count: { select: { articles: true } } },
+    });
+
+    const formatted = categories.map((cat) => ({
+      faq_id: cat.faq_id,
+      name: cat.name,
+      desc: cat.desc,
+      icon: cat.icon,
+      color: cat.color,
+      created_at: cat.created_at,
+      updated_at: cat.updated_at,
+      articles_count: cat._count.articles,
+    }));
+
+    await this.cache.set(cacheKey, formatted, 3600);
+
+    return {
+      success: true,
+      message: 'Categories fetched successfully',
+      data: formatted,
+    };
   }
 
   @Track()
@@ -121,7 +150,7 @@ export class FaqService {
           where: { topic_id: exists.topic_id },
           data: { name: body.name },
         });
-
+        await this.resetFaqCache();
         return {
           success: true,
           message: 'Faq Topic updated successfully',
@@ -134,7 +163,7 @@ export class FaqService {
           icon: body.icon || '',
         },
       });
-
+      await this.resetFaqCache();
       return {
         success: true,
         message: 'Faq Topic created successfully',
@@ -151,34 +180,36 @@ export class FaqService {
   }
 
   async getAllTopics(): Promise<ResponseDto<any>> {
-    try {
-      const topics = await this.prismaService.faq_topics.findMany({
-        orderBy: { name: 'asc' },
-        include: {
-          _count: { select: { articles: true } },
-        },
-      });
+    const cacheKey = this.faqTopicsKey();
 
-      const formatted = topics.map((t) => ({
-        topic_id: t.topic_id,
-        name: t.name,
-        icon: t.icon,
-        articles_count: t._count.articles,
-      }));
-
+    const cached = await this.cache.get(cacheKey);
+    if (cached) {
       return {
         success: true,
         message: 'Topics fetched successfully',
-        data: formatted,
-      };
-    } catch (error) {
-      writeToConsole.error(`Error in getAllTopics: ${String(error)}`);
-      return {
-        success: false,
-        message: 'Failed to fetch topics',
-        data: null,
+        data: cached,
       };
     }
+
+    const topics = await this.prismaService.faq_topics.findMany({
+      orderBy: { name: 'asc' },
+      include: { _count: { select: { articles: true } } },
+    });
+
+    const formatted = topics.map((t) => ({
+      topic_id: t.topic_id,
+      name: t.name,
+      icon: t.icon,
+      articles_count: t._count.articles,
+    }));
+
+    await this.cache.set(cacheKey, formatted, 3600);
+
+    return {
+      success: true,
+      message: 'Topics fetched successfully',
+      data: formatted,
+    };
   }
 
   @Track()
@@ -201,7 +232,7 @@ export class FaqService {
             topic_id: body.topic_id,
           },
         });
-
+        await this.resetFaqCache();
         return {
           success: true,
           message: 'Article updated successfully',
@@ -219,7 +250,7 @@ export class FaqService {
           category_id: body.category_id,
         },
       });
-
+      await this.resetFaqCache();
       return {
         success: true,
         message: 'Article created successfully',
@@ -240,37 +271,47 @@ export class FaqService {
     topic_id?: string;
     search?: string;
   }): Promise<ResponseDto<any>> {
-    try {
-      const articles = await this.prismaService.articles.findMany({
-        where: {
-          ...(params.category_id && { category_id: params.category_id }),
-          ...(params.topic_id && { topic_id: params.topic_id }),
-          ...(params.search && {
-            OR: [
-              { article_id: params.search },
-              { question: { contains: params.search, mode: 'insensitive' } },
-              { answer: { contains: params.search, mode: 'insensitive' } },
-              { points: { has: params.search } },
-            ],
-          }),
-        },
-        orderBy: { created_at: 'desc' },
-      });
+    const category_id = sanitizeParams(params.category_id);
+    const topic_id = sanitizeParams(params.topic_id);
+    const search = sanitizeParams(params.search);
 
+    const cacheKey = this.faqArticlesKey({
+      category_id,
+      topic_id,
+      search,
+    });
+
+    const cached = await this.cache.get(cacheKey);
+    if (cached) {
       return {
         success: true,
         message: 'Articles fetched successfully',
-        data: articles,
-      };
-    } catch (error) {
-      writeToConsole.error(
-        `Error in FaqService.getArticlesByBody: ${String(error)}`,
-      );
-      return {
-        success: false,
-        message: 'Failed to fetch articles',
-        data: null,
+        data: cached,
       };
     }
+
+    const articles = await this.prismaService.articles.findMany({
+      where: {
+        ...(category_id && { category_id }),
+        ...(topic_id && { topic_id }),
+        ...(search && {
+          OR: [
+            { article_id: search },
+            { question: { contains: search, mode: 'insensitive' } },
+            { answer: { contains: search, mode: 'insensitive' } },
+            { points: { has: search } },
+          ],
+        }),
+      },
+      orderBy: { created_at: 'desc' },
+    });
+
+    await this.cache.set(cacheKey, articles, 1800); // 30 min
+
+    return {
+      success: true,
+      message: 'Articles fetched successfully',
+      data: articles,
+    };
   }
 }

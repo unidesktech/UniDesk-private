@@ -9,19 +9,21 @@ import { SchoolGatewayController } from './school/school.gateway.controller';
 import { SchoolGatewayService } from './school/school.gateway.service';
 import { commonGateWayService } from './common/common.gateway.service';
 import { CommonGatewayController } from './common/common.gateway.controller';
-import { RedisModule } from './redis/redis.module';
+import { RedisModule } from '../../../libs/redis/redis.module';
 import { MeGatewayController } from './me/me.gateway.controller';
 import { MeService } from './me/me.gateway.service';
 import { PrismaModule } from '@app/prisma';
 import { SidebarService } from './me/sidebar.service';
 import { PermissionResolverService } from '@app/common/permissions/permission-resolver.service';
-import { RedisCacheService } from './redis/redis-cache.service';
+import { RedisCacheService } from '../../../libs/redis/redis-cache.service';
 import { StudentGatewayService } from './student/student.gateway.service';
 import { StudentGatewayController } from './student/student.gateway.controller';
 import { ParentGatewayController } from './parent/parent.gateway.controller';
 import { ParentGatewayService } from './parent/parent.gateway.service';
 import { SubjectGatewayController } from './subject/subject.gateway.controller';
 import { SubjectGatewayService } from './subject/subject.gateway.service';
+import { FaqGatewayController } from './faq/faq.gateway.controller';
+import { FaqGatewayService } from './faq/faq.gateway.service';
 
 @Module({
   imports: [
@@ -39,6 +41,7 @@ import { SubjectGatewayService } from './subject/subject.gateway.service';
     SchoolGatewayController,
     CommonGatewayController,
     MeGatewayController,
+    FaqGatewayController,
     StudentGatewayController,
     ParentGatewayController,
     SubjectGatewayController,
@@ -48,6 +51,7 @@ import { SubjectGatewayService } from './subject/subject.gateway.service';
     RequestDemoGateWayService,
     SchoolGatewayService,
     commonGateWayService,
+    FaqGatewayService,
     MeService,
     SidebarService,
     PermissionResolverService,

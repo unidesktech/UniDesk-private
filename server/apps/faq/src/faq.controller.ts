@@ -30,7 +30,7 @@ export class FaqController {
     return this.faqService.saveArticle(body);
   }
 
-  @Get('articles/get')
+  @Get('article/get')
   getArticles(
     @Query('category_id') category_id?: string,
     @Query('topic_id') topic_id?: string,

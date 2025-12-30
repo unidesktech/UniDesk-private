@@ -30,7 +30,9 @@ export class RedisCacheService {
 
     try {
       await this.redis!.set(key, JSON.stringify(value), 'EX', ttlSeconds);
-    } catch {}
+    } catch {
+      this.logger.error('Unable to set redis cache');
+    }
   }
 
   async del(key: string): Promise<void> {
@@ -38,7 +40,9 @@ export class RedisCacheService {
 
     try {
       await this.redis!.del(key);
-    } catch {}
+    } catch {
+      this.logger.error('Unable to delete redis cache');
+    }
   }
 
   async delByPattern(pattern: string): Promise<void> {
@@ -51,6 +55,8 @@ export class RedisCacheService {
           await this.redis!.del(...keys);
         }
       }
-    } catch {}
+    } catch {
+      this.logger.error('Unable to detete by pattern redis cache');
+    }
   }
 }

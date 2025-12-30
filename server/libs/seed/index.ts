@@ -1,3 +1,4 @@
+import { seedFaqData } from './faq.seed';
 import { seedInitialSchoolUser } from './initial-user.seed';
 import { seedModules } from './modules.seed';
 import { seedPermissions } from './permissions.seed';
@@ -17,6 +18,7 @@ async function main() {
   await seedPermissions();
   await seedRolePermissions();
   await seedUserOverrides();
+  await seedFaqData();
 
   console.log('✅ Database seeding completed.');
 }

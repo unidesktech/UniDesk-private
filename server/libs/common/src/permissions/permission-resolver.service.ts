@@ -1,6 +1,6 @@
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
-import { RedisCacheService } from 'apps/api-gateway/src/redis/redis-cache.service';
+import { RedisCacheService } from 'libs/redis/redis-cache.service';
 import { CACHE_VERSIONS } from 'cache-keys';
 
 @Injectable()
