@@ -70,7 +70,12 @@ const Sidebar = () => {
         <Menu />
       </button>
 
-      <aside className="hidden md:flex h-screen w-64 bg-white border-r flex-col">
+      <aside
+        className={clsx(
+          "hidden md:flex sticky z-10 top-0 h-screen bg-white border-r flex-col transition-all duration-300",
+          collapsed ? "w-20" : "w-64"
+        )}
+      >
         {/* HEADER */}
         <div
           className={clsx(
@@ -180,9 +185,7 @@ const Sidebar = () => {
                 {!collapsed && (
                   <>
                     <div className="flex flex-col text-sm leading-tight">
-                      <span className="font-medium truncate">
-                        {user?.name}
-                      </span>
+                      <span className="font-medium truncate">{user?.name}</span>
                       <span className="text-xs text-gray-500 truncate">
                         {user?.role}
                       </span>
@@ -201,12 +204,8 @@ const Sidebar = () => {
               className="z-50 w-60 rounded-xl border border-gray-200 bg-white shadow-xl p-1"
             >
               <div className="px-3 py-2 rounded-lg bg-gray-50">
-                <p className="text-sm font-semibold truncate">
-                  {user?.name}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {user?.email}
-                </p>
+                <p className="text-sm font-semibold truncate">{user?.name}</p>
+                <p className="text-xs text-gray-500 truncate">{user?.email}</p>
               </div>
 
               <DropdownMenuSeparator className="my-1" />
