@@ -505,8 +505,8 @@ model student_profiles {
   blood_group        String?
   emergencyContactNo String?
 
-  class_id   String?
-  section_id String?
+  class_id   String? @db.Uuid
+  section_id String? @db.Uuid
 
   comments   String?
   is_deleted Boolean @default(false)
@@ -516,7 +516,9 @@ model student_profiles {
   updated_at DateTime @updatedAt
   updated_by String?
 
-  users users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  users    users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  classes  classes?  @relation(fields: [class_id], references: [class_id], onDelete: Cascade)
+  sections sections? @relation(fields: [section_id], references: [section_id], onDelete: Cascade)
 
   student_parent_map student_parent_map[]
 
@@ -603,8 +605,9 @@ model classes {
   updated_at DateTime @updatedAt
   updated_by String?  @db.Uuid
 
-  sections       sections[]
-  class_subjects class_subjects[]
+  sections         sections[]
+  class_subjects   class_subjects[]
+  student_profiles student_profiles[]
 
   @@schema("unidesk")
 }
@@ -623,6 +626,8 @@ model sections {
   created_by String?  @db.Uuid
   updated_at DateTime @updatedAt
   updated_by String?  @db.Uuid
+
+  student_profiles student_profiles[]
 
   classes classes @relation(fields: [class_id], references: [class_id])
 

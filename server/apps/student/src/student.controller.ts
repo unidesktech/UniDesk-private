@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Query,
@@ -24,19 +25,20 @@ export class StudentController {
   }
 
   @Get('stats')
-  async getStats(@Req() req: AuthenticatedRequest) {
-    const schoolId = req?.user?.school_id;
-    if (!schoolId) throw new UnauthorizedException('School ID missing');
+  async getStats(@Headers('x-school-id') schoolId: string) {
+    if (!schoolId)
+      throw new UnauthorizedException('School ID and User ID missing');
     return this.studentService.getStats(schoolId);
   }
 
   @Get('getAll')
   async getAll(
+    @Headers('x-school-id') schoolId: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
-    @Req() req?: AuthenticatedRequest,
   ) {
-    const schoolId = req?.user?.school_id;
+    if (!schoolId)
+      throw new UnauthorizedException('School ID and User ID missing');
     return this.studentService.getAll({
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,

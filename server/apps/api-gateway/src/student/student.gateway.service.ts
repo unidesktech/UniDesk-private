@@ -1,5 +1,7 @@
+import { gatewayHeaders } from '@app/common/headers/gateway.header';
+import { Track } from '@app/common/logger/track.decorator';
 import { ResponseDto } from '@app/dto/response.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
@@ -14,23 +16,36 @@ export class StudentGatewayService {
     return response.data;
   }
 
-  async getAllStudents(params?: {
-    page?: number;
-    limit?: number;
-  }): Promise<ResponseDto<any>> {
+  @Track()
+  async getAllStudents(
+    userId?: string,
+    schoolId?: string,
+    params?: {
+      page?: number;
+      limit?: number;
+    },
+  ): Promise<ResponseDto<any>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
     const response = await axios.get<ResponseDto<any>>(
       `${this.baseUrl}/getAll`,
       {
         params,
+        headers: gatewayHeaders(userId, schoolId),
       },
     );
     return response.data;
   }
 
-  async getStudentStats(): Promise<ResponseDto<string>> {
-    const response = await axios.get<ResponseDto<string>>(
-      `${this.baseUrl}/stats`,
-    );
+  @Track()
+  async getStudentStats(userId?: string, schoolId?: string): Promise<any> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await axios.get(`${this.baseUrl}/stats`, {
+      headers: gatewayHeaders(userId, schoolId),
+    });
     return response.data;
   }
 
