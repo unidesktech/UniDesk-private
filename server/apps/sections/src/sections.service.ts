@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma';
 import { ResponseDto } from '@app/dto/response.dto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
-import { randomUUID } from 'crypto';
 import { Track } from '@app/common/logger/track.decorator';
+import { uuidv7 } from 'uuidv7';
 
 @Injectable()
 export class SectionsService {
@@ -41,7 +41,7 @@ export class SectionsService {
               updated_by: creator,
             },
             create: {
-              section_id: randomUUID(),
+              section_id: uuidv7(),
               name: body.section.name,
               class_id: body.section.class_id,
               is_active: body.section.is_active ?? true,

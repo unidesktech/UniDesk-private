@@ -35,6 +35,17 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
         ],
       },
       {
+        key: 'parent',
+        label: 'Parents',
+        icon: 'Users',
+        path: '/management/parents',
+        permissions: [
+          'management.parents.view',
+          'management.parents.edit',
+          'management.parents.delete',
+        ],
+      },
+      {
         key: 'teachers',
         label: 'Teachers',
         icon: 'Users',
@@ -65,6 +76,17 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
           'management.classes.view',
           'management.classes.edit',
           'management.classes.delete',
+        ],
+      },
+      {
+        key: 'sections',
+        label: 'Sections',
+        icon: 'Layers',
+        path: '/management/sections',
+        permissions: [
+          'management.sections.view',
+          'management.sections.edit',
+          'management.sections.delete',
         ],
       },
     ],

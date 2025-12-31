@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ResponseDto } from '@app/dto/response.dto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { PrismaService } from '@app/prisma';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 import { Track } from '@app/common/logger/track.decorator';
 import bcrypt from 'bcryptjs';
 
@@ -33,7 +33,7 @@ export class TeacherService {
               updated_by: creator,
             },
             create: {
-              user_id: randomUUID(),
+              user_id: uuidv7(),
               user_code: `TEACH-${Date.now()}`,
               school_id: schoolId,
               name: body.teacher.name,
@@ -56,7 +56,7 @@ export class TeacherService {
               updated_by: creator,
             },
             create: {
-              teacher_id: randomUUID(),
+              teacher_id: uuidv7(),
               user_id: user.user_id,
               qualification: body.teacher.qualification,
               joining_date: body.teacher.joiningDate,

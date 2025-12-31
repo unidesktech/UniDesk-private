@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ResponseDto } from '@app/dto/response.dto';
 import { SaveStudentDto } from '@app/dto/student.dto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 import { Track } from '@app/common/logger/track.decorator';
 import { PrismaService } from '@app/prisma';
 import bcrypt from 'bcryptjs';
@@ -34,7 +34,7 @@ export class StudentService {
               updated_by: creator,
             },
             create: {
-              user_id: randomUUID(),
+              user_id: uuidv7(),
               user_code: `STU-${Date.now()}`,
               school_id: schoolId,
               name: body.student.name,
@@ -61,7 +61,7 @@ export class StudentService {
               updated_by: creator,
             },
             create: {
-              student_id: randomUUID(),
+              student_id: uuidv7(),
               user_id: studentUser.user_id,
               admission_no: body.student.admission_no,
               dob: body.student.dob,
@@ -88,7 +88,7 @@ export class StudentService {
                   updated_by: creator,
                 },
                 create: {
-                  user_id: randomUUID(),
+                  user_id: uuidv7(),
                   user_code: `PARENT-${Date.now()}`,
                   name: parent.name,
                   email: parent.email,
@@ -109,7 +109,7 @@ export class StudentService {
                   relation_to_student: parent.relation,
                 },
                 create: {
-                  parent_id: randomUUID(),
+                  parent_id: uuidv7(),
                   user_id: parentUser.user_id,
                   occupation: parent.occupation,
                   relation_to_student: parent.relation,
@@ -130,7 +130,7 @@ export class StudentService {
                   updated_by: creator,
                 },
                 create: {
-                  student_parent_map_id: randomUUID(),
+                  student_parent_map_id: uuidv7(),
                   student_id: studentProfile.student_id,
                   parent_id: parentProfile.parent_id,
                   created_by: creator,

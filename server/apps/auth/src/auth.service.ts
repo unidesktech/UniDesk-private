@@ -3,11 +3,12 @@ import { ResponseDto } from '@app/dto/response.dto';
 import { SchoolBasicInfoDTO } from '@app/dto/school.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { randomUUID, randomBytes } from 'crypto';
+import { randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '@app/common/utils/Email';
 import { getSuperAdminUserCreationEmail } from '@app/common/utils/templates/emails/User';
 import { LoginDto, RequestOTPDto } from '@app/dto';
+import { uuidv7 } from 'uuidv7';
 import {
   signAccessToken,
   signRefreshToken,
@@ -69,7 +70,7 @@ export class AuthService {
         const userCode = `${prefix}${newSuffix}`;
         const user = await prisma.users.create({
           data: {
-            user_id: randomUUID(),
+            user_id: uuidv7(),
             user_code: userCode,
             school_id: body.school_id,
             name: body.name,
@@ -86,7 +87,7 @@ export class AuthService {
 
         await prisma.user_onboarding_status.create({
           data: {
-            onboarding_id: randomUUID(),
+            onboarding_id: uuidv7(),
             user_id: user.user_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -97,7 +98,7 @@ export class AuthService {
 
         await prisma.user_preferences.create({
           data: {
-            pref_id: randomUUID(),
+            pref_id: uuidv7(),
             user_id: user.user_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -108,7 +109,7 @@ export class AuthService {
 
         const role = await prisma.roles.create({
           data: {
-            role_id: randomUUID(),
+            role_id: uuidv7(),
             school_id: body.school_id,
             name: 'Super-Admin',
             description: `This is the super user for ${body.name}`,
@@ -121,7 +122,7 @@ export class AuthService {
 
         await prisma.user_roles.create({
           data: {
-            user_role_id: randomUUID(),
+            user_role_id: uuidv7(),
             user_id: user.user_id,
             role_id: role.role_id,
             created_at: new Date(),
@@ -225,7 +226,7 @@ export class AuthService {
       try {
         await this.prismaService.auth_tokens.create({
           data: {
-            token_id: randomUUID(),
+            token_id: uuidv7(),
             user_id: user.user_id,
             refresh_token: hashToken(refreshToken),
             user_agent: ua,
@@ -446,7 +447,7 @@ export class AuthService {
 
       const otpRow = await this.prismaService.otp.create({
         data: {
-          otp_id: randomUUID(),
+          otp_id: uuidv7(),
           otp: hashedOtp,
           user_email: email,
           expires_at: expiresAt,

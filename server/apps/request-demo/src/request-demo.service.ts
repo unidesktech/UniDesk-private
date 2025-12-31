@@ -5,7 +5,7 @@ import { RequestDemoDTO } from '@app/dto/request-demo.dto';
 import { ResponseDto } from '@app/dto/response.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 import { validate as isUUID } from 'uuid';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class RequestDemoService {
           data: {
             ...data,
             created_at: new Date(),
-            request_id: randomUUID(),
+            request_id: uuidv7(),
           },
         });
 

@@ -3,6 +3,7 @@ import { ResponseDto } from '@app/dto/response.dto';
 import { saveSubjectDto } from '@app/dto/subject.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
+import { uuidv7 } from 'uuidv7';
 
 @Injectable()
 export class SubjectService {
@@ -37,7 +38,7 @@ export class SubjectService {
         },
 
         create: {
-          subject_id: crypto.randomUUID(),
+          subject_id: uuidv7(),
           school_id: school_id,
           year_id: body.year_id,
           name,

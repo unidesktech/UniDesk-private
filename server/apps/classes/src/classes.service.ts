@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@app/prisma';
 import { ResponseDto } from '@app/dto/response.dto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 import { Track } from '@app/common/logger/track.decorator';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class ClassesService {
             updated_by: creator,
           },
           create: {
-            class_id: randomUUID(),
+            class_id: uuidv7(),
             school_id: schoolId!,
             year_id: body.classes.year_id,
             name: body.classes.name,

@@ -10,7 +10,7 @@ import {
 } from '@app/dto/school.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 
 @Injectable()
 export class SchoolService {
@@ -60,7 +60,7 @@ export class SchoolService {
       const school = await this.prismaService.$transaction(async (prisma) => {
         const school = await prisma.schools.create({
           data: {
-            school_id: randomUUID(),
+            school_id: uuidv7(),
             school_code: this.getSchoolCode(name, short_name),
             name,
             address,
@@ -78,7 +78,7 @@ export class SchoolService {
 
         await prisma.school_branding.create({
           data: {
-            branding_id: randomUUID(),
+            branding_id: uuidv7(),
             school_id: school.school_id,
             logo_url: logo_url || null,
             banner_url: banner_url || null,
@@ -91,7 +91,7 @@ export class SchoolService {
 
         await prisma.school_subscription_status.create({
           data: {
-            status_id: randomUUID(),
+            status_id: uuidv7(),
             school_id: school.school_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -105,7 +105,7 @@ export class SchoolService {
 
         await prisma.school_pricing_plans.create({
           data: {
-            plan_id: randomUUID(),
+            plan_id: uuidv7(),
             school_id: school.school_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -121,7 +121,7 @@ export class SchoolService {
 
         await prisma.school_initial_setup.create({
           data: {
-            setup_id: randomUUID(),
+            setup_id: uuidv7(),
             school_id: school.school_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -132,7 +132,7 @@ export class SchoolService {
 
         await prisma.school_settings.create({
           data: {
-            setting_id: randomUUID(),
+            setting_id: uuidv7(),
             school_id: school.school_id,
             created_at: new Date(),
             updated_at: new Date(),

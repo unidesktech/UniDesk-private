@@ -3,7 +3,7 @@ import { Track } from '@app/common/logger/track.decorator';
 import { PrismaService } from '@app/prisma';
 import { FaqCategoryDTO, ArticleDTO, FaqTopicDTO } from '@app/dto/faq.dto';
 import { ResponseDto } from '@app/dto/response.dto';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { sanitizeParams } from '@app/common/utils/FormatFunctions';
 import { CACHE_VERSIONS } from 'cache-keys';
@@ -242,7 +242,7 @@ export class FaqService {
 
       const article = await this.prismaService.articles.create({
         data: {
-          article_id: randomUUID(),
+          article_id: uuidv7(),
           question: body.question,
           answer: body.answer,
           points: body.points,

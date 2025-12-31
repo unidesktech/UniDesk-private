@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 import bcrypt from 'bcryptjs';
 
 import { Track } from '@app/common/logger/track.decorator';
@@ -33,7 +33,7 @@ export class ParentService {
             updated_by: creator,
           },
           create: {
-            user_id: randomUUID(),
+            user_id: uuidv7(),
             user_code: `PARENT-${Date.now()}`,
             school_id: schoolId,
             name: body.name,
@@ -55,7 +55,7 @@ export class ParentService {
             updated_by: creator,
           },
           create: {
-            parent_id: randomUUID(),
+            parent_id: uuidv7(),
             user_id: parentUser.user_id,
             occupation: body.occupation,
             annual_income: body.annual_income,
@@ -75,7 +75,7 @@ export class ParentService {
             updated_by: creator,
           },
           create: {
-            student_parent_map_id: randomUUID(),
+            student_parent_map_id: uuidv7(),
             student_id: body.student_id,
             parent_id: parentProfile.parent_id,
             comments: body.relation,

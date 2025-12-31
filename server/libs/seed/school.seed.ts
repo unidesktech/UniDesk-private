@@ -6,7 +6,7 @@ import {
   STATUS_ID,
 } from './constants';
 import { prisma } from './prisma.client';
-import { randomUUID } from 'crypto';
+import { uuidv7 } from 'uuidv7';
 
 export async function seedSchools() {
   console.log('🌱 Seeding schools...');
@@ -38,7 +38,7 @@ export async function seedSchools() {
       where: { school_id: school.school_id },
       update: {},
       create: {
-        branding_id: randomUUID(),
+        branding_id: uuidv7(),
         school_id: school.school_id,
         logo_url: null,
         banner_url: null,
@@ -93,7 +93,7 @@ export async function seedSchools() {
       where: { school_id: school.school_id },
       update: {},
       create: {
-        setup_id: randomUUID(),
+        setup_id: uuidv7(),
         school_id: school.school_id,
         created_at: new Date(),
         updated_at: new Date(),
