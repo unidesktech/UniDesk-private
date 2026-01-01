@@ -1,7 +1,7 @@
 import { gatewayHeaders } from '@app/common/headers/gateway.header';
 import { Track } from '@app/common/logger/track.decorator';
+import { gatewayAxios } from '@app/common/middlewares/gatewayAxios.middleware';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import axios from 'axios';
 
 @Injectable()
 export class commonGateWayService {
@@ -15,7 +15,7 @@ export class commonGateWayService {
       throw new UnauthorizedException('User Id or School Id is missing.');
     }
     const url = `${process.env.ENDPOINT_URL}:${process.env.COMMON_PORT}/common/distinct-values`;
-    const response = await axios.post(url, body, {
+    const response = await gatewayAxios.post(url, body, {
       headers: gatewayHeaders(userId, schoolId),
     });
 
