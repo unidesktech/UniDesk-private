@@ -1,4 +1,5 @@
 import axios from "axios";
+import api from "../hooks/axios.interceptor";
 
 const dummy = [
   {
@@ -175,58 +176,42 @@ const dummy = [
 ];
 
 export const getManagementStats = async (entity: string) => {
-  // simulate network delay
-  await new Promise((res) => setTimeout(res, 300));
-
-  const total = dummy.length;
-  const active = dummy.filter((d) => d.status === "active").length;
-  const inactive = dummy.filter((d) => d.status === "inactive").length;
-
-  return {
-    total,
-    active,
-    inactive,
-    thisWeek: 5,
-  };
+  const response = await api.get(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/${entity.toLowerCase()}/stats`
+  );
+  return response.data;
 };
-
-// export const getManagementStats = async (entity: string) => {
-//   const data = await axios.get(
-//     `${process.env.NEXT_PUBLIC_API_BASE_URL}/${entity.toLowerCase()}/stats`
-//   );
-//   return data.data;
-// };
-
-// export const getManagementList = async (
-//   entity: string,
-//   page = 1,
-//   limit = 10,
-//   filters: Record<string, any> = {},
-// ) => {
-//   const res = await axios.get(
-//     `${process.env.NEXT_PUBLIC_API_BASE_URL}/${entity.toLowerCase()}/getAll`,
-//     {
-//       params: {
-//         page,
-//         limit,
-//         ...filters,
-//       },
-//     },
-//   );
-
-//   return res;
-// };
 
 export const getManagementList = async (
   entity: string,
   page = 1,
   limit = 10,
-  filters: Record<string, any> = {}
+  filters: Record<string, string | object> = {},
 ) => {
-  await new Promise((res) => setTimeout(res, 300));
+  const res = await api.get(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/${entity.toLowerCase()}/getAll`,
+    {
+      params: {
+        page,
+        limit,
+        ...filters,
+      },
+    },
+  );
 
-  return {
-    data: dummy.slice((page - 1) * limit, page * limit),
-    total: dummy.length,
-  };
+  return res.data.data;
 };
+
+// export const getManagementList = async (
+//   entity: string,
+//   page = 1,
+//   limit = 10,
+//   filters: Record<string, any> = {}
+// ) => {
+//   await new Promise((res) => setTimeout(res, 300));
+
+//   return {
+//     data: dummy.slice((page - 1) * limit, page * limit),
+//     total: dummy.length,
+//   };
+// };

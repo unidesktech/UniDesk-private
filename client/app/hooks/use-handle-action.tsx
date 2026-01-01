@@ -12,13 +12,13 @@ export const useHandleAction = () => {
     action: "navigate" | "modal" | "api",
     actionValue: string,
     data: any,
-    actionUse?: "edit" | "add" | "delete"
+    actionUse?: "edit" | "add" | "delete" | "import" | "export"
   ) => {
     switch (action) {
       case "navigate":
         if (actionUse) {
           // if (actionUse === "edit") router.push(`/${actionValue}?id=${data.id}`);
-          // if (actionUse === "add") router.push(`/${actionValue}`);
+          if (actionUse === "add") router.push(`/${actionValue}`);
         } else {
           router.push(actionValue);
         }

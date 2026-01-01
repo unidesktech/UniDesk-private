@@ -250,7 +250,7 @@ export class StudentService {
         const data = records.map((r) => ({
           user_code: r.users?.user_code,
           name: r.users?.name,
-          class: r.classes?.name ?? "",
+          class: r.classes?.name ?? '',
           contact: r.users?.phone,
           status: r.users?.status,
         }));

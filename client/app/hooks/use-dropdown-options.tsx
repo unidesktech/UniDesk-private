@@ -1,70 +1,81 @@
-import { useEffect, useState } from "react";
-import { DropDownOption } from "../models/dropdown.modal";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getDistinctValues } from "../services/common.service";
-import { FieldProps } from "../models/form.model";
 
-export const useDropdownOptions = (
-  field: FieldProps,
-  formData: Record<string, any>,
-  page = 1,
-  mode = "default"
-) => {
-  const {
-    options: staticOptions,
-    isDistinct,
-    dependancy,
-    type,
-    tableName,
-    columnName,
-  } = field;
+export function useDropdownOptions(
+  config: {
+    key: string;
+    isDistinct?: boolean;
+    tableName?: string;
+    columnName?: string;
+    dependancy?: string[];
+    options?: { id: string; value: string }[];
+  },
+  activeFilters: Record<string, any>
+) {
+  const [options, setOptions] = useState<{ id: string; value: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const fetchedOnceRef = useRef(false);
 
-  const [options, setOptions] = useState<DropDownOption[]>(staticOptions || []);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const dependencyKey = useMemo(() => {
+    if (!config.dependancy?.length) return null;
+    return config.dependancy
+      .map((dep) => activeFilters[dep] ?? "")
+      .join("|");
+  }, [config.dependancy, ...config.dependancy?.map((d) => activeFilters[d]) ?? []]);
+
+  const isDisabled = useMemo(() => {
+    if (!config.dependancy?.length) return false;
+    return config.dependancy.some((dep) => !activeFilters[dep]);
+  }, [config.dependancy, ...config.dependancy?.map((d) => activeFilters[d]) ?? []]);
 
   useEffect(() => {
-    if (type !== "dropdown") return;
+    if (!config.isDistinct) {
+      setOptions(config.options ?? []);
+      return;
+    }
 
-    const fetchOptions = async () => {
-      if (dependancy?.length) {
-        const hasParentValue = dependancy.every((dep) => formData[dep]);
-        if (!hasParentValue && !isDistinct) {
-          setOptions([]);
-          setIsDisabled(true);
-          return;
-        }
-      }
-      if (isDistinct) {
-        if (!tableName || !columnName) {
-          console.warn("Missing tableName or columnName for distinct dropdown");
-          setOptions([]);
-          setIsDisabled(true);
-          return;
-        }
+    if (!config.dependancy?.length) {
+      if (fetchedOnceRef.current) return;
 
-        const filters =
-          dependancy?.reduce((acc, dep) => {
-            if (formData[dep]) acc[dep] = formData[dep];
-            return acc;
-          }, {} as Record<string, any>) ?? {};
+      fetchedOnceRef.current = true;
+      setLoading(true);
 
-        const data = await getDistinctValues({
-          tableName,
-          columnName,
-          filters,
-        });
+      getDistinctValues({
+        tableName: config.tableName!,
+        columnName: config.columnName!,
+      })
+        .then(setOptions)
+        .finally(() => setLoading(false));
 
-        setOptions(data || []);
-        setIsDisabled(!data || data.length === 0);
-        return;
-      }
-      if (staticOptions) {
-        setOptions(staticOptions);
-        setIsDisabled(false);
-      }
-    };
+      return;
+    }
 
-    fetchOptions();
-  }, [formData, JSON.stringify(dependancy)]);
+    if (isDisabled) {
+      setOptions([]);
+      return;
+    }
 
-  return { options, isDisabled };
-};
+    setLoading(true);
+
+    const filters: Record<string, any> = {};
+    config.dependancy.forEach((dep) => {
+      filters[dep] = activeFilters[dep];
+    });
+
+    getDistinctValues({
+      tableName: config.tableName!,
+      columnName: config.columnName!,
+      filters,
+    })
+      .then(setOptions)
+      .finally(() => setLoading(false));
+  }, [
+    config.isDistinct,
+    config.tableName,
+    config.columnName,
+    dependencyKey,
+    isDisabled,
+  ]);
+
+  return { options, isDisabled, loading };
+}

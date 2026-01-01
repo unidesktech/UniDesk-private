@@ -1,9 +1,11 @@
+"use client";
 import { Search, LayoutGrid, LayoutList } from "lucide-react";
 import Dropdown from "../Dropdown/Dropdown";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useDropdownOptions } from "@/app/hooks/use-dropdown-options";
 import useDebounce from "@/app/hooks/use-debounce";
+import { useEffect, useState } from "react";
 
 type ViewMode = "table" | "card";
 
@@ -14,8 +16,8 @@ interface FilterOption {
 
 interface FilterItem {
   key: string;
+  label: string;
   options?: FilterOption[];
-
   isDistinct?: boolean;
   tableName?: string;
   columnName?: string;
@@ -30,13 +32,10 @@ interface FilterBarConfig {
 
 interface FilterBarProps {
   config: FilterBarConfig;
-
   searchQuery: string;
   onSearchChange: (query: string) => void;
-
-  filters: Record<string, string>;
+  filters: Record<string, any>;
   onFiltersChange: (filters: Record<string, any>) => void;
-
   viewMode?: ViewMode;
   onViewModeChange?: (mode: ViewMode) => void;
 }
@@ -50,6 +49,13 @@ export function FilterBar({
   viewMode,
   onViewModeChange,
 }: FilterBarProps) {
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const debouncedSearch = useDebounce(searchInput, 300);
+
+  useEffect(() => {
+    onSearchChange(debouncedSearch);
+  }, [debouncedSearch]);
+
   return (
     <div className="bg-white rounded-xl p-4 border shadow-sm">
       <div className="flex flex-col lg:flex-row gap-4">
@@ -57,8 +63,8 @@ export function FilterBar({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              value={searchQuery}
-              onChange={(e) => onSearchChange(useDebounce(e.target.value, 300))}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               placeholder={config.searchPlaceholder}
               className="pl-10 bg-gray-50"
             />
@@ -66,20 +72,15 @@ export function FilterBar({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 lg:w-1/2">
-          {/* Filters */}
           {config.filters.map((filter) => {
-            const { options, isDisabled } = useDropdownOptions(
-              {
-                type: "dropdown",
-                ...filter,
-              } as any,
-              filters
-            );
+            const { options, isDisabled } = useDropdownOptions(filter, filters);
+            console.log(filters, filter.key)
             return (
-              <div key={filter.key} className="flex-1 min-w-[180px] max-w-full">
+              <div key={filter.key} className="flex-1 min-w-[180px]">
                 <Dropdown
+                placeholder={filter.label}
                   options={options}
-                  value={String(filters[filter.key] ?? "")}
+                  value={filters[filter.key] ?? null}
                   disabled={isDisabled}
                   onChange={(v) =>
                     onFiltersChange({
@@ -92,7 +93,6 @@ export function FilterBar({
             );
           })}
 
-          {/* View Toggle */}
           {config.enableViewToggle && viewMode && onViewModeChange && (
             <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
               <Button

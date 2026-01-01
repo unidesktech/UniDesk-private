@@ -18,14 +18,17 @@ export class CommonsService {
       throw new BadRequestException('Invalid table name');
     }
 
-    const { table, idColumn } = dbTable;
+    const { table, idColumn, scope } = dbTable;
 
     const conditions: Prisma.Sql[] = [
       Prisma.sql`is_active = true`,
       Prisma.sql`is_deleted = false`,
     ];
 
-    if (schoolId) {
+    if (scope === 'school') {
+      if (!schoolId) {
+        throw new BadRequestException('schoolId is required');
+      }
       conditions.push(Prisma.sql`school_id = ${schoolId}`);
     }
 

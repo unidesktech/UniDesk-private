@@ -3,10 +3,7 @@ import { BreadcrumbComponent } from "@/app/components/Breadcrumb/BreadcrumbCompo
 import StatCard from "@/app/components/Cards/stat-card";
 import { FilterBar } from "@/app/components/Table/filter-bar";
 import { Button } from "@/app/components/ui/button";
-import { managementConfig } from "@/app/config/management.config";
 import useViewportMatch from "@/app/hooks/use-viewport-match";
-import { formatLabel } from "@/app/utils/HelperFunction";
-import { Download, Plus, Upload } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useHandleAction } from "@/app/hooks/use-handle-action";
 import ModalRenderer from "@/app/components/Modal/modal-rendrer";
@@ -18,22 +15,22 @@ import {
 import dynamic from "next/dynamic";
 import TableComponent from "@/app/components/Table/table-component";
 import StatCardSkeleton from "@/app/components/SkeletonLoader/stat-card-skeleton";
+import { usePermissionChecker } from "@/app/hooks/use-permission-checker";
+import { managementConfig } from "@/app/config/management.config";
 const EntitySidebar = dynamic(
   () => import("@/app/components/EntitySidebar/entity-side"),
   { ssr: false }
 );
 
-const page = () => {
+const Management = () => {
   const params = useParams();
+  const {can} = usePermissionChecker();
   const entityType = params?.entityType as string | undefined;
   const entityConfig = useMemo(() => {
     if (!entityType) return null;
-    return managementConfig[entityType as keyof typeof managementConfig];
+    return managementConfig()[entityType as keyof typeof managementConfig];
   }, [entityType]);
-
-  if (!entityConfig) return null;
-
-  const { header, cards, filters, table, sidebar } = entityConfig;
+  
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [selected, setSelected] = useState<Record<string, any> | null>(null);
   const [filter, setFilter] = useState<Record<string, string>>({});
@@ -41,7 +38,7 @@ const page = () => {
   const [limit, setLimit] = useState<number>(5);
   const [page, setPage] = useState<number>(1);
   const isDesktop = useViewportMatch(768);
-
+  
   const [stats, setStats] = useState<any>(null);
   const [tableData, setTableData] = useState<any>(null);
   const [tableVersion, setTableVersion] = useState(0);
@@ -63,17 +60,17 @@ const page = () => {
       setStats(null);
       try {
         const res = await getManagementStats(entityType);
-        setStats(res);
+        setStats(res.data);
       } finally {
         setStatLoading(false);
       }
     };
     fetchStats();
   }, [entityType, statsVersion]);
-
+  
   useEffect(() => {
     if (!entityType) return;
-
+    
     const fetchTable = async () => {
       const res = await getManagementList(entityType, page, limit, {
         searchQuery,
@@ -81,11 +78,15 @@ const page = () => {
       });
       setTableData(res);
     };
-
+    
     fetchTable();
   }, [entityType, page, limit, tableVersion]);
 
   const { handleAction, closeModal, modalProps } = useHandleAction();
+
+  if (!entityConfig) return null;
+  const { header, buttons, cards, filters, table, sidebar } = entityConfig;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
@@ -103,24 +104,19 @@ const page = () => {
           )}
 
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              className="gap-2 cursor-pointer text-xs md:text-base"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </Button>
-            <Button
-              variant="outline"
-              className="gap-2 cursor-pointer text-sm md:text-base"
-            >
-              <Upload className="w-4 h-4" />
-              Import
-            </Button>
-            <Button className="text-sm md:text-base gap-2 cursor-pointer bg-linear-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700">
-              <Plus className="w-4 h-4" />
-              Add {formatLabel(String(entityType))}
-            </Button>
+            {
+              buttons.map((button, index: number) => (
+                <Button
+                key={index}
+                variant={button.variant}
+                onClick={() => handleAction(button.action, button.actionValue, "", button.actionUse)}
+                disabled={!can(button.permissions)}
+                className={`${!can(button.permissions) && "hidden"} ${button.action === 'api' ? "gap-2 cursor-pointer text-sm md:text-base" : "text-sm md:text-base gap-2 cursor-pointer bg-linear-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 "}`} >
+                  <button.icon className="w-4 h-4" />
+                  {button.label}
+                </Button>
+              ))
+            }
           </div>
         </div>
 
@@ -240,4 +236,4 @@ const page = () => {
     </div>
   );
 };
-export default page;
+export default Management;

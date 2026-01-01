@@ -8,18 +8,51 @@ import {
   Users,
   MessageSquare,
   Download,
-  UserPlus,
   Phone,
-  Mail,
+  Upload,
+  Plus,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 
-export const managementConfig = {
+export const managementConfig = () => {
+  return {
   students: {
     header: {
       title: "Students",
       subtitle: "Manage all student records, enrollments, and information",
     },
+    buttons: [
+      {
+        name: "export",
+        icon: Download,
+        variant: "outline",
+        action: "api",
+        actionUse: "export",
+        actionValue: "students/export",
+        label: "Export",
+        permissions: ["management.students.view"]
+      },
+      {
+        name: "import",
+        icon: Upload,
+        variant: "outline",
+        action: "api",
+        actionUse: "import",
+        actionValue: "students/import",
+        label: "Import",
+        permissions: ["management.students.edit"]
+      },
+      {
+        name: "addStudent",
+        icon: Plus,
+        variant: "",
+        action: "navigate",
+        actionUse: "add",
+        actionValue: "students/add",
+        label: "Add Student",
+        permissions: ["management.students.edit"]
+      },
+    ],
     cards: [
       {
         value: "Total Students",
@@ -37,7 +70,7 @@ export const managementConfig = {
       },
       {
         value: "New This Week",
-        key: "thisWeek",
+        key: "newThisWeek",
         icon: TrendingUp,
         color: "text-green-600",
         bg: "bg-green-100",
@@ -56,6 +89,7 @@ export const managementConfig = {
       filters: [
         {
           key: "status",
+          label: "Status",
           options: [
             { value: "All Status", id: "all" },
             { value: "Active", id: "active" },
@@ -64,19 +98,22 @@ export const managementConfig = {
         },
         {
           key: "class_id",
+          label: "Classes",
           isDistinct: true,
           tableName: "classes",
-          columnName: "id",
+          columnName: "name",
         },
         {
           key: "section_id",
+          label: "Sections",
           isDistinct: true,
           tableName: "sections",
-          columnName: "id",
+          columnName: "name",
           dependancy: ["class_id"],
         },
         {
           key: "sortBy",
+          label: "Sort By",
           options: [
             { value: "Name", id: "name" },
             { value: "ID", id: "id" },
@@ -86,7 +123,7 @@ export const managementConfig = {
     },
     table: {
       headers: [
-        { key: "id", header: "ID / Code" },
+        { key: "user_code", header: "ID / Code" },
         { key: "name", header: "Name" },
         { key: "class", header: "Class" },
         { key: "contact", header: "Contact" },
@@ -99,7 +136,7 @@ export const managementConfig = {
           actionValue: "",
           label: "View",
           icon: Eye,
-          allowedRole: ["admin", "teacher"],
+          permissions: ["management.students.view"],
         },
         {
           action: "modal",
@@ -107,7 +144,7 @@ export const managementConfig = {
           actionValue: "student",
           label: "Edit",
           icon: Edit,
-          allowedRole: ["admin"],
+          permissions: ["management.students.edit"],
         },
         {
           action: "navigate",
@@ -115,7 +152,7 @@ export const managementConfig = {
           actionValue: "student",
           label: "Chat",
           icon: FaWhatsapp,
-          allowedRole: ["admin"],
+          permissions: ["communication.students.view"],
         },
         {
           action: "sep",
@@ -128,7 +165,7 @@ export const managementConfig = {
           label: "Delete",
           icon: Trash2,
           className: "text-red-600",
-          allowedRole: ["admin"],
+          permissions: ["management.students.delete"],
         },
       ],
     },
@@ -164,7 +201,7 @@ export const managementConfig = {
           type: "fields",
           fields: [
             { key: "class", label: "Class", icon: null },
-            { key: "rollNo", label: "Roll No", icon: null },
+            // { key: "rollNo", label: "Roll No", icon: null },
             { key: "contact", label: "Contact", icon: Phone },
           ],
           stats: [
@@ -180,7 +217,7 @@ export const managementConfig = {
           type: "details",
           fields: [
             { key: "class", label: "Class" },
-            { key: "rollNo", label: "Roll No" },
+            // { key: "rollNo", label: "Roll No" },
             { key: "contact", label: "Contact" },
           ],
         },
@@ -234,5 +271,6 @@ export const managementConfig = {
         },
       ],
     },
-  },
+  }
+}
 };

@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "../ui/dropdown-menu";
+import { usePermissionChecker } from "@/app/hooks/use-permission-checker";
 
 export interface ActionItem {
   key: string;
@@ -21,6 +22,7 @@ export interface ActionItem {
   action?: any;
   actionValue?: string;
   actionUse?: "edit" | "add" | "delete";
+  permissions: string[]
 }
 
 interface ActionButtonProps {
@@ -41,7 +43,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   row,
   handleAction,
 }) => {
+  const { can } = usePermissionChecker();
   if (!config?.length) return null;
+
 
   return (
     <DropdownMenu>
@@ -53,7 +57,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
       <DropdownMenuContent align="end" onClick={stop}>
         {config.map((item, i) =>
-          item.type === "separator" ? (
+          can(item.permissions) ? item.type === "separator" ? (
             <DropdownMenuSeparator key={`sep-${item.key}+i`} />
           ) : (
             <DropdownMenuItem
@@ -71,7 +75,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
               {item.icon && <item.icon className="w-4 h-4 mr-2" />}
               {item.label}
             </DropdownMenuItem>
-          )
+          ) : <></>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
