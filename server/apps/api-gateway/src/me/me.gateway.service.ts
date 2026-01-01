@@ -4,12 +4,14 @@ import { SidebarService } from './sidebar.service';
 import { AuthenticatedUser } from '@app/dto';
 import { JsonObject } from 'libs/prisma/generated/runtime/client';
 import { Track } from '@app/common/logger/track.decorator';
+import { PermissionResolverService } from '@app/common/permissions/permission-resolver.service';
 
 @Injectable()
 export class MeService {
   constructor(
     private readonly prismaService: PrismaService,
     private sidebarService: SidebarService,
+    private permissionResolver: PermissionResolverService,
   ) {}
 
   @Track()
@@ -68,6 +70,11 @@ export class MeService {
         };
       }
 
+      const permission = await this.permissionResolver.getUserPermissions(
+        user.user_id,
+        schoolId,
+      );
+
       return {
         success: true,
         message: 'Store Value Fetched',
@@ -91,6 +98,7 @@ export class MeService {
                 : null,
             is_active: school.is_active,
           },
+          permission: permission,
         },
       };
     }

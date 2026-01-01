@@ -14,7 +14,7 @@ import Sidebar from "./components/Sidebar/sidebar";
 import { isExcludedFromSidebar } from "./utils/routes.utils";
 import { getStoreValue } from "./services/me.service";
 import { useAppDispatch } from "./store/hooks";
-import { setSchool, setUser } from "./store/app.slice";
+import { setPermission, setSchool, setUser } from "./store/app.slice";
 
 const ClientLayout = ({
   children,
@@ -37,6 +37,7 @@ const ClientLayout = ({
         if (response.success) {
           dispatch(setUser(response.data.user));
           dispatch(setSchool(response.data.school));
+          dispatch(setPermission(response.data.permission));
         } else {
           router.push("/auth/login");
         }

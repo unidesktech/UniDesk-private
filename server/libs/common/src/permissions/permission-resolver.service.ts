@@ -34,6 +34,23 @@ export class PermissionResolverService {
     return resolved[permissionKey] ?? false;
   }
 
+  async getUserPermissions(
+    userId: string,
+    schoolId: string,
+  ): Promise<Record<string, boolean>> {
+    const key = this.cacheKey(schoolId, userId);
+
+    const cached = await this.cache.get<Record<string, boolean>>(key);
+    if (cached) {
+      return cached;
+    }
+
+    const resolved = await this.resolveAllPermissions(userId, schoolId);
+
+    await this.cache.set(key, resolved, 3600);
+    return resolved;
+  }
+
   private async resolveAllPermissions(
     userId: string,
     schoolId: string,
@@ -86,5 +103,9 @@ export class PermissionResolverService {
     }
 
     return finalPermissions;
+  }
+
+  async invalidateUserPermissions(userId: string, schoolId: string) {
+    await this.cache.del(this.cacheKey(schoolId, userId));
   }
 }

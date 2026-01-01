@@ -6,6 +6,7 @@ import { UserBasicInfo } from "../models/user.model";
 const initialState: AppState = {
   school: null,
   user: null,
+  permission: null,
   resetPasswordEmail: null,
   isAuthenticated: false,
 };
@@ -20,6 +21,9 @@ const appSlice = createSlice({
     setUser(state, action: PayloadAction<UserBasicInfo | null>) {
       state.user = action.payload;
     },
+    setPermission(state, action: PayloadAction<Record<string, boolean> | null>) {
+      state.permission = action.payload;
+    },
     setResetPasswordEmail(state, action: PayloadAction<string | null>) {
       state.resetPasswordEmail = action.payload;
     },
@@ -29,5 +33,5 @@ const appSlice = createSlice({
   },
 });
 
-export const { setSchool, setUser, setResetPasswordEmail, logout } = appSlice.actions;
+export const { setSchool, setUser, setPermission, setResetPasswordEmail, logout } = appSlice.actions;
 export default appSlice.reducer;
