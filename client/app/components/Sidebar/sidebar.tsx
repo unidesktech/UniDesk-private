@@ -44,7 +44,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (!user) {
-      router.push("/auth/login");
+      // router.push("/auth/login");
     }
   }, [user]);
 
