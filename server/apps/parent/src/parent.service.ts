@@ -106,7 +106,7 @@ export class ParentService {
     startOfWeek.setDate(startOfWeek.getDate() - 7);
 
     const [totalParents, activeParents, inactiveParents, newThisWeek] =
-      await this.prismaService.$transaction([
+      await Promise.all([
         this.prismaService.parent_profiles.count({
           where: {
             is_deleted: false,

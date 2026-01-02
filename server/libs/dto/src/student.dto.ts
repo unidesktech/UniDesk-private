@@ -35,8 +35,8 @@ export class SaveStudentDto {
     name: string;
     email: string;
     phone?: string;
-    avatar?: string;            // profile photo URL
-    password?: string;          // optional password
+    avatar?: string; // profile photo URL
+    password?: string; // optional password
     admission_no: string;
     dob: Date;
     gender?: string;
@@ -51,11 +51,10 @@ export class SaveStudentDto {
     name: string;
     email: string;
     phone?: string;
-    avatar?: string;            // optional profile photo
-    password?: string;          // optional password
+    avatar?: string; // optional profile photo
+    password?: string; // optional password
     relation: string;
     occupation?: string;
     annual_income?: number;
   }>;
 }
-

@@ -7,22 +7,29 @@ import {
   Query,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { ClassesService } from './classes.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
+import { Track } from '@app/common/logger/track.decorator';
+import { MircoServiceGuard } from '@app/common/guards/microservice.guard';
+import { SaveClassDTO } from '@app/dto/class.dto';
 
 @Controller('class')
+@UseGuards(MircoServiceGuard)
 export class ClassesController {
   constructor(private readonly classService: ClassesService) {}
 
   @Post('save')
-  async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
+  @Track()
+  async save(@Body() body: SaveClassDTO, @Req() req: AuthenticatedRequest) {
     const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
     return this.classService.save(body, creator, schoolId);
   }
 
   @Get('getAll')
+  @Track()
   async getAll(
     @Query('page') page?: number,
     @Query('limit') limit?: number,
@@ -36,6 +43,7 @@ export class ClassesController {
     });
   }
   @Get('stats')
+  @Track()
   async getStats(@Req() req: AuthenticatedRequest) {
     const schoolId = req?.user?.school_id;
     if (!schoolId) throw new UnauthorizedException('School ID missing');
@@ -43,11 +51,13 @@ export class ClassesController {
   }
 
   @Get(':id')
+  @Track()
   async getById(@Param('id') id: string) {
     return this.classService.getById(id);
   }
 
-  @Post(':id/delete')
+  @Post('delete/:id')
+  @Track()
   async softDelete(
     @Param('id') id: string,
     @Body() body: { reason: string },

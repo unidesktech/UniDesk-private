@@ -1,43 +1,78 @@
+import { gatewayHeaders } from '@app/common/headers/gateway.header';
+import { gatewayAxios } from '@app/common/middlewares/gatewayAxios.middleware';
 import { ResponseDto } from '@app/dto/response.dto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import axios from 'axios';
 
 @Injectable()
 export class ParentGatewayService {
   private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_PARENT_PORT}/parent`;
 
-  async saveParent(body: any): Promise<ResponseDto<string>> {
-    const response = await axios.post<ResponseDto<string>>(
+  async saveParent(
+    body: any,
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<string>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.post<ResponseDto<string>>(
       `${this.baseUrl}/save`,
       body,
+      { headers: gatewayHeaders(userId, schoolId) },
     );
 
     return response.data;
   }
 
-  async getAllParent(params?: {
-    page?: number;
-    limit?: number;
-  }): Promise<ResponseDto<any>> {
-    const response = await axios.get<ResponseDto<any>>(
+  async getAllParent(
+    params?: {
+      page?: number;
+      limit?: number;
+    },
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<any>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.get<ResponseDto<any>>(
       `${this.baseUrl}/getAll`,
       {
         params,
+        headers: gatewayHeaders(userId, schoolId),
       },
     );
     return response.data;
   }
 
-  async getParentStats(): Promise<ResponseDto<string>> {
+  async getParentStats(
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<string>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
     const response = await axios.get<ResponseDto<string>>(
       `${this.baseUrl}/stats`,
+      { headers: gatewayHeaders(userId, schoolId) },
     );
     return response.data;
   }
 
   // Get student by ID
-  async getParentById(id: string): Promise<ResponseDto<any>> {
-    const response = await axios.get<ResponseDto<any>>(`${this.baseUrl}/${id}`);
+  async getParentById(
+    id: string,
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<any>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.get<ResponseDto<any>>(
+      `${this.baseUrl}/${id}`,
+      { headers: gatewayHeaders(userId, schoolId) },
+    );
     return response.data;
   }
 
@@ -45,10 +80,16 @@ export class ParentGatewayService {
   async softDeleteParent(
     id: string,
     body: { reason: string },
+    userId?: string,
+    schoolId?: string,
   ): Promise<ResponseDto<null>> {
-    const response = await axios.post<ResponseDto<null>>(
-      `${this.baseUrl}/${id}/delete`,
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.post<ResponseDto<null>>(
+      `${this.baseUrl}/delete/${id}`,
       body,
+      { headers: gatewayHeaders(userId, schoolId) },
     );
     return response.data;
   }

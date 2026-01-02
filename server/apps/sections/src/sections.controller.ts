@@ -1,14 +1,25 @@
-import { Body, Controller, Get, Param, Post, Query, Req,} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { SectionsService } from './sections.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
+import { MircoServiceGuard } from '@app/common/guards/microservice.guard';
+import { SaveSectionDTO } from '@app/dto/section.dto';
 
 @Controller('section')
+@UseGuards(MircoServiceGuard)
 export class SectionsController {
   constructor(private readonly sectionService: SectionsService) {}
 
   @Post('save')
-  async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
-    // const schoolId = req.user?.school_id;
+  async save(@Body() body: SaveSectionDTO, @Req() req: AuthenticatedRequest) {
     const creator = req.user?.user_id;
     return this.sectionService.save(body, creator);
   }
@@ -32,11 +43,16 @@ export class SectionsController {
     return this.sectionService.getById(id);
   }
 
-  @Post(':id/delete')
+  @Get('stats')
+  async getSectionStats(@Param('id') id: string) {
+    return this.sectionService.getStats(id);
+  }
+
+  @Post('delete/:id')
   async softDelete(
     @Param('id') id: string,
     @Body() body: { reason: string },
-     @Req() req: AuthenticatedRequest
+    @Req() req: AuthenticatedRequest,
   ) {
     const updatedBy = req.user?.user_id;
     return this.sectionService.softDelete(id, body, updatedBy);

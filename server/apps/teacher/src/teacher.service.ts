@@ -5,6 +5,7 @@ import { PrismaService } from '@app/prisma';
 import { uuidv7 } from 'uuidv7';
 import { Track } from '@app/common/logger/track.decorator';
 import bcrypt from 'bcryptjs';
+import { SaveTeacherDTO } from '@app/dto/teacher.dto';
 
 @Injectable()
 export class TeacherService {
@@ -12,23 +13,23 @@ export class TeacherService {
 
   @Track()
   async save(
-    body: any,
+    body: SaveTeacherDTO,
     creator?: string,
     schoolId?: string,
   ): Promise<ResponseDto<{ teacher_id: string } | null>> {
     try {
       const teacherId = await this.prismaService.$transaction(
         async (prisma) => {
-          const plainPassword = body.teacher.password || body.teacher.name;
+          const plainPassword = body.password || body.name;
           const saltRounds = parseInt(process.env.SALT_ROUNDS ?? '10', 10);
           const hashedPassword = await bcrypt.hash(plainPassword, saltRounds);
 
           const user = await prisma.users.upsert({
-            where: { email: body.teacher.email },
+            where: { email: body.email },
             update: {
-              name: body.teacher.name,
-              phone: body.teacher.phone,
-              profile_photo_url: body.teacher.avatar,
+              name: body.name,
+              phone: body.phone,
+              profile_photo_url: body.avatar,
               password_hash: hashedPassword,
               updated_by: creator,
             },
@@ -36,10 +37,10 @@ export class TeacherService {
               user_id: uuidv7(),
               user_code: `TEACH-${Date.now()}`,
               school_id: schoolId,
-              name: body.teacher.name,
-              email: body.teacher.email,
-              phone: body.teacher.phone,
-              profile_photo_url: body.teacher.avatar,
+              name: body.name,
+              email: body.email,
+              phone: body.phone,
+              profile_photo_url: body.avatar,
               password_hash: hashedPassword,
               status: 'active',
               created_by: creator,
@@ -49,17 +50,17 @@ export class TeacherService {
           const profile = await prisma.teacher_profiles.upsert({
             where: { user_id: user.user_id },
             update: {
-              qualification: body.teacher.qualification,
-              experience_in_years: body.teacher.experienceYears,
-              joining_date: body.teacher.joiningDate,
+              qualification: body.qualification,
+              experience_in_years: body.experienceYears,
+              joining_date: body.joiningDate,
               is_deleted: false,
               updated_by: creator,
             },
             create: {
               teacher_id: uuidv7(),
               user_id: user.user_id,
-              qualification: body.teacher.qualification,
-              joining_date: body.teacher.joiningDate,
+              qualification: body.qualification,
+              joining_date: body.joiningDate,
               created_by: creator,
               updated_by: creator,
             },
@@ -89,49 +90,48 @@ export class TeacherService {
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const [total, active, onLeave, newThisMonth] =
-      await this.prismaService.$transaction([
-        this.prismaService.teacher_profiles.count({
-          where: {
+    const [total, active, onLeave, newThisMonth] = await Promise.all([
+      this.prismaService.teacher_profiles.count({
+        where: {
+          is_deleted: false,
+          users: {
+            school_id: schoolId,
             is_deleted: false,
-            users: {
-              school_id: schoolId,
-              is_deleted: false,
-            },
           },
-        }),
+        },
+      }),
 
-        this.prismaService.teacher_profiles.count({
-          where: {
+      this.prismaService.teacher_profiles.count({
+        where: {
+          is_deleted: false,
+          users: {
+            school_id: schoolId,
+            status: 'active',
             is_deleted: false,
-            users: {
-              school_id: schoolId,
-              status: 'active',
-              is_deleted: false,
-            },
           },
-        }),
-        this.prismaService.teacher_profiles.count({
-          where: {
+        },
+      }),
+      this.prismaService.teacher_profiles.count({
+        where: {
+          is_deleted: false,
+          users: {
+            school_id: schoolId,
+            status: 'on_leave',
             is_deleted: false,
-            users: {
-              school_id: schoolId,
-              status: 'on_leave',
-              is_deleted: false,
-            },
           },
-        }),
-        this.prismaService.teacher_profiles.count({
-          where: {
+        },
+      }),
+      this.prismaService.teacher_profiles.count({
+        where: {
+          is_deleted: false,
+          created_at: { gte: startOfMonth },
+          users: {
+            school_id: schoolId,
             is_deleted: false,
-            created_at: { gte: startOfMonth },
-            users: {
-              school_id: schoolId,
-              is_deleted: false,
-            },
           },
-        }),
-      ]);
+        },
+      }),
+    ]);
 
     return {
       data: { total, active, onLeave, newThisMonth },

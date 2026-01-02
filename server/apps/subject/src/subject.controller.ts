@@ -7,18 +7,20 @@ import {
   Query,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { SubjectService } from './subject.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
-import { saveSubjectDto } from '@app/dto/subject.dto';
+import { SaveSubjectDto } from '@app/dto/subject.dto';
+import { MircoServiceGuard } from '@app/common/guards/microservice.guard';
 
 @Controller('subject')
-// @UseGuards(AuthGuard)
+@UseGuards(MircoServiceGuard)
 export class SubjectController {
   constructor(private readonly subjectService: SubjectService) {}
 
   @Post('save')
-  async save(@Body() body: saveSubjectDto, @Req() req: AuthenticatedRequest) {
+  async save(@Body() body: SaveSubjectDto, @Req() req: AuthenticatedRequest) {
     const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
     if (!schoolId) throw new UnauthorizedException('School ID missing');
@@ -52,7 +54,7 @@ export class SubjectController {
     return this.subjectService.getById(id);
   }
 
-  @Post(':id/delete')
+  @Post('delete/:id')
   async softDelete(@Param('id') id: string, @Body() body: { reason: string }) {
     return this.subjectService.softDelete(id, body);
   }

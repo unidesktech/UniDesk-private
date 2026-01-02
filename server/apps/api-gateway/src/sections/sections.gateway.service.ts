@@ -1,42 +1,96 @@
+import { gatewayHeaders } from '@app/common/headers/gateway.header';
+import { Track } from '@app/common/logger/track.decorator';
+import { gatewayAxios } from '@app/common/middlewares/gatewayAxios.middleware';
 import { ResponseDto } from '@app/dto/response.dto';
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class SectionGatewayService {
   private baseUrl = `${process.env.ENDPOINT_URL}:${process.env.MANAGEMENT_SECTIONS_PORT}/section`;
 
-  async saveSection(body: any): Promise<ResponseDto<any>> {
-    const response = await axios.post<ResponseDto<any>>(
+  @Track()
+  async saveSection(
+    body: any,
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<any>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.post<ResponseDto<any>>(
       `${this.baseUrl}/save`,
       body,
+      { headers: gatewayHeaders(userId, schoolId) },
     );
     return response.data;
   }
 
-  async getAllSections(params?: {
-    page?: number;
-    limit?: number;
-  }): Promise<ResponseDto<any>> {
-    const response = await axios.get<ResponseDto<any>>(
+  @Track()
+  async getAllSections(
+    params?: {
+      page?: number;
+      limit?: number;
+    },
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<any>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.get<ResponseDto<any>>(
       `${this.baseUrl}/getAll`,
-      { params },
+      { params, headers: gatewayHeaders(userId, schoolId) },
     );
     return response.data;
   }
 
-  async getSectionById(id: string): Promise<ResponseDto<any>> {
-    const response = await axios.get<ResponseDto<any>>(`${this.baseUrl}/${id}`);
+  @Track()
+  async getSectionById(
+    id: string,
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<any>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.get<ResponseDto<any>>(
+      `${this.baseUrl}/${id}`,
+      { headers: gatewayHeaders(userId, schoolId) },
+    );
     return response.data;
   }
 
+  @Track()
+  async getSectionStats(
+    userId?: string,
+    schoolId?: string,
+  ): Promise<ResponseDto<string>> {
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.get<ResponseDto<string>>(
+      `${this.baseUrl}/stats`,
+      {
+        headers: gatewayHeaders(userId, schoolId),
+      },
+    );
+    return response.data;
+  }
+
+  @Track()
   async softDeleteSection(
     id: string,
     body: { reason: string },
+    userId?: string,
+    schoolId?: string,
   ): Promise<ResponseDto<null>> {
-    const response = await axios.post<ResponseDto<null>>(
-      `${this.baseUrl}/${id}/delete`,
+    if (!userId || !schoolId) {
+      throw new UnauthorizedException('UserId or SchoolId is missing');
+    }
+    const response = await gatewayAxios.post<ResponseDto<null>>(
+      `${this.baseUrl}/delete/${id}`,
       body,
+      { headers: gatewayHeaders(userId, schoolId) },
     );
     return response.data;
   }

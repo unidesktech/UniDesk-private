@@ -7,21 +7,20 @@ import {
   Query,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { ParentService } from './parent.service';
 import { AuthenticatedRequest } from '@app/dto/types/request';
+import { MircoServiceGuard } from '@app/common/guards/microservice.guard';
+import { SaveParentDto } from '@app/dto/parent.dto';
 
 @Controller()
+@UseGuards(MircoServiceGuard)
 export class ParentController {
   constructor(private readonly parentService: ParentService) {}
 
-  // @Get()
-  // getHello(): string {
-  //   return this.parentService.getHello();
-  // }
-
   @Post('save')
-  async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
+  async save(@Body() body: SaveParentDto, @Req() req: AuthenticatedRequest) {
     const schoolId = req.user?.school_id;
     const creator = req.user?.user_id;
     return this.parentService.save(body, schoolId, creator);
@@ -51,7 +50,7 @@ export class ParentController {
   async getById(@Param('id') id: string) {
     return this.parentService.getById(id);
   }
-  @Post(':id/delete')
+  @Post('delete/:id')
   async softDelete(@Param('id') id: string, @Body() body: { reason: string }) {
     return this.parentService.softDelete(id, body);
   }

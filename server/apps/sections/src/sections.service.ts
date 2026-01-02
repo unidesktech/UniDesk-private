@@ -4,6 +4,7 @@ import { ResponseDto } from '@app/dto/response.dto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { Track } from '@app/common/logger/track.decorator';
 import { uuidv7 } from 'uuidv7';
+import { SaveSectionDTO } from '@app/dto/section.dto';
 
 @Injectable()
 export class SectionsService {
@@ -11,7 +12,7 @@ export class SectionsService {
 
   @Track()
   async save(
-    body: any,
+    body: SaveSectionDTO,
     creator?: string,
     // schoolId?: string,
   ): Promise<ResponseDto<{ section_id: string } | null>> {
@@ -21,7 +22,7 @@ export class SectionsService {
           // validate class
           const cls = await prisma.classes.findFirst({
             where: {
-              class_id: body.section.class_id,
+              class_id: body.class_id,
               is_deleted: false,
             },
           });
@@ -32,19 +33,19 @@ export class SectionsService {
 
           const section = await prisma.sections.upsert({
             where: {
-              section_id: body.section?.section_id ?? '',
+              section_id: body.section_id ?? '',
             },
             update: {
-              name: body.section.name,
-              class_id: body.section.class_id,
-              is_active: body.section.is_active,
+              name: body.name,
+              class_id: body.class_id,
+              is_active: body.is_active,
               updated_by: creator,
             },
             create: {
               section_id: uuidv7(),
-              name: body.section.name,
-              class_id: body.section.class_id,
-              is_active: body.section.is_active ?? true,
+              name: body.name,
+              class_id: body.class_id,
+              is_active: body.is_active ?? true,
               created_by: creator,
               updated_by: creator,
             },
@@ -106,6 +107,52 @@ export class SectionsService {
       success: true,
       message: 'Section fetched successfully',
       data: section,
+    };
+  }
+
+  async getStats(schoolId: string) {
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - 7);
+
+    const baseWhere = {
+      is_deleted: false,
+      classes: {
+        school_id: schoolId,
+        is_deleted: false,
+      },
+    };
+
+    const [total, active, inactive, newThisWeek] = await Promise.all([
+      this.prismaService.sections.count({
+        where: baseWhere,
+      }),
+
+      this.prismaService.sections.count({
+        where: {
+          ...baseWhere,
+          is_active: true,
+        },
+      }),
+
+      this.prismaService.sections.count({
+        where: {
+          ...baseWhere,
+          is_active: false,
+        },
+      }),
+
+      this.prismaService.sections.count({
+        where: {
+          ...baseWhere,
+          created_at: { gte: startOfWeek },
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+      message: 'Section stats fetched successfully',
+      data: { total, active, inactive, newThisWeek },
     };
   }
 

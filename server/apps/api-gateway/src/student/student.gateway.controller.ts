@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -20,13 +21,19 @@ export class StudentGatewayController {
   constructor(private readonly studentGatewayService: StudentGatewayService) {}
 
   @Post('/save')
-  save(@Body() body: any) {
-    return this.studentGatewayService.saveStudent(body);
+  @Track()
+  @RequirePermission('management.students.edit')
+  save(@Body() body: any, @Req() req: AuthenticatedRequest) {
+    return this.studentGatewayService.saveStudent(
+      body,
+      req?.user?.user_id,
+      req.user?.school_id,
+    );
   }
 
   @Get('getAll')
   @Track()
-  @RequirePermission('management.students.edit')
+  @RequirePermission('management.students.view')
   getAll(
     @Req() req: AuthenticatedRequest,
     @Query('page') page?: number,
@@ -53,12 +60,27 @@ export class StudentGatewayController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    return this.studentGatewayService.getStudentById(id);
+  getById(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    return this.studentGatewayService.getStudentById(
+      id,
+      req?.user?.user_id,
+      req?.user?.school_id,
+    );
   }
 
-  @Post(':id/delete')
-  softDelete(@Param('id') id: string, @Body() body: { reason: string }) {
-    return this.studentGatewayService.softDeleteStudent(id, body);
+  @Delete('delete/:id')
+  @Track()
+  @RequirePermission('management.students.delete')
+  softDelete(
+    @Param('id') id: string,
+    @Body() body: { reason: string },
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.studentGatewayService.softDeleteStudent(
+      id,
+      body,
+      req?.user?.user_id,
+      req?.user?.school_id,
+    );
   }
 }

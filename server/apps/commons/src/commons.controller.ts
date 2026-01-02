@@ -1,9 +1,18 @@
-import { Body, Controller, Headers, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CommonsService } from './commons.service';
 import { DistinctValuePlayload } from '@app/dto/common.dto';
 import { AuthenticatedRequest } from '@app/dto/types/request';
+import { MircoServiceGuard } from '@app/common/guards/microservice.guard';
 
 @Controller('common')
+@UseGuards(MircoServiceGuard)
 export class CommonsController {
   constructor(private readonly commonsService: CommonsService) {}
 

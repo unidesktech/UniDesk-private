@@ -4,6 +4,7 @@ import { ResponseDto } from '@app/dto/response.dto';
 import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { uuidv7 } from 'uuidv7';
 import { Track } from '@app/common/logger/track.decorator';
+import { SaveClassDTO } from '@app/dto/class.dto';
 
 @Injectable()
 export class ClassesService {
@@ -11,7 +12,7 @@ export class ClassesService {
 
   @Track()
   async save(
-    body: any,
+    body: SaveClassDTO,
     creator?: string,
     schoolId?: string,
   ): Promise<ResponseDto<{ class_id: string } | null>> {
@@ -19,21 +20,21 @@ export class ClassesService {
       const classId = await this.prismaService.$transaction(async (prisma) => {
         const cls = await prisma.classes.upsert({
           where: {
-            class_id: body.classes?.class_id ?? '',
+            class_id: body.class_id ?? '',
           },
           update: {
-            name: body.classes.name,
-            comments: body.classes.comments,
-            is_active: body.classes.is_active,
+            name: body.name,
+            comments: body.comments,
+            is_active: body.is_active,
             updated_by: creator,
           },
           create: {
             class_id: uuidv7(),
             school_id: schoolId!,
-            year_id: body.classes.year_id,
-            name: body.classes.name,
-            comments: body.classes.comments,
-            is_active: body.classes.is_active ?? true,
+            year_id: body.year_id,
+            name: body.name,
+            comments: body.comments,
+            is_active: body.is_active ?? true,
             created_by: creator,
             updated_by: creator,
           },
@@ -47,6 +48,7 @@ export class ClassesService {
             },
             data: {
               is_deleted: true,
+              is_active: false,
               updated_by: creator,
             },
           });
@@ -150,7 +152,7 @@ export class ClassesService {
 
   async getStats(schoolId: string) {
     const [totalClasses, activeClasses, inactiveClasses, classesWithSections] =
-      await this.prismaService.$transaction([
+      await Promise.all([
         this.prismaService.classes.count({
           where: { is_deleted: false, school_id: schoolId },
         }),
@@ -220,6 +222,7 @@ export class ClassesService {
         where: { class_id: id, is_deleted: false },
         data: {
           is_deleted: true,
+          is_active: false,
           comments: `Deleted due to class deletion: ${body.reason}`,
           updated_at: new Date(),
           updated_by: updatedBy,
@@ -230,6 +233,7 @@ export class ClassesService {
         where: { class_id: id },
         data: {
           is_deleted: true,
+          is_active: false,
           comments: body.reason,
           updated_at: new Date(),
           updated_by: updatedBy,

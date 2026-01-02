@@ -1,6 +1,6 @@
 import { writeToConsole } from '@app/common/utils/writeToConsole';
 import { ResponseDto } from '@app/dto/response.dto';
-import { saveSubjectDto } from '@app/dto/subject.dto';
+import { SaveSubjectDto } from '@app/dto/subject.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable } from '@nestjs/common';
 import { uuidv7 } from 'uuidv7';
@@ -8,11 +8,9 @@ import { uuidv7 } from 'uuidv7';
 @Injectable()
 export class SubjectService {
   constructor(private readonly prismaService: PrismaService) {}
-  // getHello(): string {
-  //   return 'Hello World!';
-  // }
+
   async save(
-    body: saveSubjectDto,
+    body: SaveSubjectDto,
     school_id: string,
     createdBy?: string,
   ): Promise<ResponseDto<{ subject_id: string } | null>> {
@@ -77,7 +75,7 @@ export class SubjectService {
       inactiveSubjects,
       newThisWeek,
       subjectsWithTeachers,
-    ] = await this.prismaService.$transaction([
+    ] = await Promise.all([
       this.prismaService.subjects.count({
         where: { is_deleted: false, school_id: schoolId },
       }),
@@ -142,7 +140,7 @@ export class SubjectService {
     try {
       const { page, limit, schoolId, yearId } = params;
 
-      const where: any = {
+      const where = {
         is_deleted: false,
         ...(schoolId && { school_id: schoolId }),
         ...(yearId && { year_id: yearId }),
@@ -232,21 +230,6 @@ export class SubjectService {
     updatedBy?: string,
   ): Promise<ResponseDto<null>> {
     try {
-      // const classSubjectCount = await this.prismaService.class_subjects.count({
-      //   where: {
-      //     subject_id: subjectId,
-      //     is_deleted: false,
-      //   },
-      // });
-
-      // if (classSubjectCount > 0) {
-      //   return {
-      //     success: false,
-      //     message: 'Cannot delete subject. Subject is assigned to class(es).',
-      //     data: null,
-      //   };
-      // }
-
       await this.prismaService.subjects.update({
         where: { subject_id: subjectId },
         data: {

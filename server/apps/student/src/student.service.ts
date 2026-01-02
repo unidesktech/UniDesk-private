@@ -281,6 +281,7 @@ export class StudentService {
       ]);
 
       const data = records.map((r) => ({
+        id: r.student_id,
         user_code: r.users?.user_code,
         name: r.users?.name,
         class: r.classes?.name,
@@ -415,6 +416,7 @@ export class StudentService {
             where: { user_id: map.parent_profiles.user_id },
             data: {
               is_deleted: true,
+              is_active: false,
               comments: body.reason,
               updated_by: updatedBy,
             },

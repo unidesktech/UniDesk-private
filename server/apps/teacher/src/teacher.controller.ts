@@ -7,17 +7,21 @@ import {
   Query,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { TeacherService } from './teacher.service';
 import { Track } from '@app/common/logger/track.decorator';
 import { AuthenticatedRequest } from '@app/dto/types/request';
+import { MircoServiceGuard } from '@app/common/guards/microservice.guard';
+import { SaveTeacherDTO } from '@app/dto/teacher.dto';
 
 @Controller('teacher')
+@UseGuards(MircoServiceGuard)
 export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
   @Post('save')
   @Track()
-  async save(@Body() body: any, @Req() req: AuthenticatedRequest) {
+  async save(@Body() body: SaveTeacherDTO, @Req() req: AuthenticatedRequest) {
     return this.teacherService.save(
       body,
       req.user?.user_id,
