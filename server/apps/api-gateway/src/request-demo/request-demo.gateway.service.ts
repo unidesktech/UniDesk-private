@@ -1,6 +1,6 @@
+import { gatewayAxios } from '@app/common/middlewares/gatewayAxios.middleware';
 import { ResponseDto } from '@app/dto/response.dto';
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
 
 @Injectable()
 export class RequestDemoGateWayService {
@@ -9,7 +9,7 @@ export class RequestDemoGateWayService {
     if (id) {
       url += `/${id}`;
     }
-    const response = await axios.post<ResponseDto<string>>(url, body);
+    const response = await gatewayAxios.post<ResponseDto<string>>(url, body);
 
     return response.data;
   }
@@ -19,7 +19,7 @@ export class RequestDemoGateWayService {
     if (id) {
       url += `/${id}`;
     }
-    const response = await axios.get<ResponseDto<string>>(url);
+    const response = await gatewayAxios.get<ResponseDto<string>>(url);
     return response.data;
   }
 }

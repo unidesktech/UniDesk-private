@@ -13,7 +13,7 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
   {
     key: 'dashboard',
     label: 'Dashboard',
-    icon: 'LayoutGrid',
+    icon: 'LayoutDashboard',
     path: '/dashboard',
     permissions: ['dashboard.view', 'dashboard.edit', 'dashboard.delete'],
   },
@@ -26,12 +26,23 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
       {
         key: 'students',
         label: 'Students',
-        icon: 'User',
+        icon: 'Users',
         path: '/management/students',
         permissions: [
           'management.students.view',
           'management.students.edit',
           'management.students.delete',
+        ],
+      },
+      {
+        key: 'parent',
+        label: 'Parents',
+        icon: 'Users',
+        path: '/management/parents',
+        permissions: [
+          'management.parents.view',
+          'management.parents.edit',
+          'management.parents.delete',
         ],
       },
       {
@@ -48,7 +59,7 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
       {
         key: 'subjects',
         label: 'Subjects',
-        icon: 'Book',
+        icon: 'BookOpen',
         path: '/management/subjects',
         permissions: [
           'management.subjects.view',
@@ -65,6 +76,17 @@ export const SIDEBAR_DEFINITION: SidebarDefinitionItem[] = [
           'management.classes.view',
           'management.classes.edit',
           'management.classes.delete',
+        ],
+      },
+      {
+        key: 'sections',
+        label: 'Sections',
+        icon: 'Layers',
+        path: '/management/sections',
+        permissions: [
+          'management.sections.view',
+          'management.sections.edit',
+          'management.sections.delete',
         ],
       },
     ],

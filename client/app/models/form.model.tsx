@@ -4,7 +4,7 @@ import { IconType } from "./types/icon.type";
 export interface FormProps {
   type: string;
   mode: "add" | "edit";
-  id?: number;
+  id: string | null;
 }
 
 export interface InfoItem {
@@ -16,13 +16,7 @@ export interface InfoItem {
   };
 }
 
-export type FormValue =
-  | string
-  | number
-  | null
-  | undefined
-  | File[]
-  | Date;
+export type FormValue = string | number | null | undefined | File[] | Date;
 
 export type FormData = Record<string, FormValue>;
 
@@ -43,6 +37,10 @@ export interface FieldProps {
   min?: number | string;
   max?: number | string;
   options?: DropDownOption[];
+  columnName?: string;
+  tableName?: string;
+  isDistinct?: boolean;
+  dependancy?: string[];
 }
 
 export interface SectionProps {
@@ -52,24 +50,32 @@ export interface SectionProps {
 
 export type FormPreview =
   | {
-    type: string;
-    key: string;
-    displayName: string;
-    avatarKey: string;
-    icon: IconType
-  }
-  | {
-    sectionName: string;
-    fields: Array<{
       type: string;
       key: string;
       displayName: string;
-    }>
-  }
-
+      avatarKey: string;
+      icon: IconType;
+    }
+  | {
+      sectionName: string;
+      fields: Array<{
+        type: string;
+        key: string;
+        displayName: string;
+      }>;
+    };
 
 export interface ConfigType {
   sections?: SectionProps[];
   info?: InfoItem[];
   preview?: FormPreview[];
+}
+
+export interface FormRendererProps {
+  sections: SectionProps[];
+  formData: Record<string, unknown>;
+  errors: Record<string, string>;
+  resetFlag?: boolean;
+  handleChange: (key: string, value: unknown) => void;
+  handleBlur: (field: FieldProps) => void;
 }

@@ -1,19 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "./components/Header/Header";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   excludeSidebarRoutes,
   generalRoutes,
   offerRoutes,
 } from "./config/header-footer.config";
 import Footer from "./components/Footer/Footer";
-import { Provider } from "react-redux";
-import { store } from "./store";
 import { OfferFooter } from "./components/Footer/Offer-footer";
 import Sidebar from "./components/Sidebar/sidebar";
 import { isExcludedFromSidebar } from "./utils/routes.utils";
+import { getStoreValue } from "./services/me.service";
+import { useAppDispatch } from "./store/hooks";
+import { setPermission, setSchool, setUser } from "./store/app.slice";
 
 const ClientLayout = ({
   children,
@@ -21,20 +22,43 @@ const ClientLayout = ({
   children: React.ReactNode;
 }>) => {
   const pathName = usePathname();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const showHeader =
     generalRoutes.includes(pathName) || offerRoutes.includes(pathName);
   const hideSidebar = isExcludedFromSidebar(pathName, excludeSidebarRoutes);
+
+  useEffect(() => {
+    const fetchStoreValues = async () => {
+      if (!hideSidebar) {
+        const response = await getStoreValue();
+
+        if (response.success) {
+          dispatch(setUser(response.data.user));
+          dispatch(setSchool(response.data.school));
+          dispatch(setPermission(response.data.permission));
+        } else {
+          router.push("/auth/login");
+        }
+      }
+    };
+
+    fetchStoreValues();
+  }, [pathName]);
   return (
-    <Provider store={store}>
+    <div className="min-h-screen flex flex-col">
       {showHeader && <Header />}
 
-      {!hideSidebar && <Sidebar />}
+      <div className="flex flex-1">
+        {!hideSidebar && <Sidebar />}
 
-      {children}
+        <main className="flex-1 overflow-y-auto bg-gray-50">{children}</main>
+      </div>
 
       {generalRoutes.includes(pathName) && <Footer />}
       {offerRoutes.includes(pathName) && <OfferFooter />}
-    </Provider>
+    </div>
   );
 };
 

@@ -2,7 +2,6 @@
 import { CategoryCard } from "@/app/components/Cards/category-card";
 import FaqAccordion from "@/app/components/FAQAccordion/faq-accordion";
 import { Card, CardContent } from "@/app/components/ui/card";
-import useDebounce from "@/app/hooks/useDebounce";
 import {
   fetchCategories,
   fetchFaqs,
@@ -13,39 +12,68 @@ import React, { useEffect, useMemo, useState } from "react";
 import { SupportCard } from "./support-card";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IconMap } from "@/app/utils/maping";
+import useDebounce from "@/app/hooks/use-debounce";
+import { safeParseArray } from "@/app/utils/HelperFunction";
+
+interface FaqItem {
+  question: string;
+  answer: string;
+  points?: string[];
+  [key: string]: unknown;
+}
+
+interface Category {
+  faq_id: string;
+  name: string;
+  desc: string;
+  icon: string;
+  color: string;
+  articles_count: number;
+}
 
 const FAQ = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTopic, setActiveTopic] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const [faqs, setFaqs] = useState<any[]>([]);
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [isLoadingFaqs, setIsLoadingFaqs] = useState(false);
 
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  const [categories, setCategories] = useState<any[]>(() => {
-    const stored = sessionStorage.getItem("categories");
-    return stored ? JSON.parse(stored) : [];
-  });
-  const [topics, setTopics] = useState<any[]>(() => {
-    const stored = sessionStorage.getItem("topics");
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [topics, setTopics] = useState<Record<string, string>[]>([]);
 
   useEffect(() => {
-    if (categories.length === 0) {
+
+    const getStoredFaqValues = () => {
+    // Categories
+    const storedCategories = safeParseArray(
+      sessionStorage.getItem("categories")
+    );
+
+    if (storedCategories.length > 0) {
+      setCategories(storedCategories as Category[]);
+    } else {
       fetchCategories().then((data) => {
         setCategories(data);
         sessionStorage.setItem("categories", JSON.stringify(data));
       });
     }
-    if (topics.length === 0) {
+
+    // Topics
+    const storedTopics = safeParseArray(sessionStorage.getItem("topics"));
+
+    if (storedTopics.length > 0) {
+      setTopics(storedTopics as Record<string, string>[]);
+    } else {
       fetchTopics().then((data) => {
         setTopics(data);
         sessionStorage.setItem("topics", JSON.stringify(data));
       });
     }
+  }
+  getStoredFaqValues();
   }, []);
 
   useEffect(() => {
@@ -174,7 +202,7 @@ const FAQ = () => {
                           icon={IconMap(category.icon)}
                           color={category.color}
                           articles_count={category.articles_count}
-                          onClick={(c)=>setSelectedCategory(c)}
+                          onClick={(c) => setSelectedCategory(c)}
                         />
                       ))
                     : Array.from({ length: 4 }).map((_, i) => (

@@ -8,3 +8,10 @@ export const combineDateAndTime = (
   }
   return new Date(`${date}T${time}:00`);
 };
+
+export const sanitizeParams = (value?: string) => {
+  if (!value || value === 'undefined' || value === 'null') {
+    return undefined;
+  }
+  return value;
+};

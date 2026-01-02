@@ -3,11 +3,12 @@ import { ResponseDto } from '@app/dto/response.dto';
 import { SchoolBasicInfoDTO } from '@app/dto/school.dto';
 import { PrismaService } from '@app/prisma';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { randomUUID, randomBytes } from 'crypto';
+import { randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sendEmail } from '@app/common/utils/Email';
 import { getSuperAdminUserCreationEmail } from '@app/common/utils/templates/emails/User';
 import { LoginDto, RequestOTPDto } from '@app/dto';
+import { uuidv7 } from 'uuidv7';
 import {
   signAccessToken,
   signRefreshToken,
@@ -69,7 +70,7 @@ export class AuthService {
         const userCode = `${prefix}${newSuffix}`;
         const user = await prisma.users.create({
           data: {
-            user_id: randomUUID(),
+            user_id: uuidv7(),
             user_code: userCode,
             school_id: body.school_id,
             name: body.name,
@@ -86,7 +87,7 @@ export class AuthService {
 
         await prisma.user_onboarding_status.create({
           data: {
-            onboarding_id: randomUUID(),
+            onboarding_id: uuidv7(),
             user_id: user.user_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -97,7 +98,7 @@ export class AuthService {
 
         await prisma.user_preferences.create({
           data: {
-            pref_id: randomUUID(),
+            pref_id: uuidv7(),
             user_id: user.user_id,
             created_at: new Date(),
             updated_at: new Date(),
@@ -108,7 +109,7 @@ export class AuthService {
 
         const role = await prisma.roles.create({
           data: {
-            role_id: randomUUID(),
+            role_id: uuidv7(),
             school_id: body.school_id,
             name: 'Super-Admin',
             description: `This is the super user for ${body.name}`,
@@ -121,7 +122,7 @@ export class AuthService {
 
         await prisma.user_roles.create({
           data: {
-            user_role_id: randomUUID(),
+            user_role_id: uuidv7(),
             user_id: user.user_id,
             role_id: role.role_id,
             created_at: new Date(),
@@ -211,30 +212,6 @@ export class AuthService {
         };
       }
 
-      const user_role = await this.prismaService.user_roles.findFirst({
-        where: { user_id: user.user_id },
-      });
-
-      if (!user_role) {
-        return {
-          success: false,
-          message: 'User has no role assigned',
-          data: null,
-        };
-      }
-
-      const role = await this.prismaService.roles.findFirst({
-        where: { role_id: user_role.role_id },
-      });
-
-      if (!role) {
-        return {
-          success: false,
-          message: "Assigned role doesn't exist",
-          data: null,
-        };
-      }
-
       const ip = req.ip;
       const ua = req.headers['user-agent'] || '';
 
@@ -249,7 +226,7 @@ export class AuthService {
       try {
         await this.prismaService.auth_tokens.create({
           data: {
-            token_id: randomUUID(),
+            token_id: uuidv7(),
             user_id: user.user_id,
             refresh_token: hashToken(refreshToken),
             user_agent: ua,
@@ -279,7 +256,6 @@ export class AuthService {
           email: user.email,
           user_code: user.user_code,
           profile_photo_url: user.profile_photo_url,
-          role: role?.name || 'User',
           csrf,
         },
         cookies: [
@@ -299,10 +275,7 @@ export class AuthService {
     }
   }
 
-  async refresh(
-    res: Response,
-    refreshToken: string,
-  ): Promise<ResponseDto<any>> {
+  async refresh(refreshToken: string): Promise<ResponseDto<null>> {
     try {
       const decoded = verifyRefreshToken(refreshToken);
 
@@ -357,17 +330,15 @@ export class AuthService {
         },
       });
 
-      res.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-      });
-
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-      });
-
-      return { success: true, message: 'Token refreshed', data: null };
+      return {
+        success: true,
+        message: 'Token refreshed',
+        data: null,
+        cookies: [
+          `accessToken=${newAccessToken}; HttpOnly; Path=/; Max-Age=600`,
+          `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=2592000`,
+        ],
+      };
     } catch (error) {
       writeToConsole.error(`Refresh Token Error: ${String(error)}`);
       return {
@@ -476,7 +447,7 @@ export class AuthService {
 
       const otpRow = await this.prismaService.otp.create({
         data: {
-          otp_id: randomUUID(),
+          otp_id: uuidv7(),
           otp: hashedOtp,
           user_email: email,
           expires_at: expiresAt,

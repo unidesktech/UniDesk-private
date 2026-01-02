@@ -10,21 +10,17 @@ import Redis from 'ioredis';
         const redis = new Redis({
           host: process.env.REDIS_HOST || '127.0.0.1',
           port: Number(process.env.REDIS_PORT) || 6379,
-          retryStrategy: (times) => {
-            return Math.min(times * 1000, 30000);
-          },
+
+          lazyConnect: true,
+          enableOfflineQueue: false,
+          maxRetriesPerRequest: 3,
+          connectTimeout: 2000,
+
+          retryStrategy: () => null,
         });
 
-        redis.on('connect', () => {
-          console.log('[Redis] Connected');
-        });
-
-        redis.on('error', (err) => {
-          console.error('[Redis] Error:', err.message);
-        });
-
-        redis.on('close', () => {
-          console.warn('[Redis] Connection closed');
+        redis.connect().catch(() => {
+          console.warn('[Redis] Disabled (connection failed)');
         });
 
         return redis;

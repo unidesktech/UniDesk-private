@@ -106,7 +106,7 @@ export const formConfig: Record<string, ConfigType> = {
         key: "productName",
         displayName: "Product Name",
         avatarKey: "productImages",
-        icon : User
+        icon: User,
       },
       {
         sectionName: "Basic Information",
@@ -126,6 +126,237 @@ export const formConfig: Record<string, ConfigType> = {
         fields: [
           { type: "text", key: "releaseDate", displayName: "Release Date" },
           { type: "text", key: "time", displayName: "Time" },
+        ],
+      },
+    ],
+  },
+  student: {
+    info: [
+      {
+        type: "title",
+        mode: {
+          add: { value: "Add New Student" },
+          edit: { value: "Edit Student Details" },
+        },
+      },
+      {
+        type: "desc",
+        mode: {
+          add: { value: "Fill in the details to register a new student" },
+          edit: { value: "Update the student information below" },
+        },
+      },
+    ],
+    sections: [
+      {
+        title: "Basic Information",
+        fields: [
+          {
+            name: "name",
+            type: "text",
+            label: "Student Name",
+            required: true,
+            placeholder: "Enter full name",
+          },
+          {
+            name: "rollNo",
+            type: "text",
+            label: "Roll Number",
+            required: true,
+            placeholder: "e.g. 001",
+          },
+          {
+            type: "dropdown",
+            name: "classes",
+            columnName: "name",
+            tableName: "classes",
+            label: "Class",
+            placeholder: "Select class",
+            required: true,
+            options: [],
+            isDistinct: true,
+          },
+          {
+            name: "status",
+            type: "dropdown",
+            label: "Status",
+            required: true,
+            placeholder: "Select Status",
+            options: [
+              { id: "active", value: "Active" },
+              { id: "inactive", value: "Inactive" },
+            ],
+          },
+        ],
+      },
+
+      {
+        title: "Contact & Profile",
+        fields: [
+          {
+            name: "phone",
+            type: "text",
+            label: "Contact Number",
+            required: true,
+            placeholder: "+91 XXXXX XXXXX",
+          },
+          {
+            name: "email",
+            type: "email",
+            label: "Email",
+            required: true,
+            placeholder: "enteryoremail@unidesk.com",
+          },
+          {
+            name: "avatar",
+            type: "uploadbox",
+            label: "Profile Photo",
+          },
+        ],
+      },
+
+      /* =========================
+     Parent / Guardian Section
+     ========================= */
+      {
+        title: "Parent / Guardian Information",
+        fields: [
+          {
+            name: "fatherName",
+            type: "text",
+            label: "Father's Name",
+            required: true,
+            placeholder: "Enter father's full name",
+          },
+          {
+            name: "motherName",
+            type: "text",
+            label: "Mother's Name",
+            required: false,
+            placeholder: "Enter mother's full name",
+          },
+          {
+            name: "parentContact",
+            type: "text",
+            label: "Parent Contact Number",
+            required: true,
+            placeholder: "+91 XXXXX XXXXX",
+          },
+          {
+            name: "parentEmail",
+            type: "text",
+            label: "Parent Email",
+            required: false,
+            placeholder: "example@email.com",
+          },
+          {
+            name: "guardianRelation",
+            type: "dropdown",
+            label: "Guardian Relation",
+            required: true,
+            placeholder: "Select relation",
+            options: [
+              { id: "father", value: "Father" },
+              { id: "mother", value: "Mother" },
+              { id: "guardian", value: "Guardian" },
+            ],
+          },
+        ],
+      },
+
+      /* =========================
+     Enrollment Section
+     ========================= */
+      {
+        title: "Enrollment Information",
+        fields: [
+          {
+            name: "admissionNo",
+            type: "text",
+            label: "Admission Number",
+            required: true,
+            placeholder: "Auto / Manual Admission No",
+          },
+          {
+            name: "admissionDate",
+            type: "date",
+            label: "Admission Date",
+            required: true,
+          },
+          {
+            name: "academicYear",
+            type: "dropdown",
+            label: "Academic Year",
+            required: true,
+            placeholder: "Select academic year",
+            options: [
+              { id: "2024-25", value: "2024 - 2025" },
+              { id: "2025-26", value: "2025 - 2026" },
+            ],
+          },
+          {
+            name: "previousSchool",
+            type: "text",
+            label: "Previous School",
+            required: false,
+            placeholder: "If applicable",
+          },
+        ],
+      },
+
+      /* =========================
+     Documents Section
+     ========================= */
+      {
+        title: "Documents & Verification",
+        fields: [
+          {
+            name: "birthCertificate",
+            type: "uploadbox",
+            label: "Birth Certificate",
+            required: true,
+          },
+          {
+            name: "aadharCard",
+            type: "uploadbox",
+            label: "Aadhar Card (Student)",
+            required: true,
+          },
+          {
+            name: "parentAadhar",
+            type: "uploadbox",
+            label: "Aadhar Card (Parent/Guardian)",
+            required: false,
+          },
+          {
+            name: "transferCertificate",
+            type: "uploadbox",
+            label: "Transfer Certificate (TC)",
+            required: false,
+          },
+        ],
+      },
+    ],
+    preview: [
+      {
+        type: "heading",
+        key: "name",
+        displayName: "Student Name",
+        avatarKey: "avatar",
+        icon: User,
+      },
+      {
+        sectionName: "Basic Information",
+        fields: [
+          { type: "text", key: "rollNo", displayName: "Roll Number" },
+          { type: "text", key: "class", displayName: "Class" },
+          { type: "text", key: "status", displayName: "Status" },
+        ],
+      },
+      {
+        sectionName: "Contact & Profile",
+        fields: [
+          { type: "text", key: "contact", displayName: "Contact Number" },
         ],
       },
     ],

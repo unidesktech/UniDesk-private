@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import * as Icons from "lucide-react";
-import { contactConfig } from "../../config/contactus.config";
+import { contactConfig } from "@/app/config/contactUs.config";
 import { DynamicRenderer } from "@/app/utils/dynamic-render";
 
 export default function ContactPage() {

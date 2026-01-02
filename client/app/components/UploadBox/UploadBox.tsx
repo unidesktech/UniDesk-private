@@ -9,7 +9,9 @@ interface UploadBoxProps {
   label?: string;
   onFilesChange?: (files: File[]) => void;
   value?: File[];
-  onBlur?: (value: React.FocusEvent<HTMLInputElement, Element> | undefined) => void;
+  onBlur?: (
+    value: React.FocusEvent<HTMLInputElement, Element> | undefined
+  ) => void;
 }
 
 const UploadBox: React.FC<UploadBoxProps> = ({
@@ -63,11 +65,11 @@ const UploadBox: React.FC<UploadBoxProps> = ({
         </label>
       </div>
 
-      {uploadedFiles.length > 0 && (
+      {uploadedFiles?.length > 0 && (
         <div className="mt-4 space-y-2">
           <Label>Uploaded Files</Label>
           <div className="space-y-2">
-            {uploadedFiles.map((file, index) => (
+            {(uploadedFiles ?? []).map((file, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"

@@ -2,26 +2,22 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { logOut } from "../services/auth.service";
-// import { ModalProps } from "../models/action.model";
+import { ModalProps } from "../models/action.model";
 
 export const useHandleAction = () => {
   const router = useRouter();
-  //   const [modalProps, setModalProps] = useState<ModalProps | null>(null);
+    const [modalProps, setModalProps] = useState<ModalProps | null>(null);
 
   const handleAction = async (
     action: "navigate" | "modal" | "api",
     actionValue: string,
     data: any,
-    actionUse?: "edit" | "add" | "delete"
+    actionUse?: "edit" | "add" | "delete" | "import" | "export"
   ) => {
+    console.log(action, actionValue, actionUse);
     switch (action) {
       case "navigate":
-        if (actionUse) {
-          // if (actionUse === "edit") router.push(`/${actionValue}?id=${data.id}`);
-          // if (actionUse === "add") router.push(`/${actionValue}`);
-        } else {
-          router.push(actionValue);
-        }
+         router.push(`/${actionValue}`);
         break;
 
       case "api":
@@ -30,11 +26,13 @@ export const useHandleAction = () => {
         }
 
       case "modal":
-        // if (actionUse === "delete") {
-        //   setModalProps({ type: "warning", actionUse, actionValue, data });
-        // }else if(actionUse === "edit"){
-        //   setModalProps({type: "info", actionUse, actionValue, data})
-        // }
+        console.log("first")
+        if (actionUse === "delete") {
+          console.log("clicked")
+          setModalProps({ type: "warning", actionUse, actionValue, data });
+        }else if(actionUse === "edit"){
+          setModalProps({type: "info", actionUse, actionValue, data})
+        }
         break;
 
       default:
@@ -42,10 +40,10 @@ export const useHandleAction = () => {
     }
   };
 
-  //   const closeModal = () => setModalProps(null);
+    const closeModal = () => setModalProps(null);
 
   return { handleAction,
-    //  modalProps,
-    //   closeModal
+     modalProps,
+      closeModal
      };
 };
