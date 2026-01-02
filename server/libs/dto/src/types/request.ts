@@ -9,7 +9,12 @@ export interface AuthenticatedUser {
   user_code: string;
 }
 
+export interface MicroServiceAuthenticatedUser {
+  user_id: string;
+  school_id: string;
+}
+
 export interface AuthenticatedRequest extends Request {
   cookies: Record<string, unknown>;
-  user?: AuthenticatedUser;
+  user?: AuthenticatedUser | MicroServiceAuthenticatedUser;
 }
