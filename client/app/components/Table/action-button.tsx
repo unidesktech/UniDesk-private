@@ -63,12 +63,12 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             <DropdownMenuItem
               key={i}
               className={item.className}
-              onClick={() =>
+              onClick={() => 
                 handleAction?.(
                   item.action!,
                   item.actionValue,
+                  row,
                   item.actionUse!,
-                  row
                 )
               }
             >

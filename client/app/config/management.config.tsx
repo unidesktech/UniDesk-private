@@ -48,7 +48,7 @@ export const managementConfig = () => {
         variant: "",
         action: "navigate",
         actionUse: "add",
-        actionValue: "students/add",
+        actionValue: "management/form/student/add",
         label: "Add Student",
         permissions: ["management.students.edit"]
       },

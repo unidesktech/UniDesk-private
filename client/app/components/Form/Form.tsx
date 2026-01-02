@@ -1,24 +1,15 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import { getFormSchema } from "@/app/utils/zod";
-import Dropdown from "../Dropdown/Dropdown";
-import { Textarea } from "../ui/textarea";
-import { DatePicker } from "../DatePicker/DatePicker";
-import UploadBox from "../UploadBox/UploadBox";
 import { FormHeader } from "./FormHeader";
 import { PreviewSidebar } from "./PreviewSidebar";
 import { FormFooter } from "./FormFooter";
 import { formConfig } from "@/app/config/form.config";
 import useDebounce from "@/app/hooks/use-debounce";
-import {
-  FieldProps,
-  FormProps,
-  InfoItem,
-  SectionProps,
-} from "@/app/models/form.model";
+import { FieldProps, FormProps, InfoItem } from "@/app/models/form.model";
 import { FormFieldRenderer } from "./form-field-rendrer";
+import { showToast } from "@/app/utils/toast";
+import { saveEntity } from "@/app/services/modal.service";
 
 const Form = ({ type, mode, id }: FormProps) => {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
@@ -43,10 +34,13 @@ const Form = ({ type, mode, id }: FormProps) => {
   const debouncedFormData = useDebounce(formData, 300);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(`${type}-formData`);
-    if (saved) {
-      setFormData(JSON.parse(saved));
-    }
+    const retrieveStorage = () => {
+      const saved = sessionStorage.getItem(`${type}-formData`);
+      if (saved) {
+        setFormData(JSON.parse(saved));
+      }
+    };
+    retrieveStorage();
   }, [type]);
 
   const saveToStorage = (data: unknown) => {
@@ -56,9 +50,12 @@ const Form = ({ type, mode, id }: FormProps) => {
   };
 
   useEffect(() => {
-    if (autoSave) {
-      saveToStorage(debouncedFormData);
-    }
+    const handleSaveStorage = () => {
+      if (autoSave) {
+        saveToStorage(debouncedFormData);
+      }
+    };
+    handleSaveStorage();
   }, [debouncedFormData, autoSave]);
 
   const handleBlur = (field: FieldProps) => {
@@ -81,7 +78,7 @@ const Form = ({ type, mode, id }: FormProps) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const result = formSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -95,8 +92,29 @@ const Form = ({ type, mode, id }: FormProps) => {
       setErrors({});
       setDisabled(false);
       console.log("Submit success:", result.data);
-      // TODO: API call
-      // TODO: remove formData from sessionStorage after sucess
+
+      const entity = type.charAt(0).toUpperCase() + type.substring(1);
+
+      showToast(`Saving ${entity}...`, {
+        isLoading: true,
+        id: "management-saving-toast",
+      });
+
+      const response = await saveEntity({
+        entityType: type,
+        data: result.data,
+      });
+
+      if (response.success) {
+        showToast(`${entity} saved successfully.`, "success", {
+          id: "management-saving-toast",
+        });
+        handleCancel();
+      } else {
+        showToast(response.message || `Failed to save ${entity}`, "error", {
+          id: "management-saving-toast",
+        });
+      }
     }
   };
 

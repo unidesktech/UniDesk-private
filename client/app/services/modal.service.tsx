@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../hooks/axios.interceptor";
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL;
 export interface SavePayload<T = any> {
@@ -16,7 +16,7 @@ export const saveEntity = async <T = any>({
   data,
 }: SavePayload<T>) => {
   if (!entityType) throw new Error("entityType is required");
-  const res = await axios.post(`${API}/${entityType}/save`, data);
+  const res = await api.post(`${API}/${entityType}/save`, data);
   return res.data;
 };
 
@@ -26,7 +26,7 @@ export const deleteEntity = async ({
 }: DeletePayload) => {
   if (!entityType || !id)
     throw new Error("entityType and id are required");
-  const res = await axios.delete(
+  const res = await api.delete(
     `${API}/${entityType}/delete/${id}`
   );
   return res.data;

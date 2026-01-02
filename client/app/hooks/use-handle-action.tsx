@@ -14,14 +14,10 @@ export const useHandleAction = () => {
     data: any,
     actionUse?: "edit" | "add" | "delete" | "import" | "export"
   ) => {
+    console.log(action, actionValue, actionUse);
     switch (action) {
       case "navigate":
-        if (actionUse) {
-          // if (actionUse === "edit") router.push(`/${actionValue}?id=${data.id}`);
-          if (actionUse === "add") router.push(`/${actionValue}`);
-        } else {
-          router.push(actionValue);
-        }
+         router.push(`/${actionValue}`);
         break;
 
       case "api":
@@ -30,7 +26,9 @@ export const useHandleAction = () => {
         }
 
       case "modal":
+        console.log("first")
         if (actionUse === "delete") {
+          console.log("clicked")
           setModalProps({ type: "warning", actionUse, actionValue, data });
         }else if(actionUse === "edit"){
           setModalProps({type: "info", actionUse, actionValue, data})

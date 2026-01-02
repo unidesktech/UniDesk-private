@@ -168,8 +168,8 @@ export const formConfig: Record<string, ConfigType> = {
           {
             type: "dropdown",
             name: "classes",
-            fieldName: "name",
-            collectionName: "class",
+            columnName: "name",
+            tableName: "classes",
             label: "Class",
             placeholder: "Select class",
             required: true,
@@ -194,17 +194,24 @@ export const formConfig: Record<string, ConfigType> = {
         title: "Contact & Profile",
         fields: [
           {
-            name: "contact",
+            name: "phone",
             type: "text",
             label: "Contact Number",
             required: true,
             placeholder: "+91 XXXXX XXXXX",
           },
-          // {
-          //   name: "avatar",
-          //   type: "uploadbox",
-          //   label: "Profile Photo",
-          // },
+          {
+            name: "email",
+            type: "email",
+            label: "Email",
+            required: true,
+            placeholder: "enteryoremail@unidesk.com",
+          },
+          {
+            name: "avatar",
+            type: "uploadbox",
+            label: "Profile Photo",
+          },
         ],
       },
 
