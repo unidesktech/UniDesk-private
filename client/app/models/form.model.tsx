@@ -72,7 +72,7 @@ export interface ConfigType {
 }
 
 export interface FormRendererProps {
-  sections: SectionProps[];
+  section: SectionProps[];
   formData: Record<string, unknown>;
   errors: Record<string, string>;
   resetFlag?: boolean;
