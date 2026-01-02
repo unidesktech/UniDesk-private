@@ -4,7 +4,7 @@ import { IconType } from "./types/icon.type";
 export interface FormProps {
   type: string;
   mode: "add" | "edit";
-  id?: number;
+  id: string | null;
 }
 
 export interface InfoItem {
