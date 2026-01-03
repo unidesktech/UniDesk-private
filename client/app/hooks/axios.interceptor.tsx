@@ -73,7 +73,6 @@ api.interceptors.response.use(
         isRefreshing = false;
 
         if (typeof window !== "undefined") {
-          console.log("inside interceptor")
           window.location.href = "/auth/login";
         }
 

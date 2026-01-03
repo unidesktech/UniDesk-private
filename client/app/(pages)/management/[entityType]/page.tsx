@@ -17,6 +17,8 @@ import TableComponent from "@/app/components/Table/table-component";
 import StatCardSkeleton from "@/app/components/SkeletonLoader/stat-card-skeleton";
 import { usePermissionChecker } from "@/app/hooks/use-permission-checker";
 import { managementConfig } from "@/app/config/management.config";
+import { useAppDispatch } from "@/app/store/hooks";
+import { setLoading } from "@/app/store/app.slice";
 const EntitySidebar = dynamic(
   () => import("@/app/components/EntitySidebar/entity-side"),
   { ssr: false }
@@ -24,6 +26,7 @@ const EntitySidebar = dynamic(
 
 const Management = () => {
   const params = useParams();
+  const dispatch = useAppDispatch();
   const {can} = usePermissionChecker();
   const entityType = params?.entityType as string | undefined;
   const entityConfig = useMemo(() => {
@@ -44,6 +47,7 @@ const Management = () => {
   const [tableVersion, setTableVersion] = useState(0);
   const [statsVersion, setStatsVersion] = useState(0);
   const [statLoading, setStatLoading] = useState(false);
+  const [managementLoading, setManagementLoading] = useState(false);
 
   useEffect(() => {
     if (!isDesktop) {
@@ -72,15 +76,21 @@ const Management = () => {
     if (!entityType) return;
     
     const fetchTable = async () => {
+      setManagementLoading(true)
       const res = await getManagementList(entityType, page, limit, {
         searchQuery,
         ...filter,
       });
       setTableData(res);
+      setManagementLoading(false)
     };
     
     fetchTable();
   }, [entityType, page, limit, tableVersion]);
+
+  useEffect(()=> {
+      dispatch(setLoading(statLoading || managementLoading))
+  }, [statLoading, managementLoading])
 
   const { handleAction, closeModal, modalProps } = useHandleAction();
 

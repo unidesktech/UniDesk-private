@@ -35,6 +35,7 @@ export class AuthController {
   @Track()
   async refresh(@Req() req: AuthenticatedRequest): Promise<ResponseDto<any>> {
     const refreshToken = req.cookies?.refreshToken;
+    console.log("refresh token" , refreshToken)
     if (!refreshToken) {
       throw new UnauthorizedException();
     }

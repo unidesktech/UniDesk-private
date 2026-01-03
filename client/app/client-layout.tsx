@@ -13,8 +13,9 @@ import { OfferFooter } from "./components/Footer/Offer-footer";
 import Sidebar from "./components/Sidebar/sidebar";
 import { isExcludedFromSidebar } from "./utils/routes.utils";
 import { getStoreValue } from "./services/me.service";
-import { useAppDispatch } from "./store/hooks";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { setPermission, setSchool, setUser } from "./store/app.slice";
+import { Loader } from "./components/Loader/Loader";
 
 const ClientLayout = ({
   children,
@@ -28,6 +29,8 @@ const ClientLayout = ({
   const showHeader =
     generalRoutes.includes(pathName) || offerRoutes.includes(pathName);
   const hideSidebar = isExcludedFromSidebar(pathName, excludeSidebarRoutes);
+
+  const isLoading = useAppSelector(state => state.app.isLoading);
 
   useEffect(() => {
     const fetchStoreValues = async () => {
@@ -52,7 +55,7 @@ const ClientLayout = ({
 
       <div className="flex flex-1">
         {!hideSidebar && <Sidebar />}
-
+        {isLoading && <Loader />}
         <main className="flex-1 overflow-y-auto bg-gray-50">{children}</main>
       </div>
 

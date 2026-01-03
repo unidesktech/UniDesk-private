@@ -7,4 +7,5 @@ export interface AppState {
   permission: Record<string, boolean> | null;
   resetPasswordEmail: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }

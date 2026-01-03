@@ -9,6 +9,7 @@ const initialState: AppState = {
   permission: null,
   resetPasswordEmail: null,
   isAuthenticated: false,
+  isLoading: false
 };
 
 const appSlice = createSlice({
@@ -27,11 +28,14 @@ const appSlice = createSlice({
     setResetPasswordEmail(state, action: PayloadAction<string | null>) {
       state.resetPasswordEmail = action.payload;
     },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
     logout() {
       return initialState;
     },
   },
 });
 
-export const { setSchool, setUser, setPermission, setResetPasswordEmail, logout } = appSlice.actions;
+export const { setSchool, setUser, setPermission, setResetPasswordEmail, setLoading, logout } = appSlice.actions;
 export default appSlice.reducer;
